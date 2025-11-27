@@ -59,9 +59,10 @@ export default async function SpeciesPage({
         {species.wikipedia_summary && (
           <div className="mb-6">
             <h2 className="text-2xl font-semibold mb-3">About</h2>
-            <p className="text-gray-700 leading-relaxed">
-              {species.wikipedia_summary}
-            </p>
+            <div 
+              className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: species.wikipedia_summary }}
+            />
           </div>
         )}
 
