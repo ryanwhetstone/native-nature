@@ -1,0 +1,143 @@
+import Link from "next/link";
+
+interface TaxonPhoto {
+  medium_url: string;
+  attribution: string;
+  license_code: string;
+}
+
+interface Taxon {
+  id: number;
+  name: string;
+  rank: string;
+  preferred_common_name?: string;
+  wikipedia_url?: string;
+  observations_count: number;
+  default_photo?: TaxonPhoto;
+  taxon_photos?: Array<{ photo: TaxonPhoto }>;
+  wikipedia_summary?: string;
+  conservation_status?: {
+    status: string;
+    status_name: string;
+  };
+}
+
+async function getSpeciesDetail(speciesId: string) {
+  try {
+    const response = await fetch(
+      `https://api.inaturalist.org/v1/taxa/${speciesId}`,
+      { next: { revalidate: 86400 } } // Cache for 24 hours
+    );
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch species');
+    }
+    
+    const data = await response.json();
+    return data.results[0] as Taxon;
+  } catch (error) {
+    console.error('Error fetching species:', error);
+    return null;
+  }
+}
+
+export default async function SpeciesPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const species = await getSpeciesDetail(id);
+
+  if (!species) {
+    return (
+      <main className="min-h-screen p-8">
+        <p className="text-gray-600">Species not found.</p>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen p-8">
+      <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
+        ← Back to states
+      </Link>
+      
+      <div className="max-w-4xl mx-auto">
+        {species.default_photo && (
+          <div className="mb-8">
+            <img
+              src={species.default_photo.medium_url}
+              alt={species.preferred_common_name || species.name}
+              className="w-full h-96 object-cover rounded-lg shadow-lg"
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              Photo: {species.default_photo.attribution} ({species.default_photo.license_code})
+            </p>
+          </div>
+        )}
+
+        <h1 className="text-4xl font-bold mb-2">
+          {species.preferred_common_name || species.name}
+        </h1>
+        <p className="text-2xl text-gray-600 italic mb-4">{species.name}</p>
+        
+        <div className="flex gap-4 mb-6 text-sm">
+          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+            Rank: {species.rank}
+          </span>
+          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+            {species.observations_count.toLocaleString()} observations
+          </span>
+          {species.conservation_status && (
+            <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
+              {species.conservation_status.status_name}
+            </span>
+          )}
+        </div>
+
+        {species.wikipedia_summary && (
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold mb-3">About</h2>
+            <p className="text-gray-700 leading-relaxed">
+              {species.wikipedia_summary}
+            </p>
+          </div>
+        )}
+
+        {species.wikipedia_url && (
+          <div className="mb-6">
+            <a
+              href={species.wikipedia_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              View on Wikipedia →
+            </a>
+          </div>
+        )}
+
+        {species.taxon_photos && species.taxon_photos.length > 1 && (
+          <div>
+            <h2 className="text-2xl font-semibold mb-3">More Photos</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {species.taxon_photos.slice(0, 6).map((item, index) => (
+                <div key={index} className="rounded-lg overflow-hidden">
+                  <img
+                    src={item.photo.medium_url}
+                    alt={`${species.preferred_common_name || species.name} photo ${index + 1}`}
+                    className="w-full h-48 object-cover"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {item.photo.attribution}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
