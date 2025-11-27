@@ -1,5 +1,18 @@
 import { getSpeciesByTaxonId, saveSpeciesFromAPI } from '@/db/queries';
 
+// IUCN Conservation Status mapping
+const IUCN_STATUS_MAP: Record<number, string> = {
+  0: 'Not Evaluated',
+  5: 'Data Deficient',
+  10: 'Least Concern',
+  20: 'Near Threatened',
+  30: 'Vulnerable',
+  40: 'Endangered',
+  50: 'Critically Endangered',
+  60: 'Extinct in the Wild',
+  70: 'Extinct',
+};
+
 interface TaxonPhoto {
   medium_url: string;
   attribution: string;
@@ -80,16 +93,20 @@ export async function getSpeciesWithCache(speciesId: string): Promise<Taxon | nu
       );
       
       if (iucnStatus) {
+        const statusName = IUCN_STATUS_MAP[iucnStatus.iucn] || iucnStatus.status;
         conservationStatus = {
           status: iucnStatus.status,
-          status_name: iucnStatus.status || iucnStatus.iucn_text || '',
+          status_name: statusName,
         };
       } else if (taxon.conservation_statuses.length > 0) {
         // Fall back to first conservation status
         const firstStatus = taxon.conservation_statuses[0];
+        const statusName = firstStatus.iucn && IUCN_STATUS_MAP[firstStatus.iucn] 
+          ? IUCN_STATUS_MAP[firstStatus.iucn]
+          : firstStatus.status;
         conservationStatus = {
           status: firstStatus.status,
-          status_name: firstStatus.status || '',
+          status_name: statusName,
         };
       }
     }
