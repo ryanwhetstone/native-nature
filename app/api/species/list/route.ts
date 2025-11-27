@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     const placeId = parseInt(searchParams.get('placeId') || '0');
     const taxonId = parseInt(searchParams.get('taxonId') || '0');
     const page = parseInt(searchParams.get('page') || '1');
-    const filter = searchParams.get('filter') as 'native' | 'invasive' | undefined;
+    const filterParam = searchParams.get('filter');
 
     if (!placeId || !taxonId) {
       return NextResponse.json(
@@ -16,8 +16,11 @@ export async function GET(request: Request) {
       );
     }
 
-    const filterType = filter === 'all' ? undefined : filter;
-    const results = await getSpeciesListWithCache(placeId, taxonId, page, filterType);
+    const filter = filterParam === 'all' || !filterParam 
+      ? undefined 
+      : (filterParam as 'native' | 'invasive');
+    
+    const results = await getSpeciesListWithCache(placeId, taxonId, page, filter);
 
     return NextResponse.json({ results });
   } catch (error) {
