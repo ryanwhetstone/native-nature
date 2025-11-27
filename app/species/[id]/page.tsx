@@ -42,10 +42,18 @@ export default async function SpeciesPage({
         </h1>
         <p className="text-2xl text-gray-600 italic mb-4">{species.name}</p>
         
+        <div className="mb-6">
+          <div className="text-sm text-gray-600 flex flex-wrap gap-1">
+            {species.kingdom && <><span className="font-medium">Kingdom:</span> <span>{species.kingdom}</span> <span className="mx-1">›</span></>}
+            {species.phylum && <><span className="font-medium">Phylum:</span> <span>{species.phylum}</span> <span className="mx-1">›</span></>}
+            {species.class && <><span className="font-medium">Class:</span> <span>{species.class}</span> <span className="mx-1">›</span></>}
+            {species.order && <><span className="font-medium">Order:</span> <span>{species.order}</span> <span className="mx-1">›</span></>}
+            {species.family && <><span className="font-medium">Family:</span> <span>{species.family}</span> <span className="mx-1">›</span></>}
+            {species.genus && <><span className="font-medium">Genus:</span> <span>{species.genus}</span></>}
+          </div>
+        </div>
+        
         <div className="flex gap-4 mb-6 text-sm">
-          <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-            Rank: {species.rank}
-          </span>
           <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
             {species.observations_count.toLocaleString()} observations
           </span>

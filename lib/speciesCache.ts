@@ -33,6 +33,13 @@ interface Taxon {
     status: string;
     status_name: string;
   };
+  // Taxonomy fields
+  kingdom?: string;
+  phylum?: string;
+  class?: string;
+  order?: string;
+  family?: string;
+  genus?: string;
 }
 
 /**
@@ -64,6 +71,12 @@ export async function getSpeciesWithCache(speciesId: string): Promise<Taxon | nu
         status: cachedSpecies.conservationStatus,
         status_name: cachedSpecies.conservationStatusName || '',
       } : undefined,
+      kingdom: cachedSpecies.kingdom || undefined,
+      phylum: cachedSpecies.phylum || undefined,
+      class: cachedSpecies.class || undefined,
+      order: cachedSpecies.order || undefined,
+      family: cachedSpecies.family || undefined,
+      genus: cachedSpecies.genus || undefined,
     };
   }
   
@@ -111,10 +124,24 @@ export async function getSpeciesWithCache(speciesId: string): Promise<Taxon | nu
       }
     }
     
-    // Create taxon object with conservation status
+    // Extract taxonomy from ancestors
+    const taxonomy: Record<string, string> = {};
+    if (taxon.ancestors && Array.isArray(taxon.ancestors)) {
+      taxon.ancestors.forEach((ancestor: any) => {
+        if (ancestor.rank === 'kingdom') taxonomy.kingdom = ancestor.name;
+        if (ancestor.rank === 'phylum') taxonomy.phylum = ancestor.name;
+        if (ancestor.rank === 'class') taxonomy.class = ancestor.name;
+        if (ancestor.rank === 'order') taxonomy.order = ancestor.name;
+        if (ancestor.rank === 'family') taxonomy.family = ancestor.name;
+        if (ancestor.rank === 'genus') taxonomy.genus = ancestor.name;
+      });
+    }
+    
+    // Create taxon object with conservation status and taxonomy
     const taxonWithStatus = {
       ...taxon,
       conservation_status: conservationStatus,
+      ...taxonomy,
     } as Taxon;
     
     // Save to database asynchronously (don't wait for it)
