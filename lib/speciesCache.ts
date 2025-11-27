@@ -118,9 +118,10 @@ export async function getSpeciesWithCache(speciesId: string): Promise<Taxon | nu
     } as Taxon;
     
     // Save to database asynchronously (don't wait for it)
-    saveSpeciesFromAPI(taxonWithStatus).catch(err => 
-      console.error('Failed to save species to DB:', err)
-    );
+    saveSpeciesFromAPI(taxonWithStatus).catch(err => {
+      console.error('Failed to save species to DB:', err);
+      console.error('Species ID:', speciesId);
+    });
     
     return taxonWithStatus;
   } catch (error) {
@@ -162,7 +163,10 @@ export async function getSpeciesListWithCache(
           item.taxon,
           placeId,
           filter === 'native' ? true : filter === 'invasive' ? false : undefined
-        ).catch(err => console.error('Failed to save species to DB:', err));
+        ).catch(err => {
+          console.error('Failed to save species to DB:', err);
+          console.error('Taxon ID:', item.taxon.id);
+        });
       }
     });
     

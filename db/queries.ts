@@ -49,49 +49,57 @@ function extractTaxonomy(ancestors?: Array<{ name: string; rank: string }>) {
 }
 
 export async function saveSpeciesFromAPI(taxon: INaturalistTaxon, placeId?: number, isNative?: boolean) {
-  const taxonomy = extractTaxonomy(taxon.ancestors);
-  
-  const speciesData: NewSpecies = {
-    taxonId: taxon.id,
-    name: taxon.name,
-    preferredCommonName: taxon.preferred_common_name,
-    rank: taxon.rank,
-    kingdom: taxonomy.kingdom,
-    phylum: taxonomy.phylum,
-    class: taxonomy.class,
-    order: taxonomy.order,
-    family: taxonomy.family,
-    genus: taxonomy.genus,
-    wikipediaUrl: taxon.wikipedia_url,
-    wikipediaSummary: taxon.wikipedia_summary,
-    observationsCount: taxon.observations_count,
-    defaultPhotoUrl: taxon.default_photo?.medium_url,
-    defaultPhotoAttribution: taxon.default_photo?.attribution,
-    defaultPhotoLicense: taxon.default_photo?.license_code,
-    conservationStatus: taxon.conservation_status?.status,
-    conservationStatusName: taxon.conservation_status?.status_name,
-    taxonPhotos: taxon.taxon_photos as any,
-    establishmentMeans: placeId && isNative !== undefined 
-      ? { [placeId]: isNative ? 'native' : 'introduced' }
-      : null,
-    updatedAt: new Date(),
-  };
+  try {
+    const taxonomy = extractTaxonomy(taxon.ancestors);
+    
+    const speciesData: NewSpecies = {
+      taxonId: taxon.id,
+      name: taxon.name,
+      preferredCommonName: taxon.preferred_common_name,
+      rank: taxon.rank,
+      kingdom: taxonomy.kingdom,
+      phylum: taxonomy.phylum,
+      class: taxonomy.class,
+      order: taxonomy.order,
+      family: taxonomy.family,
+      genus: taxonomy.genus,
+      wikipediaUrl: taxon.wikipedia_url,
+      wikipediaSummary: taxon.wikipedia_summary,
+      observationsCount: taxon.observations_count,
+      defaultPhotoUrl: taxon.default_photo?.medium_url,
+      defaultPhotoAttribution: taxon.default_photo?.attribution,
+      defaultPhotoLicense: taxon.default_photo?.license_code,
+      conservationStatus: taxon.conservation_status?.status,
+      conservationStatusName: taxon.conservation_status?.status_name,
+      taxonPhotos: taxon.taxon_photos as any,
+      establishmentMeans: placeId && isNative !== undefined 
+        ? { [placeId]: isNative ? 'native' : 'introduced' }
+        : null,
+      updatedAt: new Date(),
+    };
 
-  // Check if species already exists
-  const existing = await db.query.species.findFirst({
-    where: eq(species.taxonId, taxon.id),
-  });
+    // Check if species already exists
+    const existing = await db.query.species.findFirst({
+      where: eq(species.taxonId, taxon.id),
+    });
 
-  if (existing) {
-    // Update existing record
-    await db.update(species)
-      .set(speciesData)
-      .where(eq(species.taxonId, taxon.id));
-    return existing.id;
-  } else {
-    // Insert new record
-    const result = await db.insert(species).values(speciesData).returning({ id: species.id });
-    return result[0].id;
+    if (existing) {
+      // Update existing record
+      await db.update(species)
+        .set(speciesData)
+        .where(eq(species.taxonId, taxon.id));
+      console.log(`Updated species: ${taxon.name} (${taxon.id})`);
+      return existing.id;
+    } else {
+      // Insert new record
+      const result = await db.insert(species).values(speciesData).returning({ id: species.id });
+      console.log(`Inserted species: ${taxon.name} (${taxon.id})`);
+      return result[0].id;
+    }
+  } catch (error) {
+    console.error('Error saving species to database:', error);
+    console.error('Taxon data:', JSON.stringify(taxon, null, 2));
+    throw error;
   }
 }
 
