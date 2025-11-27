@@ -66,16 +66,46 @@ export async function getSpeciesWithCache(speciesId: string): Promise<Taxon | nu
     }
     
     const data = await response.json();
-    const taxon = data.results[0] as Taxon;
+    const taxon = data.results[0];
     
-    // Save to database asynchronously (don't wait for it)
-    if (taxon) {
-      saveSpeciesFromAPI(taxon).catch(err => 
-        console.error('Failed to save species to DB:', err)
+    if (!taxon) return null;
+    
+    // Extract global conservation status from conservation_statuses array
+    // Prefer IUCN global status if available
+    let conservationStatus = null;
+    if (taxon.conservation_statuses && Array.isArray(taxon.conservation_statuses)) {
+      // Look for IUCN global status (authority = "IUCN Red List")
+      const iucnStatus = taxon.conservation_statuses.find(
+        (cs: any) => cs.authority === 'IUCN Red List' && !cs.place
       );
+      
+      if (iucnStatus) {
+        conservationStatus = {
+          status: iucnStatus.status,
+          status_name: iucnStatus.status || iucnStatus.iucn_text || '',
+        };
+      } else if (taxon.conservation_statuses.length > 0) {
+        // Fall back to first conservation status
+        const firstStatus = taxon.conservation_statuses[0];
+        conservationStatus = {
+          status: firstStatus.status,
+          status_name: firstStatus.status || '',
+        };
+      }
     }
     
-    return taxon;
+    // Create taxon object with conservation status
+    const taxonWithStatus = {
+      ...taxon,
+      conservation_status: conservationStatus,
+    } as Taxon;
+    
+    // Save to database asynchronously (don't wait for it)
+    saveSpeciesFromAPI(taxonWithStatus).catch(err => 
+      console.error('Failed to save species to DB:', err)
+    );
+    
+    return taxonWithStatus;
   } catch (error) {
     console.error('Error fetching species:', error);
     return null;
