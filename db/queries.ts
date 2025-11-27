@@ -24,27 +24,44 @@ interface INaturalistTaxon {
   default_photo?: TaxonPhoto;
   taxon_photos?: Array<{ photo: TaxonPhoto }>;
   conservation_status?: ConservationStatus;
-  // Ancestry fields
-  kingdom?: string;
-  phylum?: string;
-  class?: string;
-  order?: string;
-  family?: string;
-  genus?: string;
+  // Ancestry is in the ancestors array
+  ancestors?: Array<{
+    name: string;
+    rank: string;
+  }>;
+}
+
+// Extract taxonomy from ancestors array
+function extractTaxonomy(ancestors?: Array<{ name: string; rank: string }>) {
+  if (!ancestors) return {};
+  
+  const taxonomy: Record<string, string> = {};
+  ancestors.forEach(ancestor => {
+    if (ancestor.rank === 'kingdom') taxonomy.kingdom = ancestor.name;
+    if (ancestor.rank === 'phylum') taxonomy.phylum = ancestor.name;
+    if (ancestor.rank === 'class') taxonomy.class = ancestor.name;
+    if (ancestor.rank === 'order') taxonomy.order = ancestor.name;
+    if (ancestor.rank === 'family') taxonomy.family = ancestor.name;
+    if (ancestor.rank === 'genus') taxonomy.genus = ancestor.name;
+  });
+  
+  return taxonomy;
 }
 
 export async function saveSpeciesFromAPI(taxon: INaturalistTaxon, placeId?: number, isNative?: boolean) {
+  const taxonomy = extractTaxonomy(taxon.ancestors);
+  
   const speciesData: NewSpecies = {
     taxonId: taxon.id,
     name: taxon.name,
     preferredCommonName: taxon.preferred_common_name,
     rank: taxon.rank,
-    kingdom: taxon.kingdom,
-    phylum: taxon.phylum,
-    class: taxon.class,
-    order: taxon.order,
-    family: taxon.family,
-    genus: taxon.genus,
+    kingdom: taxonomy.kingdom,
+    phylum: taxonomy.phylum,
+    class: taxonomy.class,
+    order: taxonomy.order,
+    family: taxonomy.family,
+    genus: taxonomy.genus,
     wikipediaUrl: taxon.wikipedia_url,
     wikipediaSummary: taxon.wikipedia_summary,
     observationsCount: taxon.observations_count,
