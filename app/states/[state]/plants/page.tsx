@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SpeciesGrid from "../SpeciesGrid";
 import { stateToPlaceId } from "../stateMapping";
+import { getSpeciesListWithCache } from "@/lib/speciesCache";
 
 interface Plant {
   count: number;
@@ -15,22 +16,8 @@ interface Plant {
 }
 
 async function getPlants(placeId: number, taxonId: number) {
-  try {
-    const response = await fetch(
-      `https://api.inaturalist.org/v1/observations/species_counts?place_id=${placeId}&taxon_id=${taxonId}&quality_grade=research&per_page=50`,
-      { next: { revalidate: 86400 } } // Cache for 24 hours
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch plants');
-    }
-    
-    const data = await response.json();
-    return data.results as Plant[];
-  } catch (error) {
-    console.error('Error fetching plants:', error);
-    return [];
-  }
+  const results = await getSpeciesListWithCache(placeId, taxonId);
+  return results as Plant[];
 }
 
 export default async function PlantsPage({

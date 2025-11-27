@@ -44,7 +44,7 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
     setLoading(true);
     try {
       const response = await fetch(
-        `https://api.inaturalist.org/v1/observations/species_counts?place_id=${placeId}&taxon_id=${taxonId}&quality_grade=research&per_page=50&page=${page + 1}${getFilterParam()}`
+        `/api/species/list?placeId=${placeId}&taxonId=${taxonId}&page=${page + 1}&filter=${filter}`
       );
       const data = await response.json();
       
@@ -68,9 +68,8 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
     setHasMore(true);
 
     try {
-      const filterParam = newFilter === 'native' ? '&native=true' : newFilter === 'invasive' ? '&introduced=true' : '';
       const response = await fetch(
-        `https://api.inaturalist.org/v1/observations/species_counts?place_id=${placeId}&taxon_id=${taxonId}&quality_grade=research&per_page=50&page=1${filterParam}`
+        `/api/species/list?placeId=${placeId}&taxonId=${taxonId}&page=1&filter=${newFilter}`
       );
       const data = await response.json();
       setSpecies(data.results);

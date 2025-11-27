@@ -1,45 +1,5 @@
 import Link from "next/link";
-
-interface TaxonPhoto {
-  medium_url: string;
-  attribution: string;
-  license_code: string;
-}
-
-interface Taxon {
-  id: number;
-  name: string;
-  rank: string;
-  preferred_common_name?: string;
-  wikipedia_url?: string;
-  observations_count: number;
-  default_photo?: TaxonPhoto;
-  taxon_photos?: Array<{ photo: TaxonPhoto }>;
-  wikipedia_summary?: string;
-  conservation_status?: {
-    status: string;
-    status_name: string;
-  };
-}
-
-async function getSpeciesDetail(speciesId: string) {
-  try {
-    const response = await fetch(
-      `https://api.inaturalist.org/v1/taxa/${speciesId}`,
-      { next: { revalidate: 86400 } } // Cache for 24 hours
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch species');
-    }
-    
-    const data = await response.json();
-    return data.results[0] as Taxon;
-  } catch (error) {
-    console.error('Error fetching species:', error);
-    return null;
-  }
-}
+import { getSpeciesWithCache } from "@/lib/speciesCache";
 
 export default async function SpeciesPage({
   params,
@@ -47,7 +7,7 @@ export default async function SpeciesPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const species = await getSpeciesDetail(id);
+  const species = await getSpeciesWithCache(id);
 
   if (!species) {
     return (
