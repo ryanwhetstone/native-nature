@@ -81,19 +81,23 @@ export function USMap() {
 
   return (
     <div className="w-full max-w-6xl mx-auto mb-12">
-        {svgContent && (
-            <p className="text-center text-sm text-gray-600 mt-4">
-            Click on any state to explore its native species
-            </p>
-        )}
-        <div 
-        ref={containerRef}
-        className="w-full"
-        dangerouslySetInnerHTML={{ __html: svgContent }}
-        />
+      {svgContent && (
+        <p className="text-center text-sm text-gray-600 mb-4">
+          Click on any state to explore its native species
+        </p>
+      )}
+      <div className={`w-full ${!svgContent ? 'min-h-[638px] flex items-center justify-center' : ''}`}>
         {!svgContent && (
-        <p className="text-center text-gray-600">Loading map...</p>
+          <p className="text-center text-gray-600 text-lg">Loading map...</p>
         )}
+        {svgContent && (
+          <div 
+            ref={containerRef}
+            className="w-full"
+            dangerouslySetInnerHTML={{ __html: svgContent }}
+          />
+        )}
+      </div>
     </div>
   );
 }
