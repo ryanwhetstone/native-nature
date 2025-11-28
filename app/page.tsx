@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { USMap } from "./USMap";
 
 const states = [
   "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
@@ -16,8 +17,12 @@ const states = [
 export default function Home() {
   return (
     <main className="min-h-screen p-8">
-      <h1 className="text-4xl font-bold mb-8">Native Nature</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <h1 className="text-4xl font-bold mb-8 text-center">Native Nature</h1>
+      
+      <USMap />
+      
+      <h2 className="text-2xl font-semibold mb-6 text-center">Or select from the list below</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
         {states.map((state) => (
           <Link
             key={state}
