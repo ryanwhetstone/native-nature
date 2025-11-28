@@ -93,7 +93,7 @@ export function USMap() {
         {svgContent && (
           <div 
             ref={containerRef}
-            className="w-full"
+            className="w-full flex justify-center"
             dangerouslySetInnerHTML={{ __html: svgContent }}
           />
         )}
