@@ -183,20 +183,6 @@ export async function getSpeciesListWithCache(
     const data = await response.json();
     const results = data.results || [];
     
-    // Save species to database in the background
-    results.forEach((item: any) => {
-      if (item.taxon) {
-        saveSpeciesFromAPI(
-          item.taxon,
-          placeId,
-          filter === 'native' ? true : filter === 'invasive' ? false : undefined
-        ).catch(err => {
-          console.error('Failed to save species to DB:', err);
-          console.error('Taxon ID:', item.taxon.id);
-        });
-      }
-    });
-    
     return results;
   } catch (error) {
     console.error('Error fetching species list:', error);
