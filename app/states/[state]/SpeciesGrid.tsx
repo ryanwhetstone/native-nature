@@ -14,6 +14,13 @@ interface Species {
     default_photo?: {
       medium_url: string;
     };
+    establishment_means?: {
+      establishment_means: string;
+      place: {
+        id: number;
+        name: string;
+      };
+    };
   };
 }
 
@@ -137,28 +144,41 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {species.map((speciesItem) => (
-          <Link 
-            key={speciesItem.taxon.id} 
-            href={`/species/${speciesItem.taxon.id}`}
-            className="border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow block"
-          >
-            {speciesItem.taxon.default_photo && (
-              <img
-                src={speciesItem.taxon.default_photo.medium_url}
-                alt={speciesItem.taxon.preferred_common_name || speciesItem.taxon.name}
-                className="w-full h-48 object-cover"
-              />
-            )}
-            <div className="p-4">
-              <h3 className="font-semibold text-lg mb-1">
-                {speciesItem.taxon.preferred_common_name || speciesItem.taxon.name}
-              </h3>
-              <p className="text-sm text-gray-600 italic">{speciesItem.taxon.name}</p>
-              <p className="text-xs text-gray-500 mt-2">{speciesItem.count.toLocaleString()} observations</p>
-            </div>
-          </Link>
-        ))}
+        {species.map((speciesItem) => {
+          const isIntroduced = speciesItem.taxon.establishment_means?.establishment_means === 'introduced';
+          
+          return (
+            <Link 
+              key={speciesItem.taxon.id} 
+              href={`/species/${speciesItem.taxon.id}`}
+              className="border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow block"
+            >
+              <div className="relative">
+                {speciesItem.taxon.default_photo && (
+                  <img
+                    src={speciesItem.taxon.default_photo.medium_url}
+                    alt={speciesItem.taxon.preferred_common_name || speciesItem.taxon.name}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+                {isIntroduced && (
+                  <div className="absolute top-2 right-2">
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-600 text-white">
+                      Invasive
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-lg mb-1">
+                  {speciesItem.taxon.preferred_common_name || speciesItem.taxon.name}
+                </h3>
+                <p className="text-sm text-gray-600 italic">{speciesItem.taxon.name}</p>
+                <p className="text-xs text-gray-500 mt-2">{speciesItem.count.toLocaleString()} observations</p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
       
       <div ref={loadMoreRef} className="mt-8 text-center py-4">

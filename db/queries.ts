@@ -24,6 +24,13 @@ interface INaturalistTaxon {
   default_photo?: TaxonPhoto;
   taxon_photos?: Array<{ photo: TaxonPhoto }>;
   conservation_status?: ConservationStatus;
+  establishment_means?: {
+    establishment_means: string;
+    place: {
+      id: number;
+      name: string;
+    };
+  };
   // Ancestry is in the ancestors array
   ancestors?: Array<{
     name: string;
@@ -52,6 +59,21 @@ export async function saveSpeciesFromAPI(taxon: INaturalistTaxon, placeId?: numb
   try {
     const taxonomy = extractTaxonomy(taxon.ancestors);
     
+    // Check if species already exists to merge establishment means
+    const existing = await db.query.species.findFirst({
+      where: eq(species.taxonId, taxon.id),
+    });
+    
+    // Merge establishment means data
+    let establishmentMeansData: any = existing?.establishmentMeans || {};
+    
+    // Add new establishment means if we have place-specific data
+    if (taxon.establishment_means && taxon.establishment_means.place) {
+      establishmentMeansData[taxon.establishment_means.place.id] = taxon.establishment_means.establishment_means;
+    } else if (placeId && isNative !== undefined) {
+      establishmentMeansData[placeId] = isNative ? 'native' : 'introduced';
+    }
+    
     const speciesData: NewSpecies = {
       taxonId: taxon.id,
       name: taxon.name,
@@ -72,16 +94,9 @@ export async function saveSpeciesFromAPI(taxon: INaturalistTaxon, placeId?: numb
       conservationStatus: taxon.conservation_status?.status,
       conservationStatusName: taxon.conservation_status?.status_name,
       taxonPhotos: taxon.taxon_photos as any,
-      establishmentMeans: placeId && isNative !== undefined 
-        ? { [placeId]: isNative ? 'native' : 'introduced' }
-        : null,
+      establishmentMeans: Object.keys(establishmentMeansData).length > 0 ? establishmentMeansData : null,
       updatedAt: new Date(),
     };
-
-    // Check if species already exists
-    const existing = await db.query.species.findFirst({
-      where: eq(species.taxonId, taxon.id),
-    });
 
     if (existing) {
       // Update existing record
