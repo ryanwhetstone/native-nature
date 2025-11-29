@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import SpeciesGrid from "../SpeciesGrid";
 import { stateToPlaceId } from "../stateMapping";
+import { categoryMapping } from "../categoryMapping";
 import { getSpeciesListWithCache } from "@/lib/speciesCache";
 
-interface Plant {
+interface Species {
   count: number;
   taxon: {
     id: number;
@@ -15,17 +17,23 @@ interface Plant {
   };
 }
 
-async function getPlants(placeId: number, taxonId: number) {
+async function getSpecies(placeId: number, taxonId: number) {
   const results = await getSpeciesListWithCache(placeId, taxonId);
-  return results as Plant[];
+  return results as Species[];
 }
 
-export default async function PlantsPage({
+export default async function CategoryPage({
   params,
 }: {
-  params: Promise<{ state: string }>;
+  params: Promise<{ state: string; category: string }>;
 }) {
-  const { state } = await params;
+  const { state, category } = await params;
+  
+  // Check if category exists in mapping
+  const categoryInfo = categoryMapping[category];
+  if (!categoryInfo) {
+    notFound();
+  }
   
   const stateName = state
     .split("-")
@@ -33,8 +41,7 @@ export default async function PlantsPage({
     .join(" ");
 
   const placeId = stateToPlaceId[state];
-  const taxonId = 47126; // All plants (Kingdom Plantae)
-  const plants = placeId ? await getPlants(placeId, taxonId) : [];
+  const species = placeId ? await getSpecies(placeId, categoryInfo.taxonId) : [];
 
   return (
     <main className="min-h-screen p-8">
@@ -42,13 +49,13 @@ export default async function PlantsPage({
         ← Back to {stateName}
       </Link>
       <h1 className="text-4xl font-bold mb-2">{stateName}</h1>
-      <h2 className="text-2xl text-gray-600 mb-8">Plants</h2>
+      <h2 className="text-2xl text-gray-600 mb-8">{categoryInfo.displayName}</h2>
       
       <section>
-        {plants.length === 0 ? (
-          <p className="text-gray-600">Loading plant data...</p>
+        {species.length === 0 ? (
+          <p className="text-gray-600">Loading {categoryInfo.pluralName} data...</p>
         ) : (
-          <SpeciesGrid initialPlants={plants} placeId={placeId} taxonId={taxonId} />
+          <SpeciesGrid initialPlants={species} placeId={placeId} taxonId={categoryInfo.taxonId} />
         )}
       </section>
     </main>
