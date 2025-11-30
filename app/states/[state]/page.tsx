@@ -19,12 +19,13 @@ export default async function StatePage({
 
   return (
     <main className="min-h-screen p-8">
-      <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
-        ← Back to all states
-      </Link>
-      <h1 className="text-4xl font-bold mb-8">{stateName}</h1>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl">
+      <div className="max-w-7xl mx-auto">
+        <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
+          ← Back to all states
+        </Link>
+        <h1 className="text-4xl font-bold mb-8">{stateName}</h1>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {Object.entries(categoryMapping).map(([slug, info]) => {
           return (
             <Link
@@ -40,6 +41,7 @@ export default async function StatePage({
             </Link>
           );
         })}
+        </div>
       </div>
     </main>
   );

@@ -45,19 +45,21 @@ export default async function CategoryPage({
 
   return (
     <main className="min-h-screen p-8">
-      <Link href={`/states/${state}`} className="text-blue-600 hover:underline mb-4 inline-block">
-        ← Back to {stateName}
-      </Link>
-      <h1 className="text-4xl font-bold mb-2">{stateName}</h1>
-      <h2 className="text-2xl text-gray-600 mb-8">{categoryInfo.displayName}</h2>
-      
-      <section>
+      <div className="max-w-7xl mx-auto">
+        <Link href={`/states/${state}`} className="text-blue-600 hover:underline mb-4 inline-block">
+          ← Back to {stateName}
+        </Link>
+        <h1 className="text-4xl font-bold mb-2">{stateName}</h1>
+        <h2 className="text-2xl text-gray-600 mb-8">{categoryInfo.displayName}</h2>
+        
+        <section>
         {species.length === 0 ? (
           <p className="text-gray-600">Loading {categoryInfo.pluralName} data...</p>
         ) : (
           <SpeciesGrid initialPlants={species} placeId={placeId} taxonId={categoryInfo.taxonId} />
         )}
-      </section>
+        </section>
+      </div>
     </main>
   );
 }
