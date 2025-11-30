@@ -49,7 +49,7 @@ export default async function ProfilePage() {
               )}
               
               <Link
-                href="/settings"
+                href="/account/settings"
                 className="ml-auto mb-4 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition-colors"
               >
                 Edit Profile

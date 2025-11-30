@@ -116,7 +116,7 @@ export default async function DashboardPage() {
             </Link>
 
             <Link
-              href="/settings"
+              href="/account/settings"
               className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
             >
               <div className="text-3xl">⚙️</div>
