@@ -29,6 +29,13 @@
       "when": 1764477921826,
       "tag": "0003_warm_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1764538471531,
+      "tag": "0004_daily_beyonder",
+      "breakpoints": true
     }
   ]
 }

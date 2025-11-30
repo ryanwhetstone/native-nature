@@ -8,6 +8,7 @@ interface User {
   name?: string | null;
   email?: string | null;
   image?: string | null;
+  publicName?: string | null;
   bio?: string | null;
 }
 
@@ -18,6 +19,7 @@ interface SettingsFormProps {
 export function SettingsForm({ user }: SettingsFormProps) {
   const router = useRouter();
   const [name, setName] = useState(user.name || "");
+  const [publicName, setPublicName] = useState(user.publicName || "");
   const [bio, setBio] = useState(user.bio || "");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -34,7 +36,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
       const response = await fetch("/api/user/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, bio }),
+        body: JSON.stringify({ name, publicName, bio }),
       });
 
       const data = await response.json();
@@ -140,6 +142,20 @@ export function SettingsForm({ user }: SettingsFormProps) {
               onChange={(e) => setName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="Your name"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="publicName" className="block text-sm font-medium text-gray-700 mb-1">
+              Public Display Name
+            </label>
+            <input
+              type="text"
+              id="publicName"
+              value={publicName}
+              onChange={(e) => setPublicName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Name shown to other users"
             />
           </div>
 

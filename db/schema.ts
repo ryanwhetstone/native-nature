@@ -10,6 +10,7 @@ export const users = pgTable('users', {
   image: text('image'),
   passwordHash: text('password_hash'),
   // Custom fields
+  publicName: varchar('public_name', { length: 255 }),
   bio: text('bio'),
   preferences: jsonb('preferences'),
   isActive: boolean('is_active').default(true).notNull(),

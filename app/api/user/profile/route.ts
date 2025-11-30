@@ -15,13 +15,14 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const { name, bio } = await request.json();
+    const { name, publicName, bio } = await request.json();
 
     // Update user profile
     await db
       .update(users)
       .set({
         name,
+        publicName,
         bio,
         updatedAt: new Date(),
       })

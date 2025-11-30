@@ -43,6 +43,7 @@ export async function POST(request: Request) {
       name,
       email,
       passwordHash,
+      publicName: name, // Set publicName to same as name initially
     }).returning();
 
     return NextResponse.json(
