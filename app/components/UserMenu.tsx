@@ -58,7 +58,7 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
           
           <Link
-            href="/profile"
+            href="/account/profile"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
             onClick={() => setIsOpen(false)}
           >

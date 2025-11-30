@@ -25,7 +25,7 @@ export async function Header() {
             </Link>
             {session?.user && (
               <Link
-                href="/dashboard"
+                href="/account/dashboard"
                 className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
               >
                 Dashboard
