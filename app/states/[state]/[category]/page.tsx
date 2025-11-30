@@ -44,7 +44,7 @@ export default async function CategoryPage({
   const species = placeId ? await getSpecies(placeId, categoryInfo.taxonId) : [];
 
   return (
-    <main className="min-h-screen p-8">
+    <main className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
         <Link href={`/states/${state}`} className="text-blue-600 hover:underline mb-4 inline-block">
           ← Back to {stateName}

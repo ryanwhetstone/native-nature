@@ -135,7 +135,7 @@ export function SpeciesGallery({ species }: SpeciesGalleryProps) {
 
         {species.taxon_photos && species.taxon_photos.length > 0 && (
           <div>
-            <h2 className="text-2xl font-semibold mb-3">More Photos</h2>
+            <h2 className="text-2xl font-semibold mb-3">Photos</h2>
             <div className="grid grid-cols-3 gap-4">
               {species.taxon_photos.slice(1, Math.min(10, species.taxon_photos.length)).map((item, index) => (
                 <div key={index} className="rounded-lg overflow-hidden">

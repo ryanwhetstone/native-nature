@@ -12,14 +12,14 @@ export default async function SpeciesPage({
 
   if (!species) {
     return (
-      <main className="min-h-screen p-8">
+      <main className="min-h-screen bg-gray-50 p-8">
         <p className="text-gray-600">Species not found.</p>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen p-8">
+    <main className="min-h-screen bg-gray-50 p-8">
       <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
         ← Back to states
       </Link>
