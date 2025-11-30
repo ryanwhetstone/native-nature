@@ -36,6 +36,7 @@ export default async function DashboardPage() {
     with: {
       species: true,
     },
+    orderBy: (favorites, { desc }) => [desc(favorites.createdAt)],
     limit: 6,
   });
 
