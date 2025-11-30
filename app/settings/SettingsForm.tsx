@@ -225,22 +225,6 @@ export function SettingsForm({ user }: SettingsFormProps) {
           </button>
         </form>
       </div>
-
-      {/* Account Actions */}
-      <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Account Actions</h2>
-        <button
-          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors"
-          onClick={() => {
-            if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-              // TODO: Implement account deletion
-              alert("Account deletion not yet implemented");
-            }
-          }}
-        >
-          Delete Account
-        </button>
-      </div>
     </div>
   );
 }
