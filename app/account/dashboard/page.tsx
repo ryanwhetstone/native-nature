@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { users, favorites } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -22,7 +22,15 @@ export default async function DashboardPage() {
     redirect("/auth/signin");
   }
 
-  // Fetch user's favorite species
+  // Get total count of favorites
+  const favoritesCountResult = await db
+    .select({ count: count() })
+    .from(favorites)
+    .where(eq(favorites.userId, session.user.id));
+  
+  const favoritesCount = favoritesCountResult[0]?.count || 0;
+
+  // Fetch user's favorite species (limited to 6 for display)
   const userFavorites = await db.query.favorites.findMany({
     where: eq(favorites.userId, session.user.id),
     with: {
@@ -30,8 +38,6 @@ export default async function DashboardPage() {
     },
     limit: 6,
   });
-
-  const favoritesCount = userFavorites.length;
 
   return (
     <main className="min-h-screen bg-gray-50 py-8">
