@@ -120,19 +120,6 @@ export function SpeciesGallery({ species }: SpeciesGalleryProps) {
           </div>
         )}
 
-        {species.wikipedia_url && (
-          <div className="mb-6">
-            <a
-              href={species.wikipedia_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              View on Wikipedia →
-            </a>
-          </div>
-        )}
-
         {species.taxon_photos && species.taxon_photos.length > 0 && (
           <div>
             <h2 className="text-2xl font-semibold mb-3">Photos</h2>
