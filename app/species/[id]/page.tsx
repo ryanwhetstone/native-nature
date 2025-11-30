@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getSpeciesWithCache } from "@/lib/speciesCache";
 import { SpeciesGallery } from "./SpeciesGallery";
+import { FavoriteButton } from "@/app/components/FavoriteButton";
 
 export default async function SpeciesPage({
   params,
@@ -20,11 +21,16 @@ export default async function SpeciesPage({
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
-      <Link href="/" className="text-blue-600 hover:underline mb-4 inline-block">
-        ← Back to states
-      </Link>
-      
-      <SpeciesGallery species={species} />
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-4">
+          <Link href="/" className="text-blue-600 hover:underline">
+            ← Back to states
+          </Link>
+          <FavoriteButton speciesId={parseInt(id)} />
+        </div>
+        
+        <SpeciesGallery species={species} />
+      </div>
 
     </main>
   );

@@ -1,0 +1,2 @@
+ALTER TABLE "favorites" DROP CONSTRAINT "favorites_user_id_species_id_pk";--> statement-breakpoint
+ALTER TABLE "favorites" ADD CONSTRAINT "favorites_user_id_species_id_unique" UNIQUE("user_id","species_id");

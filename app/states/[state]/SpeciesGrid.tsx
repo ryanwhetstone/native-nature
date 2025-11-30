@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import { FavoriteButton } from '@/app/components/FavoriteButton';
 
 type FilterType = 'all' | 'native' | 'invasive';
 
@@ -168,6 +169,9 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
                     </span>
                   </div>
                 )}
+                <div className="absolute bottom-2 right-2" onClick={(e) => e.preventDefault()}>
+                  <FavoriteButton speciesId={speciesItem.taxon.id} className="!px-2 !py-1 text-sm" />
+                </div>
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-lg mb-1">

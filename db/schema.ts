@@ -1,4 +1,5 @@
-import { pgTable, serial, varchar, text, integer, timestamp, boolean, jsonb, primaryKey } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, text, integer, timestamp, boolean, jsonb, primaryKey, unique } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
 
 // NextAuth required tables
 export const users = pgTable('users', {
@@ -89,3 +90,37 @@ export const species = pgTable('species', {
 
 export type Species = typeof species.$inferSelect;
 export type NewSpecies = typeof species.$inferInsert;
+
+// Favorites table
+export const favorites = pgTable('favorites', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  speciesId: integer('species_id').notNull().references(() => species.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => ({
+  // Ensure a user can only favorite a species once
+  uniqueUserSpecies: unique().on(table.userId, table.speciesId),
+}));
+
+export type Favorite = typeof favorites.$inferSelect;
+export type NewFavorite = typeof favorites.$inferInsert;
+
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  favorites: many(favorites),
+}));
+
+export const speciesRelations = relations(species, ({ many }) => ({
+  favorites: many(favorites),
+}));
+
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+  user: one(users, {
+    fields: [favorites.userId],
+    references: [users.id],
+  }),
+  species: one(species, {
+    fields: [favorites.speciesId],
+    references: [species.id],
+  }),
+}));
