@@ -17,8 +17,6 @@ const states = [
 export default function Home() {
   return (
     <main className="min-h-screen p-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">Native Nature</h1>
-      
       <USMap />
       
       <h2 className="text-2xl font-semibold mb-6 text-center">Or select from the list below</h2>
