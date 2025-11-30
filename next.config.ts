@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/photos/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'static.inaturalist.org',
+        port: '',
+        pathname: '/photos/**',
+      },
     ],
   },
 };
