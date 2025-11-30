@@ -69,6 +69,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      // Set publicName to name when user is created via OAuth
+      if (user.name && user.id) {
+        await db
+          .update(users)
+          .set({ publicName: user.name })
+          .where(eq(users.id, user.id));
+      }
+    },
+  },
   callbacks: {
     async session({ session, user }) {
       if (user && session.user) {
