@@ -147,11 +147,13 @@ export async function getSpeciesWithCache(speciesId: string): Promise<Taxon | nu
       ...taxonomy,
     } as Taxon;
     
-    // Save to database asynchronously (don't wait for it)
-    saveSpeciesFromAPI(taxonWithStatus).catch(err => {
-      console.error('Failed to save species to DB:', err);
-      console.error('Species ID:', speciesId);
-    });
+    // Save to database asynchronously (don't wait for it) - only if caching is enabled
+    if (!cacheDisabled) {
+      saveSpeciesFromAPI(taxonWithStatus).catch(err => {
+        console.error('Failed to save species to DB:', err);
+        console.error('Species ID:', speciesId);
+      });
+    }
     
     return taxonWithStatus;
   } catch (error) {
@@ -197,9 +199,10 @@ export async function getSpeciesListWithCache(
           // (unless caching is disabled)
           const cachedSpecies = cacheDisabled ? null : await getSpeciesByTaxonId(result.taxon.id);
           
-          if (cachedSpecies?.establishmentMeans && !cacheDisabled) {
+          if (cachedSpecies && !cacheDisabled) {
+            // If we have cached species and caching is enabled, use cached data
             const establishmentData = cachedSpecies.establishmentMeans as any;
-            if (establishmentData[placeId]) {
+            if (establishmentData && establishmentData[placeId]) {
               return {
                 ...result,
                 taxon: {
@@ -211,61 +214,66 @@ export async function getSpeciesListWithCache(
                 }
               };
             }
+            // If cached but no establishment means for this place, just return as-is
+            // Don't fetch from API when caching is enabled
+            return result;
           }
           
-          // If not in database or no establishment means for this place, fetch from API
-          const taxonResponse = await fetch(
-            `https://api.inaturalist.org/v1/taxa/${result.taxon.id}?place_id=${placeId}`,
-            { next: { revalidate: 86400 } }
-          );
-          
-          if (taxonResponse.ok) {
-            const taxonData = await taxonResponse.json();
-            const taxon = taxonData.results[0];
+          // Only fetch from API if caching is disabled OR species not in database
+          if (cacheDisabled || !cachedSpecies) {
+            const taxonResponse = await fetch(
+              `https://api.inaturalist.org/v1/taxa/${result.taxon.id}?place_id=${placeId}`,
+              { next: { revalidate: 86400 } }
+            );
             
-            if (taxon) {
-              // Extract conservation status (same logic as getSpeciesWithCache)
-              let conservationStatus = null;
-              if (taxon.conservation_statuses && Array.isArray(taxon.conservation_statuses)) {
-                const iucnStatus = taxon.conservation_statuses.find(
-                  (cs: any) => cs.authority === 'IUCN Red List' && !cs.place
-                );
+            if (taxonResponse.ok) {
+              const taxonData = await taxonResponse.json();
+              const taxon = taxonData.results[0];
+              
+              if (taxon) {
+                // Extract conservation status (same logic as getSpeciesWithCache)
+                let conservationStatus = null;
+                if (taxon.conservation_statuses && Array.isArray(taxon.conservation_statuses)) {
+                  const iucnStatus = taxon.conservation_statuses.find(
+                    (cs: any) => cs.authority === 'IUCN Red List' && !cs.place
+                  );
+                  
+                  if (iucnStatus) {
+                    const statusName = IUCN_STATUS_MAP[iucnStatus.iucn] || iucnStatus.status;
+                    conservationStatus = {
+                      status: iucnStatus.status,
+                      status_name: statusName,
+                    };
+                  } else if (taxon.conservation_statuses.length > 0) {
+                    const firstStatus = taxon.conservation_statuses[0];
+                    const statusName = firstStatus.iucn && IUCN_STATUS_MAP[firstStatus.iucn] 
+                      ? IUCN_STATUS_MAP[firstStatus.iucn]
+                      : firstStatus.status;
+                    conservationStatus = {
+                      status: firstStatus.status,
+                      status_name: statusName,
+                    };
+                  }
+                }
                 
-                if (iucnStatus) {
-                  const statusName = IUCN_STATUS_MAP[iucnStatus.iucn] || iucnStatus.status;
-                  conservationStatus = {
-                    status: iucnStatus.status,
-                    status_name: statusName,
-                  };
-                } else if (taxon.conservation_statuses.length > 0) {
-                  const firstStatus = taxon.conservation_statuses[0];
-                  const statusName = firstStatus.iucn && IUCN_STATUS_MAP[firstStatus.iucn] 
-                    ? IUCN_STATUS_MAP[firstStatus.iucn]
-                    : firstStatus.status;
-                  conservationStatus = {
-                    status: firstStatus.status,
-                    status_name: statusName,
+                // Add conservation status to taxon object
+                const enrichedTaxon = {
+                  ...taxon,
+                  conservation_status: conservationStatus,
+                };
+                
+                // Save the enriched taxon data to database
+                await saveSpeciesFromAPI(enrichedTaxon);
+                
+                if (taxon.establishment_means) {
+                  return {
+                    ...result,
+                    taxon: {
+                      ...result.taxon,
+                      establishment_means: taxon.establishment_means
+                    }
                   };
                 }
-              }
-              
-              // Add conservation status to taxon object
-              const enrichedTaxon = {
-                ...taxon,
-                conservation_status: conservationStatus,
-              };
-              
-              // Save the enriched taxon data to database
-              await saveSpeciesFromAPI(enrichedTaxon);
-              
-              if (taxon.establishment_means) {
-                return {
-                  ...result,
-                  taxon: {
-                    ...result.taxon,
-                    establishment_means: taxon.establishment_means
-                  }
-                };
               }
             }
           }

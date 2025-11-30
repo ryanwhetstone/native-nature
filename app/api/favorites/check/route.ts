@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { favorites } from "@/db/schema";
+import { favorites, species } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function GET(request: Request) {
@@ -22,10 +22,19 @@ export async function GET(request: Request) {
       );
     }
 
+    // Look up species by taxonId (iNaturalist ID)
+    const speciesRecord = await db.query.species.findFirst({
+      where: eq(species.taxonId, parseInt(speciesId)),
+    });
+
+    if (!speciesRecord) {
+      return NextResponse.json({ isFavorited: false }, { status: 200 });
+    }
+
     const favorite = await db.query.favorites.findFirst({
       where: and(
         eq(favorites.userId, session.user.id),
-        eq(favorites.speciesId, parseInt(speciesId))
+        eq(favorites.speciesId, speciesRecord.id)
       ),
     });
 

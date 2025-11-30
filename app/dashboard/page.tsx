@@ -1,9 +1,10 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { users, favorites } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -20,6 +21,17 @@ export default async function DashboardPage() {
   if (!userData) {
     redirect("/auth/signin");
   }
+
+  // Fetch user's favorite species
+  const userFavorites = await db.query.favorites.findMany({
+    where: eq(favorites.userId, session.user.id),
+    with: {
+      species: true,
+    },
+    limit: 6,
+  });
+
+  const favoritesCount = userFavorites.length;
 
   return (
     <main className="min-h-screen bg-gray-50 py-8">
@@ -48,7 +60,7 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Favorites</p>
-                <p className="text-3xl font-bold text-gray-900">0</p>
+                <p className="text-3xl font-bold text-gray-900">{favoritesCount}</p>
               </div>
               <div className="text-4xl">⭐</div>
             </div>
@@ -113,6 +125,68 @@ export default async function DashboardPage() {
                 <p className="text-sm text-gray-600">Manage your account</p>
               </div>
             </Link>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white rounded-lg shadow mb-8">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">Favorite Species</h2>
+              {favoritesCount > 0 && (
+                <Link href="/favorites" className="text-sm text-green-600 hover:text-green-700 font-medium">
+                  View All
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className="p-6">
+            {userFavorites.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {userFavorites.map((favorite) => (
+                  <Link
+                    key={favorite.id}
+                    href={`/species/${favorite.species.taxonId}`}
+                    className="group"
+                  >
+                    <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
+                      {favorite.species.defaultPhotoUrl ? (
+                        <img
+                          src={favorite.species.defaultPhotoUrl}
+                          alt={favorite.species.preferredCommonName || favorite.species.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl">
+                          🌿
+                        </div>
+                      )}
+                      <div className="absolute top-2 right-2">
+                        <span className="text-xl">❤️</span>
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-900 group-hover:text-green-600 line-clamp-2">
+                      {favorite.species.preferredCommonName || favorite.species.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 italic line-clamp-1">
+                      {favorite.species.name}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <div className="text-5xl mb-4">⭐</div>
+                <p className="text-lg font-medium">No favorites yet</p>
+                <p className="mt-2">Start favoriting species to see them here!</p>
+                <Link
+                  href="/"
+                  className="mt-6 inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors"
+                >
+                  Explore Species
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 

@@ -63,15 +63,11 @@ export function FavoriteButton({ speciesId, className = "" }: FavoriteButtonProp
     <button
       onClick={toggleFavorite}
       disabled={loading}
-      className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-        isFavorited
-          ? "bg-red-600 text-white hover:bg-red-700"
-          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-      } ${className}`}
+      className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white/90 backdrop-blur-sm hover:bg-white shadow-sm ${className}`}
       title={isFavorited ? "Remove from favorites" : "Add to favorites"}
     >
       <span className="text-xl">{isFavorited ? "❤️" : "🤍"}</span>
-      <span>{loading ? "..." : isFavorited ? "Favorited" : "Favorite"}</span>
+      <span className="text-gray-700">{loading ? "..." : isFavorited ? "Favorited" : "Favorite"}</span>
     </button>
   );
 }
