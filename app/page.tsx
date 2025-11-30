@@ -1,5 +1,8 @@
+'use client';
+
 import Link from "next/link";
 import { USMap } from "./USMap";
+import { useEffect, useState } from "react";
 
 const states = [
   "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
@@ -15,9 +18,21 @@ const states = [
 ];
 
 export default function Home() {
+  const [mapKey, setMapKey] = useState(0);
+
+  useEffect(() => {
+    // Listen for when navigation happens to the current page
+    const handleFocus = () => {
+      setMapKey(prev => prev + 1);
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
   return (
     <main className="min-h-screen bg-gray-50 p-8">
-      <USMap />
+      <USMap key={mapKey} />
       
       <h2 className="text-2xl font-semibold mb-6 text-center">Or select from the list below</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
