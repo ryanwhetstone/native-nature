@@ -134,7 +134,7 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-gray-900">Favorite Species</h2>
               {favoritesCount > 0 && (
-                <Link href="/favorites" className="text-sm text-green-600 hover:text-green-700 font-medium">
+                <Link href="/account/favorites" className="text-sm text-green-600 hover:text-green-700 font-medium">
                   View All
                 </Link>
               )}
