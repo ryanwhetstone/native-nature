@@ -48,8 +48,8 @@ export function USMap() {
   // Separate effect to handle visibility changes
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && pathname === '/') {
-        // Force reinitialization when tab becomes visible and we're on home
+      if (document.visibilityState === 'visible' && pathname === '/countries/usa') {
+        // Force reinitialization when tab becomes visible and we're on USA page
         isInitializedRef.current = false;
       }
     };
