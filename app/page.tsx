@@ -49,7 +49,7 @@ export default function Home() {
         <div className="mt-12 p-8 bg-gray-100 rounded-lg text-center">
           <h3 className="text-xl font-semibold text-gray-700 mb-2">More Countries Coming Soon</h3>
           <p className="text-gray-600">
-            We're working on adding more countries and regions. Check back soon!
+            We&apos;re working on adding more countries and regions. Check back soon!
           </p>
         </div>
       </div>
