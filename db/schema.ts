@@ -106,6 +106,30 @@ export const favorites = pgTable('favorites', {
 export type Favorite = typeof favorites.$inferSelect;
 export type NewFavorite = typeof favorites.$inferInsert;
 
+// iNaturalist Places table - stores place IDs for countries and regions
+export const inaturalistPlaces = pgTable('inaturalist_places', {
+  id: serial('id').primaryKey(),
+  // iNaturalist place ID
+  placeId: integer('place_id').notNull().unique(),
+  // Location info
+  countryCode: varchar('country_code', { length: 3 }).notNull(), // ISO 3-letter code
+  placeName: varchar('place_name', { length: 255 }).notNull(), // e.g., "Ontario", "California"
+  placeSlug: varchar('place_slug', { length: 255 }).notNull(), // URL-friendly slug
+  // Additional metadata from iNaturalist
+  displayName: varchar('display_name', { length: 500 }), // Full display name from iNaturalist
+  placeType: integer('place_type'), // iNaturalist place type code
+  adminLevel: integer('admin_level'), // Administrative level
+  // Timestamps
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, (table) => ({
+  // Ensure unique combination of country and place
+  uniqueCountryPlace: unique().on(table.countryCode, table.placeSlug),
+}));
+
+export type INaturalistPlace = typeof inaturalistPlaces.$inferSelect;
+export type NewINaturalistPlace = typeof inaturalistPlaces.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   favorites: many(favorites),

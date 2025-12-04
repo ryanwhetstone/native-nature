@@ -16,14 +16,18 @@
     "@auth/drizzle-adapter": "^1.11.1",
     "@neondatabase/serverless": "^1.0.2",
     "bcryptjs": "^3.0.3",
+    "countrycitystatejson": "^25.8.101",
     "drizzle-orm": "^0.44.7",
+    "leaflet": "^1.9.4",
     "next": "^15.0.3",
     "next-auth": "^5.0.0-beta.30",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

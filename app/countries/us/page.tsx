@@ -50,7 +50,7 @@ export default function USAPage() {
         {states.map((state) => (
           <Link
             key={state}
-            href={`/states/${state.toLowerCase().replace(/\s+/g, "-")}`}
+            href={`/country/usa/place/${state.toLowerCase().replace(/\s+/g, "-")}`}
             className="p-4 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
           >
             {state}

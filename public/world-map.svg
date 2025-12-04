@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500">
+  <rect width="1000" height="500" fill="#e0f2fe"/>
+  
+  <!-- United States -->
+  <path class="us" d="M 120 140 L 280 140 L 300 160 L 290 220 L 240 240 L 180 240 L 130 220 L 115 180 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Canada -->
+  <path class="ca" d="M 110 60 L 310 60 L 340 80 L 330 130 L 300 160 L 280 140 L 120 140 L 100 120 L 90 80 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Mexico -->
+  <path class="mx" d="M 130 240 L 230 240 L 250 260 L 245 290 L 210 310 L 160 310 L 135 285 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Greenland -->
+  <path class="gl" d="M 350 30 L 450 30 L 480 50 L 475 110 L 440 130 L 380 130 L 340 100 L 335 60 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Brazil -->
+  <path class="br" d="M 320 280 L 400 280 L 430 310 L 430 390 L 410 430 L 360 440 L 310 420 L 295 380 L 295 320 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Argentina -->
+  <path class="ar" d="M 270 350 L 320 350 L 335 390 L 335 470 L 310 490 L 270 485 L 255 450 L 255 380 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- United Kingdom -->
+  <path class="gb" d="M 475 115 L 500 115 L 510 135 L 505 155 L 480 160 L 470 145 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- France -->
+  <path class="fr" d="M 490 155 L 535 155 L 550 180 L 545 210 L 515 220 L 485 210 L 480 180 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Spain -->
+  <path class="es" d="M 460 190 L 510 190 L 525 215 L 520 245 L 485 250 L 455 240 L 450 215 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Germany -->
+  <path class="de" d="M 520 130 L 565 130 L 575 155 L 570 180 L 545 185 L 520 175 L 515 150 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Italy -->
+  <path class="it" d="M 535 180 L 560 180 L 575 210 L 575 255 L 565 280 L 550 285 L 535 275 L 530 230 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Scandinavia (Norway, Sweden, Finland) -->
+  <path class="no" d="M 520 70 L 560 70 L 575 90 L 570 125 L 540 130 L 515 120 L 510 90 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Russia -->
+  <path class="ru" d="M 575 75 L 880 75 L 920 95 L 920 200 L 880 220 L 780 220 L 720 210 L 650 195 L 600 175 L 570 155 L 565 120 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Egypt & North Africa -->
+  <path class="eg" d="M 550 210 L 590 210 L 605 235 L 605 270 L 585 285 L 555 280 L 545 255 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- South Africa -->
+  <path class="za" d="M 540 370 L 600 370 L 625 395 L 625 430 L 600 450 L 555 450 L 530 430 L 525 400 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Middle East -->
+  <path class="sa" d="M 585 195 L 640 195 L 660 215 L 660 250 L 640 270 L 600 270 L 585 245 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- India -->
+  <path class="in" d="M 680 225 L 740 225 L 755 255 L 755 305 L 730 330 L 690 330 L 670 305 L 665 265 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- China -->
+  <path class="cn" d="M 720 160 L 850 160 L 880 185 L 880 260 L 850 290 L 780 290 L 740 270 L 710 245 L 705 200 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Japan -->
+  <path class="jp" d="M 875 195 L 905 195 L 920 220 L 920 260 L 905 285 L 885 285 L 870 265 L 870 220 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Southeast Asia -->
+  <path class="th" d="M 760 280 L 810 280 L 830 305 L 830 335 L 805 350 L 765 345 L 750 320 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Australia -->
+  <path class="au" d="M 780 360 L 900 360 L 940 385 L 945 435 L 910 465 L 820 465 L 770 440 L 765 395 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- New Zealand -->
+  <path class="nz" d="M 920 450 L 945 450 L 955 470 L 950 490 L 925 495 L 910 480 Z" fill="#d1d5db" stroke="#ffffff" stroke-width="2"/>
+</svg>

@@ -1,12 +1,12 @@
 'use client';
 
 import Link from "next/link";
-
-const countries = [
-  { name: "United States", slug: "usa", description: "Explore species across all 50 states" },
-];
+import { WorldMap } from "./WorldMap";
+import { getAllCountries } from "@/lib/countries";
 
 export default function Home() {
+  const countries = getAllCountries().slice(0, 15); // Show first 15 countries
+  
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -19,20 +19,25 @@ export default function Home() {
         </div>
       </div>
 
+      {/* World Map Section */}
+      <div className="py-16 px-8">
+        <WorldMap />
+      </div>
+
       {/* Countries Section */}
-      <div className="max-w-7xl mx-auto px-8 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Explore by Country</h2>
+      <div className="max-w-7xl mx-auto px-8 pb-16">
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">Available Countries</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {countries.map((country) => (
             <Link
               key={country.slug}
-              href={`/countries/${country.slug}`}
+              href={`/country/${country.slug}`}
               className="group block p-6 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:shadow-lg transition-all"
             >
               <h3 className="text-2xl font-semibold text-gray-900 group-hover:text-green-600 mb-2">
                 {country.name}
               </h3>
-              <p className="text-gray-600">{country.description}</p>
+              <p className="text-gray-600">Explore native species in {country.name}</p>
               <div className="mt-4 text-green-600 group-hover:text-green-700 font-medium">
                 Explore →
               </div>
