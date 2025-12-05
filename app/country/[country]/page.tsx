@@ -60,7 +60,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
                 return (
                   <Link
                     key={stateName || index}
-                    href={`/country/${country}/place/${stateSlug}`}
+                    href={`/place/${country}/${stateSlug}`}
                     className="block p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:shadow-md transition-all"
                   >
                     <p className="font-semibold text-gray-900">{stateName}</p>
