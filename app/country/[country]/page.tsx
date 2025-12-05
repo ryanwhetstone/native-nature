@@ -83,6 +83,9 @@ export default async function CountryPage({ params }: CountryPageProps) {
   );
 }
 
+// Enable dynamic params for countries not in generateStaticParams
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   // Generate pages for all countries
   return getAllCountries().map((country) => ({

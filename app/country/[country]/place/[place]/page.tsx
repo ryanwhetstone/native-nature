@@ -66,6 +66,10 @@ export default async function PlacePage({ params }: PlacePageProps) {
   );
 }
 
+// Enable dynamic rendering for all place pages
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   // For now, return empty array - states will be generated on-demand
   // In the future, you could pre-generate popular states

@@ -120,6 +120,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   );
 }
 
+// Enable dynamic rendering for all category pages
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   // Generate on-demand for now
   return [];
