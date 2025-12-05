@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { getSpeciesWithCache } from "@/lib/speciesCache";
 import { SpeciesGallery } from "./SpeciesGallery";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
+import { BackButton } from "./BackButton";
 
 export default async function SpeciesPage({
   params,
@@ -23,9 +23,7 @@ export default async function SpeciesPage({
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-4">
-          <Link href="/" className="text-blue-600 hover:underline">
-            ← Back to states
-          </Link>
+          <BackButton />
           <FavoriteButton speciesId={parseInt(id)} />
         </div>
         
