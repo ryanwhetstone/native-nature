@@ -49,7 +49,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
             return (
               <Link
                 key={slug}
-                href={`/species/${country}/${place}/${slug}`}
+                href={`/species-list/${country}/${place}/${slug}`}
                 className={`p-8 border-2 border-gray-300 rounded-lg ${info.colors.hover} transition-all text-center group`}
               >
                 <div className="text-6xl mb-4">{info.emoji}</div>
