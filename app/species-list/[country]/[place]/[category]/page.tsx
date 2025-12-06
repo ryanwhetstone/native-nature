@@ -5,8 +5,7 @@ import { getINaturalistPlaceId } from "@/lib/inaturalist-places";
 import { getSpeciesListWithCache } from "@/lib/speciesCache";
 import { categoryMapping } from "@/app/states/[state]/categoryMapping";
 import SpeciesGrid from "@/app/states/[state]/SpeciesGrid";
-// @ts-ignore - No types available for this package
-import ccsjson from "countrycitystatejson";
+import { getSVGConfigForCountry } from "@/lib/svg-mappings";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -41,16 +40,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  // Get the state name from the slug
-  const countryInfo = ccsjson.getCountryByShort(countryData.isoCode2);
-  const stateNames = countryInfo?.states ? Object.keys(countryInfo.states) : [];
-  const placeName = stateNames.find(
-    (name: string) => name.toLowerCase().replace(/\s+/g, '-') === place
-  );
+  // Get the state/region name from the SVG mapping
+  const svgConfig = getSVGConfigForCountry(country);
+  const regionData = svgConfig?.regionMapping 
+    ? Object.values(svgConfig.regionMapping).find((region: any) => region.slug === place)
+    : null;
 
-  if (!placeName) {
+  if (!regionData) {
     notFound();
   }
+
+  const placeName = (regionData as any).name;
 
   const categoryInfo = categoryMapping[category];
   if (!categoryInfo) {

@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import CountryDetailMapWrapper from "../CountryDetailMapWrapper";
+import InteractiveSVGMap from "@/components/InteractiveSVGMap";
+import { getSVGConfigForCountry } from "@/lib/svg-mappings";
 import { getCountryBySlug, getAllCountries } from "@/lib/countries";
-// @ts-ignore - No types available for this package
-import ccsjson from "countrycitystatejson";
 
 interface CountryPageProps {
   params: Promise<{
@@ -19,16 +19,17 @@ export default async function CountryPage({ params }: CountryPageProps) {
     notFound();
   }
 
-  // For USA, redirect to the specific implementation
-  if (country.toLowerCase() === "usa") {
-    const { default: USAPage } = await import("../us/page");
-    return <USAPage />;
-  }
+  // Check if this country has an interactive SVG map available
+  const svgConfig = getSVGConfigForCountry(country);
+  const hasSvgMap = svgConfig !== undefined;
 
-  // Get states/provinces for this country using the 2-letter ISO code
-  const countryInfo = ccsjson.getCountryByShort(countryData.isoCode2);
-  const stateNames = countryInfo?.states ? Object.keys(countryInfo.states) : [];
-  const states = stateNames.filter(name => name.length > 2); // Filter out short codes like "AA", "AE"
+  // Get states/provinces from the SVG mapping if available
+  const states = hasSvgMap && svgConfig?.regionMapping 
+    ? Object.values(svgConfig.regionMapping).map((region: any) => ({
+        name: region.name,
+        slug: region.slug
+      }))
+    : [];
 
   // For other countries, show the country code and map
   return (
@@ -42,28 +43,25 @@ export default async function CountryPage({ params }: CountryPageProps) {
         </Link>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">{countryData.name}</h1>
         
-        <CountryDetailMapWrapper countryCode={countryData.isoCode} countryName={countryData.name} />
+        {hasSvgMap ? (
+          <InteractiveSVGMap countrySlug={country} />
+        ) : (
+          <CountryDetailMapWrapper countryCode={countryData.isoCode} countryName={countryData.name} />
+        )}
         
-        <div className="bg-white rounded-lg shadow p-8 mb-8">
-          <p className="text-gray-600 mb-4">
-            Country Code: <span className="font-mono font-bold text-2xl text-green-600">{countryData.isoCode}</span>
-          </p>
-        </div>
-
         {/* States/Provinces Grid */}
         {states.length > 0 && (
           <div className="bg-white rounded-lg shadow p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">States & Provinces</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {states.map((stateName: string, index: number) => {
-                const stateSlug = stateName.toLowerCase().replace(/\s+/g, '-');
+              {states.map((state, index: number) => {
                 return (
                   <Link
-                    key={stateName || index}
-                    href={`/place/${country}/${stateSlug}`}
+                    key={state.slug || index}
+                    href={`/place/${country}/${state.slug}`}
                     className="block p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:shadow-md transition-all"
                   >
-                    <p className="font-semibold text-gray-900">{stateName}</p>
+                    <p className="font-semibold text-gray-900">{state.name}</p>
                   </Link>
                 );
               })}

@@ -10,7 +10,9 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "download:svg": "tsx scripts/download-country-svgs.ts",
+    "download:svg:all": "tsx scripts/download-country-svgs.ts simplemaps-all"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
@@ -37,6 +39,7 @@
     "eslint-config-next": "^15.0.3",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }
