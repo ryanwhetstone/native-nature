@@ -17,14 +17,12 @@ export default function InteractiveSVGMap({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const config = getSVGConfigForCountry(countrySlug);
-  
-  if (!config) {
-    return <div className="p-4 text-gray-500">Interactive map not available for this country</div>;
-  }
-
-  const { svgFileName, regionIdPrefix } = config;
+  const svgFileName = config?.svgFileName;
+  const regionIdPrefix = config?.regionIdPrefix;
 
   useEffect(() => {
+    if (!svgFileName) return;
+    
     // Load the SVG file
     fetch(`/${svgFileName}`)
       .then((response) => response.text())
@@ -37,7 +35,7 @@ export default function InteractiveSVGMap({
   }, [svgFileName]);
 
   useEffect(() => {
-    if (!svgContent || !containerRef.current) return;
+    if (!svgContent || !containerRef.current || !regionIdPrefix) return;
 
     const container = containerRef.current;
 
@@ -74,6 +72,10 @@ export default function InteractiveSVGMap({
     };
   }, [svgContent, router, countrySlug, hoveredRegion, regionIdPrefix]);
 
+  if (!config) {
+    return <div className="p-4 text-gray-500">Interactive map not available for this country</div>;
+  }
+
   if (!svgContent) {
     return (
       <div className="flex items-center justify-center h-96 bg-gray-100 rounded-lg">
@@ -85,14 +87,14 @@ export default function InteractiveSVGMap({
   return (
     <div className="relative">
       <style dangerouslySetInnerHTML={{ __html: `
-        #interactive-svg-container path[id^="${regionIdPrefix}"] {
+        #interactive-svg-container path[id^="${regionIdPrefix || ''}"] {
           fill: #d1d5db;
           stroke: #4b5563;
           stroke-width: 1;
           cursor: pointer;
           transition: fill 0.2s ease;
         }
-        #interactive-svg-container path[id^="${regionIdPrefix}"]:hover {
+        #interactive-svg-container path[id^="${regionIdPrefix || ''}"]:hover {
           fill: #5a8a60 !important;
         }
         #interactive-svg-container svg {
