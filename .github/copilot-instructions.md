@@ -23,3 +23,8 @@ This is a Next.js 15 application with Tailwind CSS. The homepage displays "Nativ
 **Development:**
 - Run `npm run dev` to start the development server
 - Access the site at http://localhost:3000
+
+## Git Operations
+- Always use standard git terminal commands (`git add`, `git commit`, `git push`) instead of MCP git tools
+- Prefer `run_in_terminal` for all git operations
+- Use clear, descriptive commit messages
