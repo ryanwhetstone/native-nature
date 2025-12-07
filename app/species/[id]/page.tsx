@@ -1,6 +1,7 @@
 import { getSpeciesWithCache } from "@/lib/speciesCache";
 import { SpeciesGallery } from "./SpeciesGallery";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
+import { AddObservationButton } from "@/app/components/AddObservationButton";
 import { BackButton } from "./BackButton";
 
 export default async function SpeciesPage({
@@ -27,7 +28,14 @@ export default async function SpeciesPage({
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-4">
           <BackButton />
-          <FavoriteButton speciesId={parseInt(id)} showLabel={true} />
+          <div className="flex items-center gap-3">
+            <AddObservationButton 
+              speciesId={species.dbId || parseInt(id)}
+              speciesName={species.preferred_common_name || species.name}
+              speciesSlug={slug}
+            />
+            <FavoriteButton speciesId={species.dbId || parseInt(id)} showLabel={true} />
+          </div>
         </div>
         
         <SpeciesGallery species={species} />

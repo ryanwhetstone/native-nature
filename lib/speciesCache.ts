@@ -21,6 +21,7 @@ interface TaxonPhoto {
 
 interface Taxon {
   id: number;
+  dbId?: number; // Database ID (different from taxon ID)
   name: string;
   rank: string;
   preferred_common_name?: string;
@@ -58,6 +59,7 @@ export async function getSpeciesWithCache(speciesId: string): Promise<Taxon | nu
     // Return data from database in iNaturalist API format
     return {
       id: cachedSpecies.taxonId,
+      dbId: cachedSpecies.id, // Add database ID
       name: cachedSpecies.name,
       rank: cachedSpecies.rank,
       preferred_common_name: cachedSpecies.preferredCommonName || undefined,

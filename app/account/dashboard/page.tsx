@@ -1,8 +1,8 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { users, favorites } from "@/db/schema";
-import { eq, count } from "drizzle-orm";
+import { users, favorites, observations } from "@/db/schema";
+import { eq, count, desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -30,6 +30,14 @@ export default async function DashboardPage() {
   
   const favoritesCount = favoritesCountResult[0]?.count || 0;
 
+  // Get total count of observations
+  const observationsCountResult = await db
+    .select({ count: count() })
+    .from(observations)
+    .where(eq(observations.userId, session.user.id));
+  
+  const observationsCount = observationsCountResult[0]?.count || 0;
+
   // Fetch user's favorite species (limited to 6 for display)
   const userFavorites = await db.query.favorites.findMany({
     where: eq(favorites.userId, session.user.id),
@@ -37,6 +45,17 @@ export default async function DashboardPage() {
       species: true,
     },
     orderBy: (favorites, { desc }) => [desc(favorites.createdAt)],
+    limit: 6,
+  });
+
+  // Fetch user's recent observations (limited to 6 for display)
+  const userObservations = await db.query.observations.findMany({
+    where: eq(observations.userId, session.user.id),
+    with: {
+      species: true,
+      pictures: true,
+    },
+    orderBy: (observations, { desc }) => [desc(observations.createdAt)],
     limit: 6,
   });
 
@@ -76,10 +95,20 @@ export default async function DashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
+                <p className="text-sm text-gray-600">Observations</p>
+                <p className="text-3xl font-bold text-gray-900">{observationsCount}</p>
+              </div>
+              <div className="text-4xl">📍</div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm text-gray-600">States Explored</p>
                 <p className="text-3xl font-bold text-gray-900">0</p>
               </div>
-              <div className="text-4xl">📍</div>
+              <div className="text-4xl">🗺️</div>
             </div>
           </div>
 
@@ -186,6 +215,79 @@ export default async function DashboardPage() {
                 <div className="text-5xl mb-4">⭐</div>
                 <p className="text-lg font-medium">No favorites yet</p>
                 <p className="mt-2">Start favoriting species to see them here!</p>
+                <Link
+                  href="/"
+                  className="mt-6 inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors"
+                >
+                  Explore Species
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Observations */}
+        <div className="bg-white rounded-lg shadow mb-8">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">Recent Observations</h2>
+              {observationsCount > 0 && (
+                <Link href="/account/observations" className="text-sm text-green-600 hover:text-green-700 font-medium">
+                  View All
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className="p-6">
+            {userObservations.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {userObservations.map((observation) => (
+                  <Link
+                    key={observation.id}
+                    href={`/species/${observation.species.taxonId}-${observation.species.preferredCommonName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || observation.species.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+                    className="group"
+                  >
+                    <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
+                      {observation.pictures && observation.pictures.length > 0 ? (
+                        <img
+                          src={observation.pictures[0].imageUrl}
+                          alt={observation.species.preferredCommonName || observation.species.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      ) : observation.species.defaultPhotoUrl ? (
+                        <img
+                          src={observation.species.defaultPhotoUrl}
+                          alt={observation.species.preferredCommonName || observation.species.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-4xl">
+                          🌿
+                        </div>
+                      )}
+                      <div className="absolute top-2 right-2">
+                        <span className="text-xl">📍</span>
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-900 group-hover:text-green-600 line-clamp-2">
+                      {observation.species.preferredCommonName || observation.species.name}
+                    </h3>
+                    <p className="text-xs text-gray-500">
+                      {new Date(observation.observedAt).toLocaleDateString()}
+                    </p>
+                    {observation.locationName && (
+                      <p className="text-xs text-gray-400 line-clamp-1">
+                        {observation.locationName}
+                      </p>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <div className="text-5xl mb-4">📍</div>
+                <p className="text-lg font-medium">No observations yet</p>
+                <p className="mt-2">Start recording species observations to see them here!</p>
                 <Link
                   href="/"
                   className="mt-6 inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors"

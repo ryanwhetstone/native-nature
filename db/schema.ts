@@ -130,13 +130,45 @@ export const inaturalistPlaces = pgTable('inaturalist_places', {
 export type INaturalistPlace = typeof inaturalistPlaces.$inferSelect;
 export type NewINaturalistPlace = typeof inaturalistPlaces.$inferInsert;
 
+// Observations table
+export const observations = pgTable('observations', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  speciesId: integer('species_id').notNull().references(() => species.id, { onDelete: 'cascade' }),
+  // Location data
+  latitude: text('latitude').notNull(),
+  longitude: text('longitude').notNull(),
+  locationName: varchar('location_name', { length: 500 }), // Optional human-readable location
+  // Timestamps
+  observedAt: timestamp('observed_at').notNull(), // When the observation was made
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export type Observation = typeof observations.$inferSelect;
+export type NewObservation = typeof observations.$inferInsert;
+
+// Observation Pictures table
+export const observationPictures = pgTable('observation_pictures', {
+  id: serial('id').primaryKey(),
+  observationId: integer('observation_id').notNull().references(() => observations.id, { onDelete: 'cascade' }),
+  imageUrl: text('image_url').notNull(),
+  caption: varchar('caption', { length: 500 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type ObservationPicture = typeof observationPictures.$inferSelect;
+export type NewObservationPicture = typeof observationPictures.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   favorites: many(favorites),
+  observations: many(observations),
 }));
 
 export const speciesRelations = relations(species, ({ many }) => ({
   favorites: many(favorites),
+  observations: many(observations),
 }));
 
 export const favoritesRelations = relations(favorites, ({ one }) => ({
@@ -147,5 +179,24 @@ export const favoritesRelations = relations(favorites, ({ one }) => ({
   species: one(species, {
     fields: [favorites.speciesId],
     references: [species.id],
+  }),
+}));
+
+export const observationsRelations = relations(observations, ({ one, many }) => ({
+  user: one(users, {
+    fields: [observations.userId],
+    references: [users.id],
+  }),
+  species: one(species, {
+    fields: [observations.speciesId],
+    references: [species.id],
+  }),
+  pictures: many(observationPictures),
+}));
+
+export const observationPicturesRelations = relations(observationPictures, ({ one }) => ({
+  observation: one(observations, {
+    fields: [observationPictures.observationId],
+    references: [observations.id],
   }),
 }));

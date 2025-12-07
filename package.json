@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",
+    "@aws-sdk/client-s3": "^3.946.0",
+    "@aws-sdk/s3-request-presigner": "^3.946.0",
     "@neondatabase/serverless": "^1.0.2",
     "bcryptjs": "^3.0.3",
     "countrycitystatejson": "^25.8.101",
