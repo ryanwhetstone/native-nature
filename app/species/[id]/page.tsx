@@ -8,7 +8,10 @@ export default async function SpeciesPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const { id: slug } = await params;
+  
+  // Extract the numeric ID from the slug (format: "42223-white-tailed-deer")
+  const id = slug.split('-')[0];
   const species = await getSpeciesWithCache(id);
 
   if (!species) {

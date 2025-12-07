@@ -138,8 +138,8 @@ export const jpnSvgToSlugMapping: RegionMapping = {
     "slug": "aichi"
   },
   "JP24": {
-    "name": "24",
-    "slug": "24"
+    "name": "Mie",
+    "slug": "mie"
   },
   "JP30": {
     "name": "Wakayama",

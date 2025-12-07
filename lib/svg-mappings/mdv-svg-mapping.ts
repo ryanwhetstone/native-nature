@@ -38,16 +38,16 @@ export const mdvSvgToSlugMapping: RegionMapping = {
     "slug": "alifu-alifu"
   },
   "MV20": {
-    "name": "20",
-    "slug": "20"
+    "name": "Baa",
+    "slug": "baa"
   },
   "MV03": {
     "name": "Lhaviyani",
     "slug": "lhaviyani"
   },
   "MV13": {
-    "name": "13",
-    "slug": "13"
+    "name": "Raa",
+    "slug": "raa"
   },
   "MV24": {
     "name": "Shaviyani",

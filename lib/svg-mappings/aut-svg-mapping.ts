@@ -9,41 +9,41 @@ export interface RegionMapping {
 }
 
 export const autSvgToSlugMapping: RegionMapping = {
-  "AT3": {
-    "name": "3",
-    "slug": "3"
-  },
-  "AT4": {
-    "name": "4",
-    "slug": "4"
-  },
   "AT1": {
-    "name": "1",
-    "slug": "1"
-  },
-  "AT8": {
-    "name": "8",
-    "slug": "8"
-  },
-  "AT7": {
-    "name": "7",
-    "slug": "7"
-  },
-  "AT5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Burgenland",
+    "slug": "burgenland"
   },
   "AT2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Kärnten",
+    "slug": "karnten"
+  },
+  "AT3": {
+    "name": "Niederösterreich",
+    "slug": "niederosterreich"
+  },
+  "AT4": {
+    "name": "Oberösterreich",
+    "slug": "oberosterreich"
+  },
+  "AT5": {
+    "name": "Salzburg",
+    "slug": "salzburg"
   },
   "AT6": {
-    "name": "6",
-    "slug": "6"
+    "name": "Steiermark",
+    "slug": "steiermark"
+  },
+  "AT7": {
+    "name": "Tirol",
+    "slug": "tirol"
+  },
+  "AT8": {
+    "name": "Vorarlberg",
+    "slug": "vorarlberg"
   },
   "AT9": {
-    "name": "9",
-    "slug": "9"
+    "name": "Wien",
+    "slug": "wien"
   }
 };
 

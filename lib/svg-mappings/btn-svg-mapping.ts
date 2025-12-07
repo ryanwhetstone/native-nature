@@ -22,8 +22,8 @@ export const btnSvgToSlugMapping: RegionMapping = {
     "slug": "bumthang"
   },
   "BT13": {
-    "name": "13",
-    "slug": "13"
+    "name": "Ha",
+    "slug": "ha"
   },
   "BT14": {
     "name": "Samchi",

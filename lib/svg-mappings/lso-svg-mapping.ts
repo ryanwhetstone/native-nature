@@ -10,44 +10,44 @@ export interface RegionMapping {
 
 export const lsoSvgToSlugMapping: RegionMapping = {
   "LSJ": {
-    "name": "J",
-    "slug": "j"
+    "name": "Mokhotlong",
+    "slug": "mokhotlong"
   },
   "LSB": {
-    "name": "Berea",
-    "slug": "berea"
-  },
-  "LSC": {
-    "name": "Qacha''s Nek",
-    "slug": "qachas-nek"
-  },
-  "LSH": {
     "name": "Butha-Buthe",
     "slug": "butha-buthe"
   },
+  "LSC": {
+    "name": "Leribe",
+    "slug": "leribe"
+  },
+  "LSH": {
+    "name": "Qacha's Nek",
+    "slug": "qacha-s-nek"
+  },
   "LSK": {
-    "name": "Mohale''s Hoek",
-    "slug": "mohales-hoek"
+    "name": "Thaba-Tseka",
+    "slug": "thaba-tseka"
   },
   "LSD": {
-    "name": "D",
-    "slug": "d"
+    "name": "Berea",
+    "slug": "berea"
   },
   "LSA": {
-    "name": "Berea",
-    "slug": "berea"
+    "name": "Maseru",
+    "slug": "maseru"
   },
   "LSE": {
-    "name": "Berea",
-    "slug": "berea"
+    "name": "Mafeteng",
+    "slug": "mafeteng"
   },
   "LSF": {
-    "name": "Mafeteng",
-    "slug": "mafeteng"
+    "name": "Mohale's Hoek",
+    "slug": "mohale-s-hoek"
   },
   "LSG": {
-    "name": "Mafeteng",
-    "slug": "mafeteng"
+    "name": "Quthing",
+    "slug": "quthing"
   }
 };
 

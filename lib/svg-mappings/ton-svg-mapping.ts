@@ -11,11 +11,11 @@ export interface RegionMapping {
 export const tonSvgToSlugMapping: RegionMapping = {
   "TO05": {
     "name": "Vava'u",
-    "slug": "vavau"
+    "slug": "vava-u"
   },
   "TO01": {
-    "name": "01",
-    "slug": "01"
+    "name": "Eua",
+    "slug": "eua"
   },
   "TO04": {
     "name": "Tongatapu",
@@ -23,7 +23,7 @@ export const tonSvgToSlugMapping: RegionMapping = {
   },
   "TO02": {
     "name": "Ha'apai",
-    "slug": "haapai"
+    "slug": "ha-apai"
   },
   "TO03": {
     "name": "Niuas",

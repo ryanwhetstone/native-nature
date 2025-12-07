@@ -38,8 +38,8 @@ export const mmrSvgToSlugMapping: RegionMapping = {
     "slug": "kayin"
   },
   "MM15": {
-    "name": "15",
-    "slug": "15"
+    "name": "Mon",
+    "slug": "mon"
   },
   "MM05": {
     "name": "Tanintharyi",

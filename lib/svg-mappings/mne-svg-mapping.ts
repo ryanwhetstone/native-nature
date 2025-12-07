@@ -58,8 +58,8 @@ export const mneSvgToSlugMapping: RegionMapping = {
     "slug": "podgorica"
   },
   "ME02": {
-    "name": "02",
-    "slug": "02"
+    "name": "Bar",
+    "slug": "bar"
   },
   "ME20": {
     "name": "Ulcinj",

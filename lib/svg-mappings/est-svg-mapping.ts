@@ -31,11 +31,11 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE255": {
     "name": "Järva",
-    "slug": "jrva"
+    "slug": "jarva"
   },
   "EE245": {
     "name": "Jõelähtme",
-    "slug": "jelhtme"
+    "slug": "joelahtme"
   },
   "EE198": {
     "name": "Harku",
@@ -62,8 +62,8 @@ export const estSvgToSlugMapping: RegionMapping = {
     "slug": "raasiku"
   },
   "EE653": {
-    "name": "653",
-    "slug": "653"
+    "name": "Rae",
+    "slug": "rae"
   },
   "EE890": {
     "name": "Viimsi",
@@ -75,11 +75,11 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE917": {
     "name": "Võru",
-    "slug": "vru"
+    "slug": "voru"
   },
   "EE834": {
     "name": "Türi",
-    "slug": "tri"
+    "slug": "turi"
   },
   "EE317": {
     "name": "Kohila",
@@ -99,7 +99,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE251": {
     "name": "Jõhvi",
-    "slug": "jhvi"
+    "slug": "johvi"
   },
   "EE446": {
     "name": "Maardu",
@@ -123,11 +123,11 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE928": {
     "name": "Väike-Maarja",
-    "slug": "vike-maarja"
+    "slug": "vaike-maarja"
   },
   "EE321": {
     "name": "Kohtla-Järve",
-    "slug": "kohtla-jrve"
+    "slug": "kohtla-jarve"
   },
   "EE803": {
     "name": "Toila",
@@ -135,11 +135,11 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE615": {
     "name": "Põhja-Sakala",
-    "slug": "phja-sakala"
+    "slug": "pohja-sakala"
   },
   "EE735": {
     "name": "Sillamäe",
-    "slug": "sillame"
+    "slug": "sillamae"
   },
   "EE424": {
     "name": "Loksa",
@@ -163,7 +163,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE708": {
     "name": "Räpina",
-    "slug": "rpina"
+    "slug": "rapina"
   },
   "EE191": {
     "name": "Haljala",
@@ -171,7 +171,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE430": {
     "name": "Lääneranna",
-    "slug": "lneranna"
+    "slug": "laaneranna"
   },
   "EE272": {
     "name": "Kadrina",
@@ -187,7 +187,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE557": {
     "name": "Otepää",
-    "slug": "otep"
+    "slug": "otepaa"
   },
   "EE792": {
     "name": "Tapa",
@@ -195,7 +195,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE622": {
     "name": "Põlva",
-    "slug": "plva"
+    "slug": "polva"
   },
   "EE284": {
     "name": "Kanepi",
@@ -211,7 +211,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE431": {
     "name": "Lääne-Harju",
-    "slug": "lne-harju"
+    "slug": "laane-harju"
   },
   "EE719": {
     "name": "Saku",
@@ -223,23 +223,23 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE441": {
     "name": "Lääne-Nigula",
-    "slug": "lne-nigula"
+    "slug": "laane-nigula"
   },
   "EE824": {
     "name": "Tõrva",
-    "slug": "trva"
+    "slug": "torva"
   },
   "EE130": {
     "name": "Alutaguse",
     "slug": "alutaguse"
   },
   "EE528": {
-    "name": "528",
-    "slug": "528"
+    "name": "Nõo",
+    "slug": "noo"
   },
   "EE624": {
     "name": "Pärnu",
-    "slug": "prnu"
+    "slug": "parnu"
   },
   "EE305": {
     "name": "Kiili",
@@ -259,7 +259,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE919": {
     "name": "Võru",
-    "slug": "vru"
+    "slug": "voru"
   },
   "EE142": {
     "name": "Antsla",
@@ -279,7 +279,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE214": {
     "name": "Häädemeeste",
-    "slug": "hdemeeste"
+    "slug": "haademeeste"
   },
   "EE184": {
     "name": "Haapsalu",
@@ -287,7 +287,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE638": {
     "name": "Põhja-Pärnumaa",
-    "slug": "phja-prnumaa"
+    "slug": "pohja-parnumaa"
   },
   "EE809": {
     "name": "Tori",
@@ -299,15 +299,15 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE442": {
     "name": "Lüganuse",
-    "slug": "lganuse"
+    "slug": "luganuse"
   },
   "EE247": {
     "name": "Jõgeva",
-    "slug": "jgeva"
+    "slug": "jogeva"
   },
   "EE586": {
     "name": "Peipsiääre",
-    "slug": "peipsire"
+    "slug": "peipsiaare"
   },
   "EE796": {
     "name": "Tartu",
@@ -315,7 +315,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE618": {
     "name": "Põltsamaa",
-    "slug": "pltsamaa"
+    "slug": "poltsamaa"
   },
   "EE283": {
     "name": "Kambja",
@@ -323,7 +323,7 @@ export const estSvgToSlugMapping: RegionMapping = {
   },
   "EE698": {
     "name": "Rõuge",
-    "slug": "ruge"
+    "slug": "rouge"
   }
 };
 

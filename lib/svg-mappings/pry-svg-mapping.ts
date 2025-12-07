@@ -21,33 +21,33 @@ export const prySvgToSlugMapping: RegionMapping = {
     "name": "Central",
     "slug": "central"
   },
-  "PYASU": {
+  "ASU": {
     "name": "Asunción",
-    "slug": "asuncin"
+    "slug": "asuncion"
   },
   "PY10": {
     "name": "Alto Paraná",
     "slug": "alto-paran"
   },
   "PY7": {
-    "name": "7",
-    "slug": "7"
+    "name": "Itapúa",
+    "slug": "itapua"
   },
   "PY12": {
     "name": "Ñeembucú",
     "slug": "eembuc"
   },
   "PY8": {
-    "name": "8",
-    "slug": "8"
+    "name": "Misiones",
+    "slug": "misiones"
   },
   "PY16": {
     "name": "Alto Paraguay",
     "slug": "alto-paraguay"
   },
   "PY1": {
-    "name": "1",
-    "slug": "1"
+    "name": "Concepción",
+    "slug": "concepcion"
   },
   "PY13": {
     "name": "Amambay",
@@ -58,28 +58,28 @@ export const prySvgToSlugMapping: RegionMapping = {
     "slug": "canindey"
   },
   "PY2": {
-    "name": "2",
-    "slug": "2"
+    "name": "San Pedro",
+    "slug": "san-pedro"
   },
   "PY5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Caaguazú",
+    "slug": "caaguazu"
   },
   "PY3": {
-    "name": "3",
-    "slug": "3"
+    "name": "Cordillera",
+    "slug": "cordillera"
   },
   "PY6": {
-    "name": "6",
-    "slug": "6"
+    "name": "Caazapá",
+    "slug": "caazapa"
   },
   "PY9": {
-    "name": "9",
-    "slug": "9"
+    "name": "Paraguarí",
+    "slug": "paraguari"
   },
   "PY4": {
-    "name": "4",
-    "slug": "4"
+    "name": "Guairá",
+    "slug": "guaira"
   }
 };
 

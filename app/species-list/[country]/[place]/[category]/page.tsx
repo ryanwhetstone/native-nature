@@ -72,18 +72,20 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <Link 
-          href={`/place/${country}/${place}`}
-          className="inline-flex items-center text-green-600 hover:text-green-700 font-medium mb-4"
-        >
-          ← Back to {placeName}
-        </Link>
-        
-        <div className="mb-8">
+        <div className="text-center mb-8 relative">
+          <Link 
+            href={`/place/${country}/${place}`}
+            className="absolute left-0 top-0 inline-flex items-center text-green-600 hover:text-green-700 font-medium"
+          >
+            ← Back to {placeName}
+          </Link>
+          
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             {categoryInfo.displayName} in {placeName}
           </h1>
-          <p className="text-xl text-gray-600">{countryData.name}</p>
+          <p className="text-lg text-gray-600">
+            Discover {categoryInfo.pluralName.toLowerCase()} observed in {placeName}, {countryData.name}
+          </p>
         </div>
 
         {!iNaturalistPlaceId ? (

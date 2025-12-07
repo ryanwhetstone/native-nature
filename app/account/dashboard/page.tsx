@@ -153,7 +153,7 @@ export default async function DashboardPage() {
                 {userFavorites.map((favorite) => (
                   <Link
                     key={favorite.id}
-                    href={`/species/${favorite.species.taxonId}`}
+                    href={`/species/${favorite.species.taxonId}-${favorite.species.commonName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || favorite.species.scientificName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
                     className="group"
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">

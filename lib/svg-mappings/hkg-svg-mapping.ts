@@ -10,76 +10,76 @@ export interface RegionMapping {
 
 export const hkgSvgToSlugMapping: RegionMapping = {
   "HK5168": {
-    "name": "5168",
-    "slug": "5168"
+    "name": "North",
+    "slug": "north"
   },
   "HK5170": {
-    "name": "5170",
-    "slug": "5170"
+    "name": "Islands",
+    "slug": "islands"
   },
   "HK5156": {
-    "name": "5156",
-    "slug": "5156"
+    "name": "Southern",
+    "slug": "southern"
   },
   "HK5153": {
-    "name": "5153",
-    "slug": "5153"
+    "name": "Central and Western",
+    "slug": "central-and-western"
   },
   "HK5154": {
-    "name": "5154",
-    "slug": "5154"
+    "name": "Wan Chai",
+    "slug": "wan-chai"
   },
   "HK5155": {
-    "name": "5155",
-    "slug": "5155"
+    "name": "Eastern",
+    "slug": "eastern"
   },
   "HK5165": {
-    "name": "5165",
-    "slug": "5165"
+    "name": "Tsuen Wan",
+    "slug": "tsuen-wan"
   },
   "HK5169": {
-    "name": "5169",
-    "slug": "5169"
+    "name": "Tai Po",
+    "slug": "tai-po"
   },
   "HK5163": {
-    "name": "5163",
-    "slug": "5163"
+    "name": "Sha Tin",
+    "slug": "sha-tin"
   },
   "HK5162": {
-    "name": "5162",
-    "slug": "5162"
+    "name": "Sai Kung",
+    "slug": "sai-kung"
   },
   "HK5161": {
-    "name": "5161",
-    "slug": "5161"
+    "name": "Kwun Tong",
+    "slug": "kwun-tong"
   },
   "HK5158": {
-    "name": "5158",
-    "slug": "5158"
+    "name": "Kowloon City",
+    "slug": "kowloon-city"
   },
   "HK5157": {
-    "name": "5157",
-    "slug": "5157"
+    "name": "Yau Tsim Mong",
+    "slug": "yau-tsim-mong"
   },
   "HK5159": {
-    "name": "5159",
-    "slug": "5159"
+    "name": "Sham Shui Po",
+    "slug": "sham-shui-po"
   },
   "HK5164": {
-    "name": "5164",
-    "slug": "5164"
+    "name": "Kwai Tsing",
+    "slug": "kwai-tsing"
   },
   "HK5166": {
-    "name": "5166",
-    "slug": "5166"
+    "name": "Tuen Mun",
+    "slug": "tuen-mun"
   },
   "HK5167": {
-    "name": "5167",
-    "slug": "5167"
+    "name": "Yuen Long",
+    "slug": "yuen-long"
   },
   "HK5160": {
-    "name": "5160",
-    "slug": "5160"
+    "name": "Wong Tai Sin",
+    "slug": "wong-tai-sin"
   }
 };
 

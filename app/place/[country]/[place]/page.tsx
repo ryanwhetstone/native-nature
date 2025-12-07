@@ -34,15 +34,19 @@ export default async function PlacePage({ params }: PlacePageProps) {
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <Link 
-          href={`/country/${country}`}
-          className="inline-flex items-center text-green-600 hover:text-green-700 font-medium mb-4"
-        >
-          ← Back to {countryData.name}
-        </Link>
-        
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">{placeName}</h1>
-        <p className="text-xl text-gray-600 mb-8">{countryData.name}</p>
+        <div className="text-center mb-8 relative">
+          <Link 
+            href={`/country/${country}`}
+            className="absolute left-0 top-0 inline-flex items-center text-green-600 hover:text-green-700 font-medium"
+          >
+            ← Back to {countryData.name}
+          </Link>
+          
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">{placeName}</h1>
+          <p className="text-lg text-gray-600">
+            Explore the diverse wildlife and natural species found in {placeName}, {countryData.name}
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Object.entries(categoryMapping).map(([slug, info]) => {
@@ -50,7 +54,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
               <Link
                 key={slug}
                 href={`/species-list/${country}/${place}/${slug}`}
-                className={`p-8 border-2 border-gray-300 rounded-lg ${info.colors.hover} transition-all text-center group`}
+                className={`p-8 border-2 border-gray-300 rounded-lg ${info.colors.hover} transition-all bg-white text-center group`}
               >
                 <div className="text-6xl mb-4">{info.emoji}</div>
                 <h2 className={`text-2xl font-bold text-gray-800 ${info.colors.text}`}>

@@ -14,100 +14,100 @@ export const venSvgToSlugMapping: RegionMapping = {
     "slug": "amazonas"
   },
   "VEB": {
+    "name": "Anzoátegui",
+    "slug": "anzoategui"
+  },
+  "VEC": {
+    "name": "Apure",
+    "slug": "apure"
+  },
+  "VED": {
+    "name": "Aragua",
+    "slug": "aragua"
+  },
+  "VEE": {
     "name": "Barinas",
     "slug": "barinas"
   },
-  "VEC": {
+  "VEF": {
+    "name": "Bolívar",
+    "slug": "bolivar"
+  },
+  "VEG": {
     "name": "Carabobo",
     "slug": "carabobo"
   },
-  "VED": {
+  "VEH": {
     "name": "Cojedes",
     "slug": "cojedes"
   },
-  "VEE": {
-    "name": "Anzoategui",
-    "slug": "anzoategui"
+  "VEY": {
+    "name": "Delta Amacuro",
+    "slug": "delta-amacuro"
   },
-  "VEF": {
-    "name": "Distrito Federal",
-    "slug": "distrito-federal"
+  "VEA": {
+    "name": "Distrito Capital",
+    "slug": "distrito-capital"
   },
-  "VEG": {
-    "name": "Anzoategui",
-    "slug": "anzoategui"
+  "VEI": {
+    "name": "Falcón",
+    "slug": "falcon"
   },
-  "VEH": {
-    "name": "Tachira",
+  "VEJ": {
+    "name": "Guárico",
+    "slug": "guarico"
+  },
+  "VEX": {
+    "name": "La Guaira",
+    "slug": "la-guaira"
+  },
+  "VEK": {
+    "name": "Lara",
+    "slug": "lara"
+  },
+  "VEL": {
+    "name": "Mérida",
+    "slug": "merida"
+  },
+  "VEM": {
+    "name": "Miranda",
+    "slug": "miranda"
+  },
+  "VEN": {
+    "name": "Monagas",
+    "slug": "monagas"
+  },
+  "VEO": {
+    "name": "Nueva Esparta",
+    "slug": "nueva-esparta"
+  },
+  "VEP": {
+    "name": "Portuguesa",
+    "slug": "portuguesa"
+  },
+  "VER": {
+    "name": "Sucre",
+    "slug": "sucre"
+  },
+  "VES": {
+    "name": "Táchira",
     "slug": "tachira"
   },
-  "VEY": {
+  "VET": {
+    "name": "Trujillo",
+    "slug": "trujillo"
+  },
+  "VEU": {
     "name": "Yaracuy",
     "slug": "yaracuy"
   },
-  "VEA": {
-    "name": "Amazonas",
-    "slug": "amazonas"
-  },
-  "VEI": {
-    "name": "Anzoategui",
-    "slug": "anzoategui"
-  },
-  "VEJ": {
-    "name": "Cojedes",
-    "slug": "cojedes"
-  },
-  "VEX": {
-    "name": "X",
-    "slug": "x"
-  },
-  "VEK": {
-    "name": "K",
-    "slug": "k"
-  },
-  "VEL": {
-    "name": "Bolivar",
-    "slug": "bolivar"
-  },
-  "VEM": {
-    "name": "Amazonas",
-    "slug": "amazonas"
-  },
-  "VEN": {
-    "name": "Amazonas",
-    "slug": "amazonas"
-  },
-  "VEO": {
-    "name": "Amazonas",
-    "slug": "amazonas"
-  },
-  "VEP": {
-    "name": "Apure",
-    "slug": "apure"
-  },
-  "VER": {
-    "name": "Apure",
-    "slug": "apure"
-  },
-  "VES": {
-    "name": "Amazonas",
-    "slug": "amazonas"
-  },
-  "VET": {
-    "name": "Anzoategui",
-    "slug": "anzoategui"
-  },
-  "VEU": {
-    "name": "Anzoategui",
-    "slug": "anzoategui"
-  },
   "VEV": {
-    "name": "Bolivar",
-    "slug": "bolivar"
+    "name": "Zulia",
+    "slug": "zulia"
   },
   "VEW": {
-    "name": "W",
-    "slug": "w"
+    "name": "Dependencias Federales",
+    "slug": "dependencias-federales"
   }
 };
 

@@ -14,20 +14,20 @@ export const mdgSvgToSlugMapping: RegionMapping = {
     "slug": "mahajanga"
   },
   "MGD": {
-    "name": "D",
-    "slug": "d"
+    "name": "Antsiranana",
+    "slug": "antsiranana"
   },
   "MGA": {
-    "name": "Antananarivo",
-    "slug": "antananarivo"
+    "name": "Toamasina",
+    "slug": "toamasina"
   },
   "MGF": {
     "name": "Fianarantsoa",
     "slug": "fianarantsoa"
   },
   "MGU": {
-    "name": "U",
-    "slug": "u"
+    "name": "Toliara",
+    "slug": "toliara"
   },
   "MGT": {
     "name": "Antananarivo",

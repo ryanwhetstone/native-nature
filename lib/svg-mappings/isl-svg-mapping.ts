@@ -10,36 +10,36 @@ export interface RegionMapping {
 
 export const islSvgToSlugMapping: RegionMapping = {
   "IS7": {
-    "name": "7",
-    "slug": "7"
+    "name": "Austurland",
+    "slug": "austurland"
   },
   "IS8": {
-    "name": "8",
-    "slug": "8"
+    "name": "Suðurland",
+    "slug": "sudurland"
   },
   "IS2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Suðurnes",
+    "slug": "sudurnes"
   },
   "IS1": {
-    "name": "1",
-    "slug": "1"
+    "name": "Höfuðborgarsvæði",
+    "slug": "hofudborgarsvaedi"
   },
   "IS3": {
-    "name": "3",
-    "slug": "3"
+    "name": "Vesturland",
+    "slug": "vesturland"
   },
   "IS4": {
-    "name": "4",
-    "slug": "4"
+    "name": "Vestfirðir",
+    "slug": "vestfirdir"
   },
   "IS5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Norðurland vestra",
+    "slug": "nordurland-vestra"
   },
   "IS6": {
-    "name": "6",
-    "slug": "6"
+    "name": "Norðurland eystra",
+    "slug": "nordurland-eystra"
   }
 };
 

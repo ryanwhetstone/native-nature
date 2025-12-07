@@ -14,8 +14,8 @@ export const nruSvgToSlugMapping: RegionMapping = {
     "slug": "anetan"
   },
   "NR09": {
-    "name": "09",
-    "slug": "09"
+    "name": "Ewa",
+    "slug": "ewa"
   },
   "NR05": {
     "name": "Baiti",
@@ -38,8 +38,8 @@ export const nruSvgToSlugMapping: RegionMapping = {
     "slug": "aiwo"
   },
   "NR06": {
-    "name": "06",
-    "slug": "06"
+    "name": "Boe",
+    "slug": "boe"
   },
   "NR14": {
     "name": "Yaren",

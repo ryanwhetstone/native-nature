@@ -10,60 +10,60 @@ export interface RegionMapping {
 
 export const panSvgToSlugMapping: RegionMapping = {
   "PA1": {
-    "name": "1",
-    "slug": "1"
-  },
-  "PANT": {
-    "name": "Naso Tjër Di",
-    "slug": "naso-tjr-di"
-  },
-  "PA4": {
-    "name": "4",
-    "slug": "4"
+    "name": "Bocas del Toro",
+    "slug": "bocas-del-toro"
   },
   "PA2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Coclé",
+    "slug": "cocle"
   },
   "PA3": {
-    "name": "3",
-    "slug": "3"
+    "name": "Colón",
+    "slug": "colon"
+  },
+  "PA4": {
+    "name": "Chiriquí",
+    "slug": "chiriqui"
   },
   "PA5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Darién",
+    "slug": "darien"
+  },
+  "PA6": {
+    "name": "Herrera",
+    "slug": "herrera"
+  },
+  "PA7": {
+    "name": "Los Santos",
+    "slug": "los-santos"
+  },
+  "PA8": {
+    "name": "Panamá",
+    "slug": "panama"
+  },
+  "PA9": {
+    "name": "Veraguas",
+    "slug": "veraguas"
+  },
+  "PA10": {
+    "name": "Panamá Oeste",
+    "slug": "panama-oeste"
   },
   "PAEM": {
     "name": "Emberá",
-    "slug": "ember"
-  },
-  "PA6": {
-    "name": "6",
-    "slug": "6"
+    "slug": "embera"
   },
   "PAKY": {
     "name": "Kuna Yala",
     "slug": "kuna-yala"
   },
-  "PA7": {
-    "name": "7",
-    "slug": "7"
-  },
   "PANB": {
     "name": "Ngöbe Buglé",
-    "slug": "ngbe-bugl"
+    "slug": "ngobe-bugle"
   },
-  "PA10": {
-    "name": "Panamá Oeste",
-    "slug": "panam-oeste"
-  },
-  "PA8": {
-    "name": "8",
-    "slug": "8"
-  },
-  "PA9": {
-    "name": "9",
-    "slug": "9"
+  "PANT": {
+    "name": "Naso Tjër Di",
+    "slug": "naso-tjer-di"
   }
 };
 

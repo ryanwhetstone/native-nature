@@ -10,16 +10,16 @@ export interface RegionMapping {
 
 export const comSvgToSlugMapping: RegionMapping = {
   "KMM": {
-    "name": "Mwali",
-    "slug": "mwali"
+    "name": "Moûhîlî",
+    "slug": "mouhili"
   },
   "KMA": {
-    "name": "Mwali",
-    "slug": "mwali"
+    "name": "Andjouân",
+    "slug": "andjouan"
   },
   "KMG": {
-    "name": "G",
-    "slug": "g"
+    "name": "Andjazîdja",
+    "slug": "andjazidja"
   }
 };
 

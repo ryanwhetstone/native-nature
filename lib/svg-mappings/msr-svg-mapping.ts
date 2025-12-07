@@ -10,16 +10,16 @@ export interface RegionMapping {
 
 export const msrSvgToSlugMapping: RegionMapping = {
   "MSP": {
-    "name": "P",
-    "slug": "p"
+    "name": "Saint Peter",
+    "slug": "saint-peter"
   },
   "MSA": {
-    "name": "Montserrat",
-    "slug": "montserrat"
+    "name": "Saint Anthony",
+    "slug": "saint-anthony"
   },
   "MSG": {
-    "name": "G",
-    "slug": "g"
+    "name": "Saint Georges",
+    "slug": "saint-georges"
   }
 };
 

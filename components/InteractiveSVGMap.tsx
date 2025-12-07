@@ -51,24 +51,41 @@ export default function InteractiveSVGMap({
       }
     };
 
-    const handleContainerMouseMove = (event: MouseEvent) => {
+    const handleMouseEnter = (event: Event) => {
       const target = event.target as SVGPathElement;
       
       if (target.tagName === 'path' && target.id && target.id.startsWith(regionIdPrefix)) {
-        if (hoveredRegion !== target.id) {
-          setHoveredRegion(target.id);
+        // Remove hover class from previous region
+        if (hoveredRegion) {
+          const prevPath = container.querySelector<SVGPathElement>(`path[id="${hoveredRegion}"]`);
+          if (prevPath) {
+            prevPath.classList.remove('region-hover');
+          }
         }
-      } else if (hoveredRegion !== null) {
+        
+        // Add hover class to new region
+        target.classList.add('region-hover');
+        setHoveredRegion(target.id);
+      }
+    };
+
+    const handleMouseLeave = (event: Event) => {
+      const target = event.target as SVGPathElement;
+      
+      if (target.tagName === 'path' && target.id && target.id.startsWith(regionIdPrefix)) {
+        target.classList.remove('region-hover');
         setHoveredRegion(null);
       }
     };
 
     container.addEventListener("click", handleContainerClick);
-    container.addEventListener("mousemove", handleContainerMouseMove);
+    container.addEventListener("mouseenter", handleMouseEnter, true);
+    container.addEventListener("mouseleave", handleMouseLeave, true);
 
     return () => {
       container.removeEventListener("click", handleContainerClick);
-      container.removeEventListener("mousemove", handleContainerMouseMove);
+      container.removeEventListener("mouseenter", handleMouseEnter, true);
+      container.removeEventListener("mouseleave", handleMouseLeave, true);
     };
   }, [svgContent, router, countrySlug, hoveredRegion, regionIdPrefix]);
 
@@ -87,19 +104,20 @@ export default function InteractiveSVGMap({
   return (
     <div className="relative">
       <style dangerouslySetInnerHTML={{ __html: `
-        #interactive-svg-container path[id^="${regionIdPrefix || ''}"] {
-          fill: #d1d5db;
-          stroke: #4b5563;
+        #interactive-svg-container path[id^="${regionIdPrefix || ""}"] {
+          fill: #e9edf2;
+          stroke: #616e80;
           stroke-width: 1;
           cursor: pointer;
           transition: fill 0.2s ease;
         }
-        #interactive-svg-container path[id^="${regionIdPrefix || ''}"]:hover {
+        #interactive-svg-container path.region-hover {
           fill: #5a8a60 !important;
         }
         #interactive-svg-container svg {
           max-height: 60vh;
           height: 100%;
+          width: 100%;
         }
       `}} />
       <div
@@ -109,10 +127,12 @@ export default function InteractiveSVGMap({
         dangerouslySetInnerHTML={{ __html: svgContent }}
       />
       {hoveredRegion && (
-        <div className="absolute top-4 left-4 bg-white px-3 py-2 rounded shadow-lg z-10 pointer-events-none">
-          <p className="text-sm font-medium">
-            {getSvgRegionInfoForCountry(countrySlug, hoveredRegion)?.name || hoveredRegion}
-          </p>
+        <div className="absolute top-0 left-0 right-0 flex justify-center pointer-events-none z-10">
+          <div className="bg-green-800 text-white px-3 py-2 rounded shadow-lg">
+            <p className="text-sm font-medium">
+              {getSvgRegionInfoForCountry(countrySlug, hoveredRegion)?.name || hoveredRegion}
+            </p>
+          </div>
         </div>
       )}
     </div>

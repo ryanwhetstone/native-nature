@@ -10,36 +10,36 @@ export interface RegionMapping {
 
 export const nerSvgToSlugMapping: RegionMapping = {
   "NE5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Tahoua",
+    "slug": "tahoua"
   },
   "NE3": {
-    "name": "3",
-    "slug": "3"
+    "name": "Dosso",
+    "slug": "dosso"
   },
   "NE2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Diffa",
+    "slug": "diffa"
   },
   "NE4": {
-    "name": "4",
-    "slug": "4"
+    "name": "Maradi",
+    "slug": "maradi"
   },
   "NE7": {
-    "name": "7",
-    "slug": "7"
+    "name": "Zinder",
+    "slug": "zinder"
   },
   "NE6": {
-    "name": "6",
-    "slug": "6"
+    "name": "Tillabéri",
+    "slug": "tillaberi"
   },
   "NE1": {
-    "name": "1",
-    "slug": "1"
+    "name": "Agadez",
+    "slug": "agadez"
   },
   "NE8": {
-    "name": "8",
-    "slug": "8"
+    "name": "Niamey",
+    "slug": "niamey"
   }
 };
 

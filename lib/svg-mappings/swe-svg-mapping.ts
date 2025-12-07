@@ -9,89 +9,89 @@ export interface RegionMapping {
 }
 
 export const sweSvgToSlugMapping: RegionMapping = {
-  "SEBD": {
-    "name": "Norrbotten",
-    "slug": "norrbotten"
-  },
-  "SEAC": {
-    "name": "Västerbotten",
-    "slug": "vsterbotten"
-  },
-  "SEZ": {
-    "name": "Gaza",
-    "slug": "gaza"
-  },
-  "SEW": {
-    "name": "W",
-    "slug": "w"
-  },
-  "SES": {
-    "name": "Alvsborgs Lan",
-    "slug": "alvsborgs-lan"
-  },
-  "SEO": {
-    "name": "Alvsborgs Lan",
-    "slug": "alvsborgs-lan"
-  },
-  "SEY": {
-    "name": "Y",
-    "slug": "y"
-  },
-  "SEX": {
-    "name": "X",
-    "slug": "x"
-  },
-  "SEC": {
-    "name": "Stockholm",
-    "slug": "stockholm"
-  },
   "SEAB": {
     "name": "Stockholm",
     "slug": "stockholm"
   },
+  "SEAC": {
+    "name": "Västerbotten",
+    "slug": "vasterbotten"
+  },
+  "SEBD": {
+    "name": "Norrbotten",
+    "slug": "norrbotten"
+  },
+  "SEC": {
+    "name": "Uppsala",
+    "slug": "uppsala"
+  },
   "SED": {
-    "name": "Angermanland",
-    "slug": "angermanland"
+    "name": "Södermanland",
+    "slug": "sodermanland"
   },
   "SEE": {
-    "name": "Angermanland",
-    "slug": "angermanland"
+    "name": "Östergötland",
+    "slug": "ostergotland"
+  },
+  "SEF": {
+    "name": "Jönköping",
+    "slug": "jonkoping"
+  },
+  "SEG": {
+    "name": "Kronoberg",
+    "slug": "kronoberg"
   },
   "SEH": {
-    "name": "Bohuslan",
-    "slug": "bohuslan"
+    "name": "Kalmar",
+    "slug": "kalmar"
+  },
+  "SEI": {
+    "name": "Gotland",
+    "slug": "gotland"
   },
   "SEK": {
     "name": "Blekinge",
     "slug": "blekinge"
   },
   "SEM": {
-    "name": "Angermanland",
-    "slug": "angermanland"
+    "name": "Skåne",
+    "slug": "skane"
   },
   "SEN": {
-    "name": "Alvsborgs Lan",
-    "slug": "alvsborgs-lan"
+    "name": "Halland",
+    "slug": "halland"
   },
-  "SEI": {
-    "name": "Blekinge",
-    "slug": "blekinge"
+  "SEO": {
+    "name": "Västra Götaland",
+    "slug": "vastra-gotaland"
   },
-  "SEU": {
-    "name": "Bohuslan",
-    "slug": "bohuslan"
-  },
-  "SEF": {
-    "name": "F",
-    "slug": "f"
+  "SES": {
+    "name": "Värmland",
+    "slug": "varmland"
   },
   "SET": {
-    "name": "Gotland",
-    "slug": "gotland"
+    "name": "Orebro",
+    "slug": "orebro"
   },
-  "SEG": {
-    "name": "Alvsborgs Lan",
-    "slug": "alvsborgs-lan"
+  "SEU": {
+    "name": "Västmanland",
+    "slug": "vastmanland"
+  },
+  "SEW": {
+    "name": "Dalarna",
+    "slug": "dalarna"
+  },
+  "SEX": {
+    "name": "Gävleborg",
+    "slug": "gavleborg"
+  },
+  "SEY": {
+    "name": "Västernorrland",
+    "slug": "vasternorrland"
+  },
+  "SEZ": {
+    "name": "Jämtland",
+    "slug": "jamtland"
   }
 };
 

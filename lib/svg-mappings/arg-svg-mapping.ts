@@ -9,101 +9,101 @@ export interface RegionMapping {
 }
 
 export const argSvgToSlugMapping: RegionMapping = {
-  "ARE": {
-    "name": "Buenos Aires",
-    "slug": "buenos-aires"
-  },
   "ARA": {
-    "name": "Buenos Aires",
-    "slug": "buenos-aires"
-  },
-  "ARY": {
-    "name": "Jujuy",
-    "slug": "jujuy"
-  },
-  "ARP": {
-    "name": "La Pampa",
-    "slug": "la-pampa"
-  },
-  "ARN": {
-    "name": "Buenos Aires",
-    "slug": "buenos-aires"
-  },
-  "ARH": {
-    "name": "Chaco",
-    "slug": "chaco"
-  },
-  "ARW": {
-    "name": "W",
-    "slug": "w"
-  },
-  "ARK": {
-    "name": "K",
-    "slug": "k"
-  },
-  "ARF": {
-    "name": "Distrito Federal",
-    "slug": "distrito-federal"
-  },
-  "ARJ": {
-    "name": "Jujuy",
-    "slug": "jujuy"
-  },
-  "ARM": {
-    "name": "Catamarca",
-    "slug": "catamarca"
-  },
-  "ARQ": {
-    "name": "Neuquen",
-    "slug": "neuquen"
-  },
-  "ARU": {
-    "name": "Buenos Aires",
-    "slug": "buenos-aires"
-  },
-  "ARR": {
-    "name": "Buenos Aires",
-    "slug": "buenos-aires"
-  },
-  "ARZ": {
-    "name": "Mendoza",
-    "slug": "mendoza"
-  },
-  "ARV": {
-    "name": "V",
-    "slug": "v"
+    "name": "Salta",
+    "slug": "salta"
   },
   "ARB": {
     "name": "Buenos Aires",
     "slug": "buenos-aires"
   },
   "ARC": {
-    "name": "Catamarca",
-    "slug": "catamarca"
-  },
-  "ARS": {
-    "name": "Buenos Aires",
-    "slug": "buenos-aires"
-  },
-  "ART": {
-    "name": "Catamarca",
-    "slug": "catamarca"
-  },
-  "ARG": {
-    "name": "Rio Negro",
-    "slug": "rio-negro"
+    "name": "Ciudad de Buenos Aires",
+    "slug": "ciudad-de-buenos-aires"
   },
   "ARD": {
-    "name": "Cordoba",
-    "slug": "cordoba"
+    "name": "San Luis",
+    "slug": "san-luis"
+  },
+  "ARE": {
+    "name": "Entre Ríos",
+    "slug": "entre-rios"
+  },
+  "ARF": {
+    "name": "La Rioja",
+    "slug": "la-rioja"
+  },
+  "ARG": {
+    "name": "Santiago del Estero",
+    "slug": "santiago-del-estero"
+  },
+  "ARH": {
+    "name": "Chaco",
+    "slug": "chaco"
+  },
+  "ARJ": {
+    "name": "San Juan",
+    "slug": "san-juan"
+  },
+  "ARK": {
+    "name": "Catamarca",
+    "slug": "catamarca"
   },
   "ARL": {
-    "name": "Distrito Federal",
-    "slug": "distrito-federal"
+    "name": "La Pampa",
+    "slug": "la-pampa"
+  },
+  "ARM": {
+    "name": "Mendoza",
+    "slug": "mendoza"
+  },
+  "ARN": {
+    "name": "Misiones",
+    "slug": "misiones"
+  },
+  "ARP": {
+    "name": "Formosa",
+    "slug": "formosa"
+  },
+  "ARQ": {
+    "name": "Neuquén",
+    "slug": "neuquen"
+  },
+  "ARR": {
+    "name": "Río Negro",
+    "slug": "rio-negro"
+  },
+  "ARS": {
+    "name": "Santa Fe",
+    "slug": "santa-fe"
+  },
+  "ART": {
+    "name": "Tucumán",
+    "slug": "tucuman"
+  },
+  "ARU": {
+    "name": "Chubut",
+    "slug": "chubut"
+  },
+  "ARV": {
+    "name": "Tierra del Fuego",
+    "slug": "tierra-del-fuego"
+  },
+  "ARW": {
+    "name": "Corrientes",
+    "slug": "corrientes"
   },
   "ARX": {
-    "name": "X",
-    "slug": "x"
+    "name": "Córdoba",
+    "slug": "cordoba"
+  },
+  "ARY": {
+    "name": "Jujuy",
+    "slug": "jujuy"
+  },
+  "ARZ": {
+    "name": "Santa Cruz",
+    "slug": "santa-cruz"
   }
 };
 

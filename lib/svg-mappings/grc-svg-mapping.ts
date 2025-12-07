@@ -10,60 +10,60 @@ export interface RegionMapping {
 
 export const grcSvgToSlugMapping: RegionMapping = {
   "GRC": {
-    "name": "Acharnes",
-    "slug": "acharnes"
+    "name": "Dytiki Makedonia",
+    "slug": "dytiki-makedonia"
   },
   "GRD": {
-    "name": "Arkadia",
-    "slug": "arkadia"
+    "name": "Ipeiros",
+    "slug": "ipeiros"
   },
   "GRB": {
-    "name": "B",
-    "slug": "b"
+    "name": "Kentriki Makedonia",
+    "slug": "kentriki-makedonia"
   },
   "GRA": {
-    "name": "Acharnes",
-    "slug": "acharnes"
+    "name": "Anatoliki Makedonia kai Thraki",
+    "slug": "anatoliki-makedonia-kai-thraki"
   },
   "GR69": {
     "name": "Ayion Oros",
     "slug": "ayion-oros"
   },
   "GRE": {
-    "name": "Acharnes",
-    "slug": "acharnes"
+    "name": "Thessalia",
+    "slug": "thessalia"
   },
   "GRH": {
-    "name": "Acharnes",
-    "slug": "acharnes"
+    "name": "Stereá Elláda",
+    "slug": "sterea-ellada"
   },
   "GRA1": {
     "name": "Attiki",
     "slug": "attiki"
   },
   "GRJ": {
-    "name": "J",
-    "slug": "j"
+    "name": "Peloponnisos",
+    "slug": "peloponnisos"
   },
   "GRG": {
-    "name": "Argolis",
-    "slug": "argolis"
+    "name": "Dytiki Ellada",
+    "slug": "dytiki-ellada"
   },
   "GRM": {
-    "name": "Drama",
-    "slug": "drama"
+    "name": "Kriti",
+    "slug": "kriti"
   },
   "GRL": {
-    "name": "Aitolia kai Akarnania",
-    "slug": "aitolia-kai-akarnania"
+    "name": "Notio Aigaio",
+    "slug": "notio-aigaio"
   },
   "GRK": {
-    "name": "Aitolia kai Akarnania",
-    "slug": "aitolia-kai-akarnania"
+    "name": "Voreio Aigaio",
+    "slug": "voreio-aigaio"
   },
   "GRF": {
-    "name": "Florina",
-    "slug": "florina"
+    "name": "Ionioi Nisoi",
+    "slug": "ionioi-nisoi"
   }
 };
 

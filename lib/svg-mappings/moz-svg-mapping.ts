@@ -10,34 +10,34 @@ export interface RegionMapping {
 
 export const mozSvgToSlugMapping: RegionMapping = {
   "MZL": {
-    "name": "Cabo Delgado",
-    "slug": "cabo-delgado"
+    "name": "Maputo",
+    "slug": "maputo"
   },
   "MZP": {
-    "name": "Maputo",
-    "slug": "maputo"
+    "name": "Cabo Delgado",
+    "slug": "cabo-delgado"
   },
   "MZA": {
-    "name": "Cabo Delgado",
-    "slug": "cabo-delgado"
+    "name": "Niassa",
+    "slug": "niassa"
   },
   "MZT": {
-    "name": "Maputo",
-    "slug": "maputo"
+    "name": "Tete",
+    "slug": "tete"
   },
   "MZB": {
-    "name": "Cabo Delgado",
-    "slug": "cabo-delgado"
+    "name": "Manica",
+    "slug": "manica"
   },
   "MZG": {
-    "name": "Cabo Delgado",
-    "slug": "cabo-delgado"
+    "name": "Gaza",
+    "slug": "gaza"
   },
   "MZQ": {
-    "name": "Q",
-    "slug": "q"
+    "name": "Zambezia",
+    "slug": "zambezia"
   },
-  "MZMPM": {
+  "MPM": {
     "name": "Maputo City",
     "slug": "maputo-city"
   },
@@ -46,12 +46,12 @@ export const mozSvgToSlugMapping: RegionMapping = {
     "slug": "inhambane"
   },
   "MZS": {
-    "name": "Niassa",
-    "slug": "niassa"
+    "name": "Sofala",
+    "slug": "sofala"
   },
   "MZN": {
-    "name": "Inhambane",
-    "slug": "inhambane"
+    "name": "Nampula",
+    "slug": "nampula"
   }
 };
 

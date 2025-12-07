@@ -34,8 +34,8 @@ export const turSvgToSlugMapping: RegionMapping = {
     "slug": "agri"
   },
   "TR65": {
-    "name": "65",
-    "slug": "65"
+    "name": "Van",
+    "slug": "van"
   },
   "TR39": {
     "name": "Kirklareli",
@@ -282,8 +282,8 @@ export const turSvgToSlugMapping: RegionMapping = {
     "slug": "k-maras"
   },
   "TR49": {
-    "name": "49",
-    "slug": "49"
+    "name": "Mus",
+    "slug": "mus"
   },
   "TR25": {
     "name": "Erzurum",

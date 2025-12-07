@@ -50,8 +50,8 @@ export const mngSvgToSlugMapping: RegionMapping = {
     "slug": "bulgan"
   },
   "MN046": {
-    "name": "046",
-    "slug": "046"
+    "name": "Uvs",
+    "slug": "uvs"
   },
   "MN049": {
     "name": "Selenge",
@@ -70,8 +70,8 @@ export const mngSvgToSlugMapping: RegionMapping = {
     "slug": "darhan-uul"
   },
   "MN047": {
-    "name": "047",
-    "slug": "047"
+    "name": "Töv",
+    "slug": "tov"
   },
   "MN073": {
     "name": "Arhangay",
@@ -94,8 +94,8 @@ export const mngSvgToSlugMapping: RegionMapping = {
     "slug": "gov-smber"
   },
   "MN1": {
-    "name": "1",
-    "slug": "1"
+    "name": "Ulaanbaatar",
+    "slug": "ulaanbaatar"
   }
 };
 

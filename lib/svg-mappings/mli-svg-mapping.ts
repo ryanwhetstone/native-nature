@@ -10,44 +10,44 @@ export interface RegionMapping {
 
 export const mliSvgToSlugMapping: RegionMapping = {
   "ML1": {
-    "name": "1",
-    "slug": "1"
+    "name": "Kayes",
+    "slug": "kayes"
   },
   "ML2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Koulikoro",
+    "slug": "koulikoro"
   },
   "ML3": {
-    "name": "3",
-    "slug": "3"
+    "name": "Sikasso",
+    "slug": "sikasso"
   },
   "ML4": {
-    "name": "4",
-    "slug": "4"
+    "name": "Ségou",
+    "slug": "segou"
   },
   "ML5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Mopti",
+    "slug": "mopti"
   },
   "ML6": {
-    "name": "6",
-    "slug": "6"
+    "name": "Tombouctou",
+    "slug": "tombouctou"
   },
   "ML7": {
-    "name": "7",
-    "slug": "7"
+    "name": "Gao",
+    "slug": "gao"
   },
   "ML8": {
-    "name": "8",
-    "slug": "8"
+    "name": "Kidal",
+    "slug": "kidal"
   },
-  "MLBKO": {
+  "BKO": {
     "name": "Bamako",
     "slug": "bamako"
   },
   "ML9": {
-    "name": "9",
-    "slug": "9"
+    "name": "Menaka",
+    "slug": "menaka"
   }
 };
 

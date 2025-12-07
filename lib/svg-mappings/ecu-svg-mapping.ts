@@ -9,101 +9,101 @@ export interface RegionMapping {
 }
 
 export const ecuSvgToSlugMapping: RegionMapping = {
-  "ECE": {
-    "name": "El Oro",
-    "slug": "el-oro"
-  },
-  "ECC": {
-    "name": "Canar",
-    "slug": "canar"
-  },
-  "ECU": {
-    "name": "Azuay",
-    "slug": "azuay"
-  },
-  "ECD": {
-    "name": "Esmeraldas",
-    "slug": "esmeraldas"
-  },
-  "ECY": {
-    "name": "Azuay",
-    "slug": "azuay"
-  },
-  "ECS": {
-    "name": "Esmeraldas",
-    "slug": "esmeraldas"
-  },
-  "ECZ": {
-    "name": "Azuay",
-    "slug": "azuay"
-  },
-  "ECL": {
-    "name": "Bolivar",
-    "slug": "bolivar"
-  },
-  "ECO": {
-    "name": "Bolivar",
-    "slug": "bolivar"
-  },
-  "ECG": {
-    "name": "Galapagos",
-    "slug": "galapagos"
-  },
-  "ECW": {
-    "name": "W",
-    "slug": "w"
-  },
-  "ECSE": {
-    "name": "Santa Elena",
-    "slug": "santa-elena"
-  },
-  "ECM": {
-    "name": "Chimborazo",
-    "slug": "chimborazo"
-  },
   "ECA": {
     "name": "Azuay",
     "slug": "azuay"
-  },
-  "ECF": {
-    "name": "F",
-    "slug": "f"
-  },
-  "ECN": {
-    "name": "Canar",
-    "slug": "canar"
-  },
-  "ECT": {
-    "name": "Cotopaxi",
-    "slug": "cotopaxi"
-  },
-  "ECH": {
-    "name": "Carchi",
-    "slug": "carchi"
   },
   "ECB": {
     "name": "Bolivar",
     "slug": "bolivar"
   },
+  "ECC": {
+    "name": "Carchi",
+    "slug": "carchi"
+  },
+  "ECD": {
+    "name": "Orellana",
+    "slug": "orellana"
+  },
+  "ECE": {
+    "name": "Esmeraldas",
+    "slug": "esmeraldas"
+  },
+  "ECF": {
+    "name": "Cañar",
+    "slug": "canar"
+  },
+  "ECG": {
+    "name": "Guayas",
+    "slug": "guayas"
+  },
+  "ECH": {
+    "name": "Chimborazo",
+    "slug": "chimborazo"
+  },
   "ECI": {
-    "name": "Bolivar",
-    "slug": "bolivar"
+    "name": "Imbabura",
+    "slug": "imbabura"
+  },
+  "ECL": {
+    "name": "Loja",
+    "slug": "loja"
+  },
+  "ECM": {
+    "name": "Manabi",
+    "slug": "manabi"
+  },
+  "ECN": {
+    "name": "Napo",
+    "slug": "napo"
+  },
+  "ECO": {
+    "name": "El Oro",
+    "slug": "el-oro"
+  },
+  "ECP": {
+    "name": "Pichincha",
+    "slug": "pichincha"
+  },
+  "ECR": {
+    "name": "Los Rios",
+    "slug": "los-rios"
+  },
+  "ECS": {
+    "name": "Morona Santiago",
+    "slug": "morona-santiago"
+  },
+  "CSD": {
+    "name": "Santo Domingo de los Tsáchilas",
+    "slug": "santo-domingo-de-los-tsachilas"
+  },
+  "CSE": {
+    "name": "Santa Elena",
+    "slug": "santa-elena"
+  },
+  "ECT": {
+    "name": "Tungurahua",
+    "slug": "tungurahua"
+  },
+  "ECU": {
+    "name": "Sucumbios",
+    "slug": "sucumbios"
+  },
+  "ECW": {
+    "name": "Galápagos",
+    "slug": "galapagos"
   },
   "ECX": {
     "name": "Cotopaxi",
     "slug": "cotopaxi"
   },
-  "ECR": {
-    "name": "Bolivar",
-    "slug": "bolivar"
+  "ECY": {
+    "name": "Pastaza",
+    "slug": "pastaza"
   },
-  "ECP": {
-    "name": "Cotopaxi",
-    "slug": "cotopaxi"
-  },
-  "ECSD": {
-    "name": "Santo Domingo de los Tsáchilas",
-    "slug": "santo-domingo-de-los-tschilas"
+  "ECZ": {
+    "name": "Zamora Chinchipe",
+    "slug": "zamora-chinchipe"
   }
 };
 

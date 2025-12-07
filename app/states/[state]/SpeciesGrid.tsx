@@ -151,8 +151,8 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
           return (
             <Link 
               key={speciesItem.taxon.id} 
-              href={`/species/${speciesItem.taxon.id}`}
-              className="border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow block"
+              href={`/species/${speciesItem.taxon.id}-${speciesItem.taxon.preferred_common_name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || speciesItem.taxon.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+              className="border border-gray-300 bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow block"
             >
               <div className="relative">
                 {speciesItem.taxon.default_photo && (

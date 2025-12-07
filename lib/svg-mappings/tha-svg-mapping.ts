@@ -66,8 +66,8 @@ export const thaSvgToSlugMapping: RegionMapping = {
     "slug": "mae-hong-son"
   },
   "TH63": {
-    "name": "63",
-    "slug": "63"
+    "name": "Tak",
+    "slug": "tak"
   },
   "TH71": {
     "name": "Kanchanaburi",
@@ -98,8 +98,8 @@ export const thaSvgToSlugMapping: RegionMapping = {
     "slug": "phayao"
   },
   "TH55": {
-    "name": "55",
-    "slug": "55"
+    "name": "Nan",
+    "slug": "nan"
   },
   "TH53": {
     "name": "Uttaradit",

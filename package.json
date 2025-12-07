@@ -12,7 +12,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "download:svg": "tsx scripts/download-country-svgs.ts",
-    "download:svg:all": "tsx scripts/download-country-svgs.ts simplemaps-all"
+    "download:svg:all": "tsx scripts/download-country-svgs.ts simplemaps-all",
+    "fetch:mappings": "tsx scripts/fetch-simplemaps-mappings.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.11.1",

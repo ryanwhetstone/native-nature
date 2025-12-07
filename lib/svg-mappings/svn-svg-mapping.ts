@@ -566,8 +566,8 @@ export const svnSvgToSlugMapping: RegionMapping = {
     "slug": "martno-in-litiji"
   },
   "SI037": {
-    "name": "037",
-    "slug": "037"
+    "name": "Komen",
+    "slug": "komen"
   },
   "SI022": {
     "name": "Dol pri Ljubljani",

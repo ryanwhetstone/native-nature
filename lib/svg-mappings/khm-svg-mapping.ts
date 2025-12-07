@@ -10,44 +10,44 @@ export interface RegionMapping {
 
 export const khmSvgToSlugMapping: RegionMapping = {
   "KH1": {
-    "name": "1",
-    "slug": "1"
+    "name": "Banteay Meanchey",
+    "slug": "banteay-meanchey"
   },
   "KH2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Battambang",
+    "slug": "battambang"
   },
   "KH3": {
-    "name": "3",
-    "slug": "3"
+    "name": "Kampong Cham",
+    "slug": "kampong-cham"
   },
   "KH4": {
-    "name": "4",
-    "slug": "4"
+    "name": "Kampong Chhnang",
+    "slug": "kampong-chhnang"
   },
   "KH5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Kampong Speu",
+    "slug": "kampong-speu"
   },
   "KH6": {
-    "name": "6",
-    "slug": "6"
+    "name": "Kampong Thom",
+    "slug": "kampong-thom"
   },
   "KH7": {
-    "name": "7",
-    "slug": "7"
+    "name": "Kampot",
+    "slug": "kampot"
   },
   "KH8": {
-    "name": "8",
-    "slug": "8"
+    "name": "Kandal",
+    "slug": "kandal"
   },
   "KH23": {
-    "name": "23",
-    "slug": "23"
+    "name": "Kep",
+    "slug": "kep"
   },
   "KH9": {
-    "name": "9",
-    "slug": "9"
+    "name": "Koh Kong",
+    "slug": "koh-kong"
   },
   "KH10": {
     "name": "Kratie",

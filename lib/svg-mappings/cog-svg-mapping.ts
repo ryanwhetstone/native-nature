@@ -10,12 +10,12 @@ export interface RegionMapping {
 
 export const cogSvgToSlugMapping: RegionMapping = {
   "CG7": {
-    "name": "7",
-    "slug": "7"
+    "name": "Likouala",
+    "slug": "likouala"
   },
   "CG8": {
-    "name": "8",
-    "slug": "8"
+    "name": "Cuvette",
+    "slug": "cuvette"
   },
   "CG14": {
     "name": "Plateaux",
@@ -25,7 +25,7 @@ export const cogSvgToSlugMapping: RegionMapping = {
     "name": "Pool",
     "slug": "pool"
   },
-  "CGBZV": {
+  "BZV": {
     "name": "Brazzaville",
     "slug": "brazzaville"
   },
@@ -34,12 +34,12 @@ export const cogSvgToSlugMapping: RegionMapping = {
     "slug": "bouenza"
   },
   "CG9": {
-    "name": "9",
-    "slug": "9"
+    "name": "Niari",
+    "slug": "niari"
   },
   "CG5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Kouilou",
+    "slug": "kouilou"
   },
   "CG13": {
     "name": "Sangha",
@@ -50,8 +50,8 @@ export const cogSvgToSlugMapping: RegionMapping = {
     "slug": "cuvette-ouest"
   },
   "CG2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Lékoumou",
+    "slug": "lekoumou"
   },
   "CG16": {
     "name": "Pointe Noire",

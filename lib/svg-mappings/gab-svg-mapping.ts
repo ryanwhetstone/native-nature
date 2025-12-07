@@ -10,40 +10,40 @@ export interface RegionMapping {
 
 export const gabSvgToSlugMapping: RegionMapping = {
   "GA9": {
-    "name": "9",
-    "slug": "9"
+    "name": "Wouleu-Ntem",
+    "slug": "wouleu-ntem"
   },
   "GA6": {
-    "name": "6",
-    "slug": "6"
+    "name": "Ogooué-Ivindo",
+    "slug": "ogooue-ivindo"
   },
   "GA2": {
-    "name": "2",
-    "slug": "2"
+    "name": "Haut-Ogooué",
+    "slug": "haut-ogooue"
   },
   "GA7": {
-    "name": "7",
-    "slug": "7"
+    "name": "Ogooué-Lolo",
+    "slug": "ogooue-lolo"
   },
   "GA4": {
-    "name": "4",
-    "slug": "4"
+    "name": "Ngounié",
+    "slug": "ngounie"
   },
   "GA5": {
-    "name": "5",
-    "slug": "5"
+    "name": "Nyanga",
+    "slug": "nyanga"
   },
   "GA1": {
-    "name": "1",
-    "slug": "1"
+    "name": "Estuaire",
+    "slug": "estuaire"
   },
   "GA8": {
-    "name": "8",
-    "slug": "8"
+    "name": "Ogooué-Maritime",
+    "slug": "ogooue-maritime"
   },
   "GA3": {
-    "name": "3",
-    "slug": "3"
+    "name": "Moyen-Ogooué",
+    "slug": "moyen-ogooue"
   }
 };
 
