@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 
 interface DeleteObservationButtonProps {
@@ -9,6 +9,7 @@ interface DeleteObservationButtonProps {
 
 export function DeleteObservationButton({ observationId }: DeleteObservationButtonProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -24,7 +25,13 @@ export function DeleteObservationButton({ observationId }: DeleteObservationButt
         throw new Error("Failed to delete observation");
       }
 
-      router.refresh();
+      // If we're on the observation detail page, go to dashboard
+      // Otherwise just refresh the current page
+      if (pathname?.startsWith('/observation/')) {
+        router.push('/account/dashboard');
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       console.error("Error deleting observation:", error);
       alert("Failed to delete observation. Please try again.");
@@ -40,14 +47,14 @@ export function DeleteObservationButton({ observationId }: DeleteObservationButt
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="flex-1 px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed whitespace-nowrap"
         >
-          {isDeleting ? "Deleting..." : "Confirm Delete"}
+          {isDeleting ? "Deleting..." : "Confirm"}
         </button>
         <button
           onClick={() => setShowConfirm(false)}
           disabled={isDeleting}
-          className="flex-1 px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded-md hover:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-3 py-2 bg-gray-200 text-gray-700 text-sm rounded-md hover:bg-gray-300 disabled:cursor-not-allowed"
         >
           Cancel
         </button>
@@ -58,9 +65,9 @@ export function DeleteObservationButton({ observationId }: DeleteObservationButt
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="w-full px-3 py-2 bg-red-50 text-red-600 text-sm rounded-md hover:bg-red-100 transition-colors"
+      className="px-4 py-2 bg-red-50 text-red-600 text-sm rounded-md hover:bg-red-100 transition-colors whitespace-nowrap"
     >
-      Delete Observation
+      Delete
     </button>
   );
 }

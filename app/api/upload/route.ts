@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, S3_BUCKET, S3_REGION } from '@/lib/s3';
+import sharp from 'sharp';
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,18 +46,31 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(7);
-    const extension = file.name.split('.').pop();
-    const key = `observations/${session.user.id}/${timestamp}-${randomString}.${extension}`;
+    const key = `observations/${session.user.id}/${timestamp}-${randomString}.jpg`;
 
     // Convert file to buffer
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Resize and optimize image with sharp
+    // Max width 1500px, maintain aspect ratio, convert to JPEG with 85% quality
+    const optimizedBuffer = await sharp(buffer)
+      .resize(1500, null, {
+        fit: 'inside',
+        withoutEnlargement: true, // Don't upscale smaller images
+      })
+      .jpeg({
+        quality: 85,
+        progressive: true,
+      })
+      .toBuffer();
 
     // Upload to S3
     const command = new PutObjectCommand({
       Bucket: S3_BUCKET,
       Key: key,
-      Body: buffer,
-      ContentType: file.type,
+      Body: optimizedBuffer,
+      ContentType: 'image/jpeg',
     });
 
     console.log('Uploading to S3:', { bucket: S3_BUCKET, key, fileType: file.type, fileSize: file.size });

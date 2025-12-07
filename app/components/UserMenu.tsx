@@ -3,6 +3,7 @@
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface UserMenuProps {
   user: {
@@ -38,9 +39,11 @@ export function UserMenu({ user }: UserMenuProps) {
         className="flex items-center space-x-2 focus:outline-none"
       >
         {user.image ? (
-          <img
+          <Image
             src={user.image}
             alt={user.name || "User"}
+            width={32}
+            height={32}
             className="w-8 h-8 rounded-full border-2 border-gray-200 hover:border-green-500 transition-colors"
           />
         ) : (

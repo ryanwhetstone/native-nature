@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { observations } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
-import { DeleteObservationButton } from "./DeleteObservationButton";
 
 export default async function ObservationsPage() {
   const session = await auth();
@@ -103,9 +102,6 @@ export default async function ObservationsPage() {
                     </div>
                   </div>
                 </Link>
-                <div className="px-4 pb-4">
-                  <DeleteObservationButton observationId={observation.id} />
-                </div>
               </div>
             ))}
           </div>

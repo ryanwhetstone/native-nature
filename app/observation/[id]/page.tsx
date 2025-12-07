@@ -39,8 +39,8 @@ export default async function ObservationDetailPage({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1 min-w-0">
               <Link
                 href={`/species/${observation.species.taxonId}`}
                 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
@@ -64,7 +64,9 @@ export default async function ObservationDetailPage({
               </div>
             </div>
             {isOwner && (
-              <DeleteObservationButton observationId={observation.id} />
+              <div className="flex-shrink-0">
+                <DeleteObservationButton observationId={observation.id} />
+              </div>
             )}
           </div>
         </div>
