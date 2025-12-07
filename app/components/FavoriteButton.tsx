@@ -7,9 +7,10 @@ import { useRouter } from "next/navigation";
 interface FavoriteButtonProps {
   speciesId: number;
   className?: string;
+  showLabel?: boolean;
 }
 
-export function FavoriteButton({ speciesId, className = "" }: FavoriteButtonProps) {
+export function FavoriteButton({ speciesId, className = "", showLabel = false }: FavoriteButtonProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const [isFavorited, setIsFavorited] = useState(false);
@@ -63,11 +64,11 @@ export function FavoriteButton({ speciesId, className = "" }: FavoriteButtonProp
     <button
       onClick={toggleFavorite}
       disabled={loading}
-      className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white/90 backdrop-blur-sm hover:bg-white shadow-sm ${className}`}
+      className={`${showLabel ? 'flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-white/90 backdrop-blur-sm hover:bg-white shadow-sm' : ''} transition-transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       title={isFavorited ? "Remove from favorites" : "Add to favorites"}
     >
-      <span className="text-xl">{isFavorited ? "❤️" : "🤍"}</span>
-      <span className="text-gray-700">{loading ? "..." : isFavorited ? "Favorited" : "Favorite"}</span>
+      <span className={showLabel ? "text-xl" : "text-2xl drop-shadow-lg"}>{isFavorited ? "❤️" : "🤍"}</span>
+      {showLabel && <span className="text-gray-700">{loading ? "..." : isFavorited ? "Favorited" : "Favorite"}</span>}
     </button>
   );
 }

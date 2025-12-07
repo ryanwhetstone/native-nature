@@ -27,7 +27,7 @@ export default async function SpeciesPage({
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-4">
           <BackButton />
-          <FavoriteButton speciesId={parseInt(id)} />
+          <FavoriteButton speciesId={parseInt(id)} showLabel={true} />
         </div>
         
         <SpeciesGallery species={species} />
