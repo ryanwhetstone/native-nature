@@ -93,14 +93,8 @@ export default function LeafletWorldMap({ onCountryClick }: LeafletWorldMapProps
                 },
                 click: () => {
                   // Check if country is available
-                  if (availableCountries.includes(countryCode) && mapRef.current) {
-                    const bounds = (layer as L.Layer & { getBounds: () => L.LatLngBounds }).getBounds();
-                    mapRef.current.fitBounds(bounds, { padding: [50, 50] });
-                    
-                    // Delay navigation slightly for zoom animation
-                    setTimeout(() => {
-                      onCountryClick(countryCode);
-                    }, 300);
+                  if (availableCountries.includes(countryCode)) {
+                    onCountryClick(countryCode);
                   }
                 },
               });
