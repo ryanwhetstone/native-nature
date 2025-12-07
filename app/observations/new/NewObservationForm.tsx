@@ -51,7 +51,6 @@ export default function NewObservationForm({
     lat: number;
     lng: number;
   } | null>(null);
-  const [locationName, setLocationName] = useState("");
   const [observedAt, setObservedAt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -146,7 +145,6 @@ export default function NewObservationForm({
           speciesId,
           latitude: selectedLocation.lat.toString(),
           longitude: selectedLocation.lng.toString(),
-          locationName: locationName || undefined,
           observedAt: new Date(observedAt).toISOString(),
           imageUrls: uploadedImageUrls,
         }),
@@ -187,20 +185,6 @@ export default function NewObservationForm({
           value={observedAt}
           onChange={(e) => setObservedAt(e.target.value)}
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="locationName" className="block text-sm font-medium mb-2">
-          Location Name (optional)
-        </label>
-        <input
-          type="text"
-          id="locationName"
-          value={locationName}
-          onChange={(e) => setLocationName(e.target.value)}
-          placeholder="e.g., Central Park, New York"
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>

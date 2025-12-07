@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { speciesId, latitude, longitude, locationName, observedAt, imageUrls } = body;
+    const { speciesId, latitude, longitude, observedAt, imageUrls } = body;
 
-    console.log('Observation data:', { speciesId, latitude, longitude, locationName, observedAt, imageUrls });
+    console.log('Observation data:', { speciesId, latitude, longitude, observedAt, imageUrls });
 
     if (!speciesId || !latitude || !longitude) {
       return NextResponse.json(
@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
       speciesId: parsedSpeciesId,
       latitude: latitude.toString(),
       longitude: longitude.toString(),
-      locationName: locationName || null,
       observedAt: observedAt ? new Date(observedAt) : new Date(),
     }).returning();
 
@@ -43,6 +42,7 @@ export async function POST(request: NextRequest) {
     if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
       const pictureRecords = imageUrls.map((url: string) => ({
         observationId: observation.id,
+        speciesId: parsedSpeciesId,
         imageUrl: url,
       }));
       

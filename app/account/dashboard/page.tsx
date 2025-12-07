@@ -244,7 +244,7 @@ export default async function DashboardPage() {
                 {userObservations.map((observation) => (
                   <Link
                     key={observation.id}
-                    href={`/species/${observation.species.taxonId}-${observation.species.preferredCommonName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || observation.species.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+                    href={`/observation/${observation.id}`}
                     className="group"
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
@@ -275,11 +275,6 @@ export default async function DashboardPage() {
                     <p className="text-xs text-gray-500">
                       {new Date(observation.observedAt).toLocaleDateString()}
                     </p>
-                    {observation.locationName && (
-                      <p className="text-xs text-gray-400 line-clamp-1">
-                        {observation.locationName}
-                      </p>
-                    )}
                   </Link>
                 ))}
               </div>

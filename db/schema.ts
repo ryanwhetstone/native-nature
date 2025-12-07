@@ -138,7 +138,9 @@ export const observations = pgTable('observations', {
   // Location data
   latitude: text('latitude').notNull(),
   longitude: text('longitude').notNull(),
-  locationName: varchar('location_name', { length: 500 }), // Optional human-readable location
+  city: varchar('city', { length: 255 }),
+  region: varchar('region', { length: 255 }),
+  zipcode: varchar('zipcode', { length: 20 }),
   // Timestamps
   observedAt: timestamp('observed_at').notNull(), // When the observation was made
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -152,6 +154,7 @@ export type NewObservation = typeof observations.$inferInsert;
 export const observationPictures = pgTable('observation_pictures', {
   id: serial('id').primaryKey(),
   observationId: integer('observation_id').notNull().references(() => observations.id, { onDelete: 'cascade' }),
+  speciesId: integer('species_id').notNull().references(() => species.id, { onDelete: 'cascade' }),
   imageUrl: text('image_url').notNull(),
   caption: varchar('caption', { length: 500 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -198,5 +201,9 @@ export const observationPicturesRelations = relations(observationPictures, ({ on
   observation: one(observations, {
     fields: [observationPictures.observationId],
     references: [observations.id],
+  }),
+  species: one(species, {
+    fields: [observationPictures.speciesId],
+    references: [species.id],
   }),
 }));

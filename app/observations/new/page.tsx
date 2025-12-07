@@ -5,7 +5,7 @@ import NewObservationForm from "./NewObservationForm";
 export default async function NewObservationPage({
   searchParams,
 }: {
-  searchParams: { speciesId?: string; speciesName?: string; speciesSlug?: string };
+  searchParams: Promise<{ speciesId?: string; speciesName?: string; speciesSlug?: string }>;
 }) {
   const session = await auth();
 
@@ -13,9 +13,10 @@ export default async function NewObservationPage({
     redirect("/auth/signin?callbackUrl=/observations/new");
   }
 
-  const speciesId = searchParams.speciesId ? parseInt(searchParams.speciesId) : undefined;
-  const speciesName = searchParams.speciesName;
-  const speciesSlug = searchParams.speciesSlug;
+  const params = await searchParams;
+  const speciesId = params.speciesId ? parseInt(params.speciesId) : undefined;
+  const speciesName = params.speciesName;
+  const speciesSlug = params.speciesSlug;
 
   if (!speciesId) {
     redirect("/");

@@ -57,6 +57,20 @@
       "when": 1765085542100,
       "tag": "0007_faulty_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1765116391715,
+      "tag": "0008_yummy_giant_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1765116621156,
+      "tag": "0009_fancy_betty_ross",
+      "breakpoints": true
     }
   ]
 }

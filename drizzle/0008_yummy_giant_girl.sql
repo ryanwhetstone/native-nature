@@ -1,0 +1,2 @@
+ALTER TABLE "observation_pictures" ADD COLUMN "species_id" integer NOT NULL;--> statement-breakpoint
+ALTER TABLE "observation_pictures" ADD CONSTRAINT "observation_pictures_species_id_species_id_fk" FOREIGN KEY ("species_id") REFERENCES "public"."species"("id") ON DELETE cascade ON UPDATE no action;

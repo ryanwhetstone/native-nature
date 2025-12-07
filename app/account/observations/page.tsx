@@ -49,7 +49,7 @@ export default async function ObservationsPage() {
                 className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group relative"
               >
                 <Link
-                  href={`/species/${observation.species.taxonId}-${observation.species.preferredCommonName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || observation.species.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+                  href={`/observation/${observation.id}`}
                 >
                   <div className="relative aspect-video bg-gray-100">
                     {observation.pictures && observation.pictures.length > 0 ? (
@@ -90,12 +90,12 @@ export default async function ObservationsPage() {
                         <span className="mr-2">📅</span>
                         <span>Observed: {new Date(observation.observedAt).toLocaleDateString()}</span>
                       </div>
-                      {observation.locationName && (
-                        <div className="flex items-center">
-                          <span className="mr-2">📍</span>
-                          <span className="line-clamp-1">{observation.locationName}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center">
+                        <span className="mr-2">📍</span>
+                        <span className="line-clamp-1">
+                          {observation.latitude}, {observation.longitude}
+                        </span>
+                      </div>
                       <div className="flex items-center text-xs text-gray-400">
                         <span className="mr-2">🕐</span>
                         <span>Added: {new Date(observation.createdAt).toLocaleDateString()}</span>

@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/photos/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'native-nature.s3.us-east-2.amazonaws.com',
+        port: '',
+        pathname: '/observations/**',
+      },
     ],
   },
 };
