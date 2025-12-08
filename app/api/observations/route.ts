@@ -24,6 +24,7 @@ async function reverseGeocode(lat: number, lng: number) {
     const data = await response.json();
     
     return {
+      country: data.address?.country || null,
       city: data.address?.city || 
             data.address?.town || 
             data.address?.village || 
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
       speciesId: parsedSpeciesId,
       latitude: latitude.toString(),
       longitude: longitude.toString(),
+      country: locationData?.country || null,
       city: locationData?.city || null,
       region: locationData?.region || null,
       zipcode: locationData?.zipcode || null,

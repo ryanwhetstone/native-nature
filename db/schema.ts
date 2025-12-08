@@ -138,6 +138,7 @@ export const observations = pgTable('observations', {
   // Location data
   latitude: text('latitude').notNull(),
   longitude: text('longitude').notNull(),
+  country: varchar('country', { length: 255 }),
   city: varchar('city', { length: 255 }),
   region: varchar('region', { length: 255 }),
   zipcode: varchar('zipcode', { length: 20 }),

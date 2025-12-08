@@ -71,6 +71,13 @@
       "when": 1765116621156,
       "tag": "0009_fancy_betty_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1765163238930,
+      "tag": "0010_freezing_norman_osborn",
+      "breakpoints": true
     }
   ]
 }

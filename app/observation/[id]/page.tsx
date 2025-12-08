@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import Link from "next/link";
 import { DeleteObservationButton } from "@/app/account/observations/DeleteObservationButton";
+import ObservationMap from "./ObservationMap";
 
 export default async function ObservationDetailPage({
   params,
@@ -64,7 +65,13 @@ export default async function ObservationDetailPage({
               </div>
             </div>
             {isOwner && (
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 flex gap-2">
+                <Link
+                  href={`/observation/${observation.id}/edit`}
+                  className="px-4 py-2 bg-blue-50 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors whitespace-nowrap"
+                >
+                  Edit
+                </Link>
                 <DeleteObservationButton observationId={observation.id} />
               </div>
             )}
@@ -97,42 +104,27 @@ export default async function ObservationDetailPage({
 
         {/* Location */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Location</h2>
-          <div className="space-y-3">
-            <div className="flex items-start">
-              <span className="text-gray-600 w-32 flex-shrink-0">Coordinates:</span>
-              <span className="text-gray-900 font-mono">
-                {observation.latitude}, {observation.longitude}
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="text-xl font-semibold mr-8">Location</h2>
+            {(observation.city || observation.region || observation.country) && (
+              <p className="text-gray-600">
+                {[observation.city, observation.region, observation.country].filter(Boolean).join(', ')}
+              </p>
+            )}
+              <p>
+                <span className="text-gray-600 w-32 flex-shrink-0">Coordinates:</span>
+              <span className="text-gray-600">
+                {parseFloat(observation.latitude).toFixed(6)}, {parseFloat(observation.longitude).toFixed(6)}
               </span>
-            </div>
-            {observation.city && (
-              <div className="flex items-start">
-                <span className="text-gray-600 w-32 flex-shrink-0">City:</span>
-                <span className="text-gray-900">{observation.city}</span>
-              </div>
-            )}
-            {observation.region && (
-              <div className="flex items-start">
-                <span className="text-gray-600 w-32 flex-shrink-0">Region:</span>
-                <span className="text-gray-900">{observation.region}</span>
-              </div>
-            )}
-            {observation.zipcode && (
-              <div className="flex items-start">
-                <span className="text-gray-600 w-32 flex-shrink-0">Zip Code:</span>
-                <span className="text-gray-900">{observation.zipcode}</span>
-              </div>
-            )}
+              </p>
+
           </div>
           
           {/* Map */}
-          <div className="mt-4 h-64 rounded-lg overflow-hidden bg-gray-200">
-            <iframe
-              width="100%"
-              height="100%"
-              frameBorder="0"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(observation.longitude) - 0.01},${parseFloat(observation.latitude) - 0.01},${parseFloat(observation.longitude) + 0.01},${parseFloat(observation.latitude) + 0.01}&layer=mapnik&marker=${observation.latitude},${observation.longitude}`}
-              style={{ border: 0 }}
+          <div className="mt-4">
+            <ObservationMap 
+              longitude={parseFloat(observation.longitude)}
+              latitude={parseFloat(observation.latitude)}
             />
           </div>
         </div>

@@ -2,43 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { LeafletMouseEvent } from "leaflet";
-
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
+import NewObservationMap from "./NewObservationMap";
 
 interface NewObservationFormProps {
   speciesId: number;
   speciesName?: string;
   speciesSlug?: string;
-}
-
-// Import useMapEvents directly in the component
-function MapClickHandler({
-  onLocationSelect,
-}: {
-  onLocationSelect: (lat: number, lng: number) => void;
-}) {
-  // @ts-ignore - dynamic import causes type issues
-  const { useMapEvents } = require("react-leaflet");
-  
-  useMapEvents({
-    click: (e: LeafletMouseEvent) => {
-      onLocationSelect(e.latlng.lat, e.latlng.lng);
-    },
-  });
-  return null;
 }
 
 export default function NewObservationForm({
@@ -53,27 +22,13 @@ export default function NewObservationForm({
   } | null>(null);
   const [observedAt, setObservedAt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const [images, setImages] = useState<Array<{ url: string; file: File }>>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
     // Set default observed date to today
     const today = new Date().toISOString().split("T")[0];
     setObservedAt(today);
-    
-    // Fix Leaflet default marker icon paths
-    if (typeof window !== 'undefined') {
-      import('leaflet').then((L) => {
-        delete (L.Icon.Default.prototype as any)._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-        });
-      });
-    }
   }, []);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,9 +49,7 @@ export default function NewObservationForm({
     });
   };
 
-  const handleLocationSelect = (lat: number, lng: number) => {
-    setSelectedLocation({ lat, lng });
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,7 +98,7 @@ export default function NewObservationForm({
           speciesId,
           latitude: selectedLocation.lat.toString(),
           longitude: selectedLocation.lng.toString(),
-          observedAt: new Date(observedAt).toISOString(),
+          observedAt: observedAt + 'T12:00:00.000Z',
           imageUrls: uploadedImageUrls,
         }),
       });
@@ -185,6 +138,7 @@ export default function NewObservationForm({
           value={observedAt}
           onChange={(e) => setObservedAt(e.target.value)}
           required
+          max={new Date().toISOString().split('T')[0]}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
@@ -229,22 +183,10 @@ export default function NewObservationForm({
         <p className="text-sm text-gray-600 mb-3">
           Click on the map to select where you observed this species
         </p>
-        {isClient && (
-          <div className="h-96 rounded-lg overflow-hidden border border-gray-300">
-            <MapContainer
-              center={[0, 0]}
-              zoom={2}
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <MapClickHandler onLocationSelect={handleLocationSelect} />
-              {selectedLocation && <Marker position={selectedLocation} />}
-            </MapContainer>
-          </div>
-        )}
+        <NewObservationMap
+          onLocationSelect={setSelectedLocation}
+          selectedLocation={selectedLocation}
+        />
         {selectedLocation && (
           <p className="text-sm text-gray-600 mt-2">
             Selected: {selectedLocation.lat.toFixed(6)},{" "}

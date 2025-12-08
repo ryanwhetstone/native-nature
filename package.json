@@ -24,6 +24,7 @@
     "countrycitystatejson": "^25.8.101",
     "drizzle-orm": "^0.44.7",
     "leaflet": "^1.9.4",
+    "mapbox-gl": "^3.17.0",
     "next": "^15.0.3",
     "next-auth": "^5.0.0-beta.30",
     "react": "^19.0.0",

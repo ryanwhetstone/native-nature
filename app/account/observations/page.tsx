@@ -92,7 +92,7 @@ export default async function ObservationsPage() {
                       <div className="flex items-center">
                         <span className="mr-2">📍</span>
                         <span className="line-clamp-1">
-                          {observation.latitude}, {observation.longitude}
+                          {[observation.city, observation.region, observation.country].filter(Boolean).join(', ') || 'Location recorded'}
                         </span>
                       </div>
                       <div className="flex items-center text-xs text-gray-400">
