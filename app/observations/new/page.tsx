@@ -12,7 +12,7 @@ export default async function NewObservationPage({
 }) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/auth/signin?callbackUrl=/observations/new");
   }
 
