@@ -8,12 +8,14 @@ interface NewObservationFormProps {
   speciesId: number;
   speciesName?: string;
   speciesSlug?: string;
+  lastLocation?: { lat: number; lng: number };
 }
 
 export default function NewObservationForm({
   speciesId,
   speciesName,
   speciesSlug,
+  lastLocation,
 }: NewObservationFormProps) {
   const router = useRouter();
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -186,6 +188,7 @@ export default function NewObservationForm({
         <NewObservationMap
           onLocationSelect={setSelectedLocation}
           selectedLocation={selectedLocation}
+          lastLocation={lastLocation}
         />
         {selectedLocation && (
           <p className="text-sm text-gray-600 mt-2">

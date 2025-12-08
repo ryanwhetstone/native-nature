@@ -9,9 +9,10 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 interface NewObservationMapProps {
   onLocationSelect: (location: { lat: number; lng: number }) => void;
   selectedLocation: { lat: number; lng: number } | null;
+  lastLocation?: { lat: number; lng: number };
 }
 
-export default function NewObservationMap({ onLocationSelect, selectedLocation }: NewObservationMapProps) {
+export default function NewObservationMap({ onLocationSelect, selectedLocation, lastLocation }: NewObservationMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const marker = useRef<mapboxgl.Marker | null>(null);
@@ -19,12 +20,18 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation }
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
+    // Use last observation location if available, otherwise default to world view
+    const initialCenter: [number, number] = lastLocation 
+      ? [lastLocation.lng, lastLocation.lat]
+      : [0, 0];
+    const initialZoom = lastLocation ? 6 : 2; // Zoom 6 is approximately state level
+
     // Initialize map
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/outdoors-v12',
-      center: [0, 0],
-      zoom: 2,
+      center: initialCenter,
+      zoom: initialZoom,
     });
 
     // Add navigation controls
