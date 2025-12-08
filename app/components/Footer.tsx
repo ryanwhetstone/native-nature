@@ -103,7 +103,11 @@ export async function Footer() {
           {/* Column 4: Recently Observed */}
           <div>
             <h3 className="text-white text-sm font-semibold mb-4 uppercase tracking-wide">
-              Recently Observed
+              <Link
+                    href="/recent-observations"
+                    >
+                        Recent Observations
+              </Link>   
             </h3>
             <ul className="space-y-2">
               {recentObservations.map((item) => (

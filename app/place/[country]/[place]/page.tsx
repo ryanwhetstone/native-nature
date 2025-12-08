@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getCountryBySlug } from "@/lib/countries";
-import { categoryMapping } from "@/app/states/[state]/categoryMapping";
+import { categoryMapping } from "@/app/place/categoryMapping";
 import { getSVGConfigForCountry } from "@/lib/svg-mappings";
 
 interface PlacePageProps {

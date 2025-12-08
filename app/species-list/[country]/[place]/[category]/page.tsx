@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import { getCountryBySlug } from "@/lib/countries";
 import { getINaturalistPlaceId } from "@/lib/inaturalist-places";
 import { getSpeciesListWithCache } from "@/lib/speciesCache";
-import { categoryMapping } from "@/app/states/[state]/categoryMapping";
-import SpeciesGrid from "@/app/states/[state]/SpeciesGrid";
+import { categoryMapping } from "@/app/place/categoryMapping";
+import SpeciesGrid from "@/app/species/SpeciesGrid";
 import { getSVGConfigForCountry } from "@/lib/svg-mappings";
 
 interface CategoryPageProps {
