@@ -7,6 +7,7 @@ import Image from "next/image";
 
 interface UserMenuProps {
   user: {
+    id?: string;
     name?: string | null;
     email?: string | null;
     image?: string | null;
@@ -61,7 +62,7 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
           
           <Link
-            href="/account/profile"
+            href={`/user/${user.id}/profile`}
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
             onClick={() => setIsOpen(false)}
           >

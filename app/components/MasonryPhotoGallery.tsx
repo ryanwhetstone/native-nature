@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { getObservationUrl } from '@/lib/observation-url';
 
 interface Photo {
   id: number;
@@ -20,11 +22,19 @@ interface Photo {
   };
 }
 
-interface PhotoLightboxProps {
+interface MasonryPhotoGalleryProps {
   photos: Photo[];
+  columns?: {
+    default: number;
+    md?: number;
+    lg?: number;
+  };
 }
 
-export default function PhotoLightbox({ photos }: PhotoLightboxProps) {
+export default function MasonryPhotoGallery({ 
+  photos, 
+  columns = { default: 2, md: 3, lg: 4 }
+}: MasonryPhotoGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const openLightbox = (index: number) => {
@@ -55,10 +65,35 @@ export default function PhotoLightbox({ photos }: PhotoLightboxProps) {
     if (e.key === 'ArrowLeft') goToPrevious();
   };
 
+  // Build proper Tailwind classes based on column configuration
+  const getColumnClasses = () => {
+    let classes = '';
+    
+    // Default columns
+    if (columns.default === 1) classes += 'columns-1';
+    else if (columns.default === 2) classes += 'columns-2';
+    else if (columns.default === 3) classes += 'columns-3';
+    else if (columns.default === 4) classes += 'columns-4';
+    
+    // Medium breakpoint
+    if (columns.md === 1) classes += ' md:columns-1';
+    else if (columns.md === 2) classes += ' md:columns-2';
+    else if (columns.md === 3) classes += ' md:columns-3';
+    else if (columns.md === 4) classes += ' md:columns-4';
+    
+    // Large breakpoint
+    if (columns.lg === 1) classes += ' lg:columns-1';
+    else if (columns.lg === 2) classes += ' lg:columns-2';
+    else if (columns.lg === 3) classes += ' lg:columns-3';
+    else if (columns.lg === 4) classes += ' lg:columns-4';
+    
+    return classes;
+  };
+
   return (
     <>
       {/* Masonry Photo Grid */}
-      <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+      <div className={`${getColumnClasses()} gap-4 space-y-4`}>
         {photos.map((photo, index) => (
           <button
             key={photo.id}
@@ -146,7 +181,21 @@ export default function PhotoLightbox({ photos }: PhotoLightboxProps) {
                   {photos[selectedIndex].species.preferredCommonName || photos[selectedIndex].species.name}
                 </h3>
                 <p className="text-gray-400 text-sm mt-1">
-                  Observed on {new Date(photos[selectedIndex].observation.observedAt).toLocaleDateString()}
+                  <Link 
+                    href={getObservationUrl(
+                      photos[selectedIndex].observation.id,
+                      photos[selectedIndex].species.name,
+                      photos[selectedIndex].species.preferredCommonName
+                    )}
+                    className="hover:text-blue-400 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      closeLightbox();
+                    }}
+                    scroll={true}
+                  >
+                    Observed on {new Date(photos[selectedIndex].observation.observedAt).toLocaleDateString()}
+                  </Link>
                 </p>
                 <p className="text-gray-400 text-xs mt-2">
                   Uploaded by {photos[selectedIndex].observation.user.publicName || photos[selectedIndex].observation.user.name || 'Anonymous'}. All rights reserved.

@@ -8,7 +8,7 @@ export function BackButton() {
   return (
     <button 
       onClick={() => router.back()}
-      className="text-blue-600 hover:underline"
+      className="text-white hover:underline"
     >
       ← Back
     </button>

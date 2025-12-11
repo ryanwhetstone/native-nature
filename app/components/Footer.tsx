@@ -2,6 +2,15 @@ import Link from "next/link";
 import { db } from "@/db";
 import { favorites, observations, species } from "@/db/schema";
 import { desc, sql, count } from "drizzle-orm";
+import { countries } from "@/lib/countries";
+import { getSpeciesUrl } from "@/lib/species-url";
+import { getObservationUrl } from "@/lib/observation-url";
+
+// Create reverse mapping: country name -> slug
+const countryNameToSlug: Record<string, string> = {};
+Object.values(countries).forEach(country => {
+  countryNameToSlug[country.name] = country.slug;
+});
 
 export async function Footer() {
   // Get top 8 countries by observation count
@@ -36,6 +45,7 @@ export async function Footer() {
   // Get last 8 observed species (most recent unique species)
   const recentObservations = await db
     .selectDistinctOn([species.id], {
+      observationId: observations.id,
       species: {
         id: species.id,
         taxonId: species.taxonId,
@@ -68,16 +78,19 @@ export async function Footer() {
               Countries
             </h3>
             <ul className="space-y-2">
-              {topCountries.map((item) => (
-                <li key={item.country}>
-                  <Link
-                    href={`/country/${item.country?.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="text-sm hover:text-green-400 transition-colors"
-                  >
-                    {item.country} ({item.count})
-                  </Link>
-                </li>
-              ))}
+              {topCountries.map((item) => {
+                const slug = item.country ? countryNameToSlug[item.country] : null;
+                return (
+                  <li key={item.country}>
+                    <Link
+                      href={slug ? `/country/${slug}` : '#'}
+                      className="text-sm hover:text-green-400 transition-colors"
+                    >
+                      {item.country} ({item.count})
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -90,7 +103,7 @@ export async function Footer() {
               {topFavorites.map((item) => (
                 <li key={item.species.id}>
                   <Link
-                    href={`/species/${item.species.taxonId}-${item.species.preferredCommonName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || item.species.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+                    href={getSpeciesUrl(item.species.taxonId, item.species.name, item.species.preferredCommonName)}
                     className="text-sm hover:text-green-400 transition-colors line-clamp-1"
                   >
                     {item.species.preferredCommonName || item.species.name} ({item.favCount})
@@ -113,7 +126,7 @@ export async function Footer() {
               {recentObservations.map((item) => (
                 <li key={item.species.id}>
                   <Link
-                    href={`/species/${item.species.taxonId}-${item.species.preferredCommonName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || item.species.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+                    href={getObservationUrl(item.observationId, item.species.name, item.species.preferredCommonName)}
                     className="text-sm hover:text-green-400 transition-colors line-clamp-1"
                   >
                     {item.species.preferredCommonName || item.species.name}

@@ -4,7 +4,9 @@ import { users, observations, favorites } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
-import PhotoLightbox from "./PhotoLightbox";
+import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
+import { getSpeciesUrl } from "@/lib/species-url";
+import { getObservationUrl } from "@/lib/observation-url";
 
 export default async function UserProfilePage({
   params,
@@ -60,74 +62,82 @@ export default async function UserProfilePage({
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Profile Header */}
-        <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
-          <div className="flex items-start gap-6">
-            {user.image && (
-              <div className="relative w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
-                <Image
-                  src={user.image}
-                  alt={displayName}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {displayName}
-              </h1>
-              {user.bio && (
-                <p className="text-gray-600 mb-4">{user.bio}</p>
+    <main className="min-h-screen bg-gray-50">
+      {/* Dark section for profile and photos */}
+      <div className="bg-slate-900 py-8">
+        <div className="w-full px-4">
+          {/* Profile Header */}
+          <div className="max-w-7xl mx-auto p-8">
+            <div className="flex items-center justify-start gap-6">
+              {user.image && (
+                <div className="relative w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
+                  <Image
+                    src={user.image}
+                    alt={displayName}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               )}
-              <div className="flex gap-6 text-sm text-gray-600">
-                <div>
-                  <span className="font-semibold text-gray-900">
-                    {userObservations.length}
-                  </span>{" "}
-                  Observations
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-900">
-                    {observationPhotos.length}
-                  </span>{" "}
-                  Photos
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-900">
-                    {userFavorites.length}
-                  </span>{" "}
-                  Favorites
+              <div className="">
+                <h1 className="text-3xl font-bold text-white mb-2">
+                  {displayName}
+                </h1>
+                {user.bio && (
+                  <p className="text-white mb-4">{user.bio}</p>
+                )}
+                <div className="flex gap-6 text-sm text-white">
+                  <div>
+                    <span className="font-semibold text-white">
+                      {userObservations.length}
+                    </span>{" "}
+                    Observations
+                  </div>
+                  <div>
+                    <span className="font-semibold text-white">
+                      {observationPhotos.length}
+                    </span>{" "}
+                    Photos
+                  </div>
+                  <div>
+                    <span className="font-semibold text-white">
+                      {userFavorites.length}
+                    </span>{" "}
+                    Favorites
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Photo Gallery */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Observation Photos</h2>
-          {observationPhotos.length > 0 ? (
-            <PhotoLightbox photos={observationPhotos} />
-          ) : (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
-              <div className="text-6xl mb-4">📷</div>
-              <p className="text-gray-600">No observation photos yet</p>
-            </div>
-          )}
+          {/* Photo Gallery */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">Observation Photos</h2>
+            {observationPhotos.length > 0 ? (
+              <MasonryPhotoGallery photos={observationPhotos} />
+            ) : (
+              <div className="bg-white rounded-lg shadow p-12 text-center">
+                <div className="text-6xl mb-4">📷</div>
+                <p className="text-gray-600">No observation photos yet</p>
+              </div>
+            )}
+          </div>
         </div>
+      </div>
+
+      {/* Light section for observations and favorites */}
+      <div className="py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
 
         {/* Observations List */}
-        <div className="mb-8">
+        <div className="mb-8 max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Recent Observations</h2>
           {userObservations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userObservations.slice(0, 6).map((observation) => (
                 <Link
                   key={observation.id}
-                  href={`/observation/${observation.id}`}
+                  href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
                   className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
                 >
                   <div className="relative aspect-video bg-gray-100">
@@ -177,14 +187,14 @@ export default async function UserProfilePage({
         </div>
 
         {/* Favorites */}
-        <div>
+        <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Favorite Species</h2>
           {userFavorites.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {userFavorites.map((favorite) => (
                 <Link
                   key={favorite.id}
-                  href={`/species/${favorite.species.taxonId}`}
+                  href={getSpeciesUrl(favorite.species.taxonId, favorite.species.name, favorite.species.preferredCommonName)}
                   className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
                 >
                   <div className="relative aspect-square bg-gray-100">
@@ -216,6 +226,7 @@ export default async function UserProfilePage({
             </div>
           )}
         </div>
+      </div>
       </div>
     </main>
   );

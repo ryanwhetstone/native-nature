@@ -24,23 +24,8 @@ export default async function SpeciesPage({
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-4">
-          <BackButton />
-          <div className="flex items-center gap-3">
-            <AddObservationButton 
-              speciesId={species.dbId || parseInt(id)}
-              speciesName={species.preferred_common_name || species.name}
-              speciesSlug={slug}
-            />
-            <FavoriteButton speciesId={species.dbId || parseInt(id)} showLabel={true} />
-          </div>
-        </div>
-        
-        <SpeciesGallery species={species} />
-      </div>
-
+    <main className="min-h-screen bg-gray-50">
+      <SpeciesGallery species={species} slug={slug} />
     </main>
   );
 }

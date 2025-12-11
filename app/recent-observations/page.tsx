@@ -3,6 +3,8 @@ import { observations } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
+import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
+import { getObservationUrl } from "@/lib/observation-url";
 
 export default async function RecentObservationsPage() {
   // Fetch recent observations with species and pictures
@@ -16,18 +18,54 @@ export default async function RecentObservationsPage() {
     limit: 50,
   });
 
-  return (
-    <main className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Recent Observations</h1>
-          <p className="mt-2 text-gray-600">
-            Latest wildlife sightings from the community
-          </p>
-        </div>
+  // Get all observation photos for the masonry gallery
+  const allPhotos = recentObservations.flatMap((obs) =>
+    obs.pictures.map((pic) => ({
+      ...pic,
+      observation: {
+        id: obs.id,
+        observedAt: obs.observedAt,
+        user: {
+          publicName: obs.user.publicName,
+          name: obs.user.name,
+        },
+      },
+      species: obs.species,
+    }))
+  );
 
-        {/* Observations Grid */}
+  return (
+    <main className="min-h-screen bg-gray-50">
+      {/* Dark section for header and photo gallery */}
+      <div className="bg-slate-900 py-8">
+        <div className="w-full px-4">
+          {/* Header */}
+          <div className="max-w-7xl mx-auto mb-8">
+            <h1 className="text-3xl font-bold text-white">Recent Observations</h1>
+            <p className="mt-2 text-gray-300">
+              Latest wildlife sightings from the community
+            </p>
+          </div>
+
+          {/* Photo Gallery */}
+          {allPhotos.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-white mb-4">Recent Photos</h2>
+              <MasonryPhotoGallery photos={allPhotos} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Light section for observations list */}
+      <div className="py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Observations List Header */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">All Observations</h2>
+          </div>
+
+          {/* Observations Grid */}
         {recentObservations.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {recentObservations.map((observation) => (
@@ -35,7 +73,7 @@ export default async function RecentObservationsPage() {
                 key={observation.id}
                 className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
               >
-                <Link href={`/user/${observation.userId}/profile`}>
+                <Link href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}>
                   <div className="relative aspect-video bg-gray-100">
                     {observation.pictures && observation.pictures.length > 0 ? (
                       <Image
@@ -102,6 +140,7 @@ export default async function RecentObservationsPage() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </main>
   );

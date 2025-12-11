@@ -7,6 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { DeleteObservationButton } from "@/app/account/observations/DeleteObservationButton";
 import ObservationMap from "./ObservationMap";
+import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
+import { getSpeciesUrl } from "@/lib/species-url";
 
 export default async function ObservationDetailPage({
   params,
@@ -25,6 +27,7 @@ export default async function ObservationDetailPage({
     with: {
       species: true,
       pictures: true,
+      user: true,
     },
   });
 
@@ -36,74 +39,91 @@ export default async function ObservationDetailPage({
   const isOwner = observation.userId === session.user.id;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <Link
-                href={`/species/${observation.species.taxonId}`}
-                className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
-              >
-                {observation.species.preferredCommonName || observation.species.name}
-              </Link>
-              {observation.species.preferredCommonName && (
-                <p className="text-gray-500 italic mt-1">
-                  {observation.species.name}
-                </p>
+    <main className="min-h-screen bg-gray-50">
+      {/* Dark section for header and photos */}
+      <div className="bg-slate-900 py-8">
+        <div className="w-full px-4">
+          {/* Header */}
+          <div className="max-w-7xl mx-auto mb-8">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-3xl font-bold text-white">
+                  {observation.species.preferredCommonName || observation.species.name}
+                </h1>
+                {observation.species.preferredCommonName && (
+                  <p className="text-gray-400 italic mt-2 text-lg">
+                    {observation.species.name}
+                  </p>
+                )}
+                <div className="flex items-center gap-6 mt-6 text-sm text-gray-300">
+                  <div className="flex items-center">
+                    <span className="mr-2">👤</span>
+                    <span>Observed by{" "}
+                      <Link 
+                        href={`/user/${observation.user.id}/profile`}
+                        className="text-blue-400 hover:text-blue-300 transition-colors"
+                      >
+                        {observation.user.publicName || observation.user.name || 'Anonymous'}
+                      </Link>
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="mr-2">📅</span>
+                    <span>{new Date(observation.observedAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <Link
+                    href={getSpeciesUrl(observation.species.taxonId, observation.species.name, observation.species.preferredCommonName)}
+                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
+                  >
+                    <span className="mr-2">🔍</span>
+                    View Species Details
+                  </Link>
+                </div>
+              </div>
+              {isOwner && (
+                <div className="flex-shrink-0 flex gap-2">
+                  <Link
+                    href={`/observation/${observation.id}/edit`}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap"
+                  >
+                    Edit
+                  </Link>
+                  <DeleteObservationButton observationId={observation.id} />
+                </div>
               )}
-              <div className="flex items-center gap-4 mt-4 text-sm text-gray-600">
-                <div className="flex items-center">
-                  <span className="mr-2">📅</span>
-                  <span>Observed: {new Date(observation.observedAt).toLocaleDateString()}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="mr-2">🕐</span>
-                  <span>Added: {new Date(observation.createdAt).toLocaleDateString()}</span>
-                </div>
-              </div>
             </div>
-            {isOwner && (
-              <div className="flex-shrink-0 flex gap-2">
-                <Link
-                  href={`/observation/${observation.id}/edit`}
-                  className="px-4 py-2 bg-blue-50 text-blue-600 text-sm rounded-md hover:bg-blue-100 transition-colors whitespace-nowrap"
-                >
-                  Edit
-                </Link>
-                <DeleteObservationButton observationId={observation.id} />
-              </div>
-            )}
           </div>
+
+          {/* Photos */}
+          {observation.pictures.length > 0 && (
+            <div className="mb-8">
+              <MasonryPhotoGallery 
+                photos={observation.pictures.map(pic => ({
+                  ...pic,
+                  observation: {
+                    id: observation.id,
+                    observedAt: observation.observedAt,
+                    user: {
+                      publicName: observation.user.publicName,
+                      name: observation.user.name,
+                    },
+                  },
+                  species: observation.species,
+                }))}
+                columns={{ default: 1, md: 2, lg: 3 }}
+              />
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* Photos */}
-        {observation.pictures.length > 0 && (
+      {/* Light section for location */}
+      <div className="py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Location */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Photos</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {observation.pictures.map((picture) => (
-                <div key={picture.id} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <Image
-                    src={picture.imageUrl}
-                    alt={picture.caption || "Observation photo"}
-                    fill
-                    className="object-cover"
-                  />
-                  {picture.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-sm p-2">
-                      {picture.caption}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Location */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="text-xl font-semibold mr-8">Location</h2>
             {(observation.city || observation.region || observation.country) && (
@@ -128,17 +148,8 @@ export default async function ObservationDetailPage({
             />
           </div>
         </div>
-
-        {/* Back Link */}
-        <div className="text-center">
-          <Link
-            href="/account/observations"
-            className="text-blue-600 hover:text-blue-800 transition-colors"
-          >
-            ← Back to My Observations
-          </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

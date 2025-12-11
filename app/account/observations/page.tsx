@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { observations } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
+import { getObservationUrl } from "@/lib/observation-url";
 
 export default async function ObservationsPage() {
   const session = await auth();
@@ -48,7 +49,7 @@ export default async function ObservationsPage() {
                 className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group relative"
               >
                 <Link
-                  href={`/observation/${observation.id}`}
+                  href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
                 >
                   <div className="relative aspect-video bg-gray-100">
                     {observation.pictures && observation.pictures.length > 0 ? (

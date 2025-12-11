@@ -5,6 +5,8 @@ import { users, favorites, observations } from "@/db/schema";
 import { eq, count, desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
+import { getSpeciesUrl } from "@/lib/species-url";
+import { getObservationUrl } from "@/lib/observation-url";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -141,7 +143,7 @@ export default async function DashboardPage() {
             </Link>
 
             <Link
-              href="/account/profile"
+              href={`/user/${session.user.id}/profile`}
               className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
             >
               <div className="text-3xl">👤</div>
