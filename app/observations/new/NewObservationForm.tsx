@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import NewObservationMap from "./NewObservationMap";
+import { getObservationUrl } from "@/lib/observation-url";
+import { useToast } from "@/app/components/Toast";
 
 interface NewObservationFormProps {
   speciesId: number;
@@ -18,11 +20,13 @@ export default function NewObservationForm({
   lastLocation,
 }: NewObservationFormProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
   const [observedAt, setObservedAt] = useState("");
+  const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<Array<{ url: string; file: File }>>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
@@ -101,6 +105,7 @@ export default function NewObservationForm({
           latitude: selectedLocation.lat.toString(),
           longitude: selectedLocation.lng.toString(),
           observedAt: observedAt + 'T12:00:00.000Z',
+          description: description || null,
           imageUrls: uploadedImageUrls,
         }),
       });
@@ -109,14 +114,16 @@ export default function NewObservationForm({
         throw new Error("Failed to create observation");
       }
 
-      // Show success message
-      alert("Observation saved successfully!");
+      const observation = await response.json();
+
+      // Show success toast
+      showToast("Observation saved successfully!");
       
-      router.push(`/species/${speciesSlug || speciesId}`);
+      router.push(getObservationUrl(observation.id, speciesName || `Species ${speciesId}`));
       router.refresh();
     } catch (error) {
       console.error("Error creating observation:", error);
-      alert("Failed to create observation. Please try again.");
+      showToast("Failed to create observation. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -141,6 +148,20 @@ export default function NewObservationForm({
           onChange={(e) => setObservedAt(e.target.value)}
           required
           max={new Date().toISOString().split('T')[0]}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="description" className="block text-sm font-medium mb-2">
+          Description (optional)
+        </label>
+        <textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={4}
+          placeholder="Add notes about this observation..."
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>

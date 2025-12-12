@@ -6,6 +6,32 @@ import { getSpeciesListWithCache } from "@/lib/speciesCache";
 import { categoryMapping } from "@/app/place/categoryMapping";
 import SpeciesGrid from "@/app/species/SpeciesGrid";
 import { getSVGConfigForCountry } from "@/lib/svg-mappings";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ country: string; place: string; category: string }>;
+}): Promise<Metadata> {
+  const { country, place, category } = await params;
+  const countryData = getCountryBySlug(country);
+  const svgConfig = getSVGConfigForCountry(country);
+  const regionData = svgConfig?.regionMapping 
+    ? Object.values(svgConfig.regionMapping).find((region: any) => region.slug === place)
+    : null;
+  const categoryData = categoryMapping[category as keyof typeof categoryMapping];
+
+  if (!countryData || !regionData || !categoryData) {
+    return {
+      title: "Species List | Native Nature",
+    };
+  }
+
+  return {
+    title: `${categoryData.displayName} in ${(regionData as any).name}, ${countryData.name} | Native Nature`,
+    description: `Browse and explore ${categoryData.pluralName.toLowerCase()} found in ${(regionData as any).name}, ${countryData.name}. View photos, observations, and detailed information.`,
+  };
+}
 
 interface CategoryPageProps {
   params: Promise<{

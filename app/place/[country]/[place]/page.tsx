@@ -3,6 +3,31 @@ import Link from "next/link";
 import { getCountryBySlug } from "@/lib/countries";
 import { categoryMapping } from "@/app/place/categoryMapping";
 import { getSVGConfigForCountry } from "@/lib/svg-mappings";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ country: string; place: string }>;
+}): Promise<Metadata> {
+  const { country, place } = await params;
+  const countryData = getCountryBySlug(country);
+  const svgConfig = getSVGConfigForCountry(country);
+  const placeData = svgConfig?.regionMapping 
+    ? Object.values(svgConfig.regionMapping).find((region: any) => region.slug === place)
+    : null;
+
+  if (!countryData || !placeData) {
+    return {
+      title: "Place Not Found | Native Nature",
+    };
+  }
+
+  return {
+    title: `${(placeData as any).name}, ${countryData.name} - Wildlife & Nature | Native Nature`,
+    description: `Discover the wildlife and nature of ${(placeData as any).name}, ${countryData.name}. Browse species by category including mammals, birds, plants, and more.`,
+  };
+}
 
 interface PlacePageProps {
   params: Promise<{

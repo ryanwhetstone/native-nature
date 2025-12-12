@@ -5,6 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
 import { getObservationUrl } from "@/lib/observation-url";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Recent Observations | Native Nature",
+  description: "Explore the latest wildlife and nature observations from our global community. View recent sightings, photos, and discoveries from around the world.",
+};
 
 export default async function RecentObservationsPage() {
   // Fetch recent observations with species and pictures

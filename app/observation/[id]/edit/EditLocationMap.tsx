@@ -73,9 +73,6 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
     if (marker.current) {
       marker.current.setLngLat([longitude, latitude]);
     }
-    if (map.current) {
-      map.current.setCenter([longitude, latitude]);
-    }
   }, [longitude, latitude]);
 
   return (

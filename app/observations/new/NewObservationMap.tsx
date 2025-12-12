@@ -99,11 +99,6 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
         }
       });
     }
-    
-    map.current.flyTo({
-      center: [selectedLocation.lng, selectedLocation.lat],
-      zoom: 13,
-    });
   }, [selectedLocation, onLocationSelect]);
 
   return (

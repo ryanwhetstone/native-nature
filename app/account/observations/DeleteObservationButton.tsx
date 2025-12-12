@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "@/app/components/Toast";
 
 interface DeleteObservationButtonProps {
   observationId: number;
@@ -10,6 +11,7 @@ interface DeleteObservationButtonProps {
 export function DeleteObservationButton({ observationId }: DeleteObservationButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { showToast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -25,6 +27,8 @@ export function DeleteObservationButton({ observationId }: DeleteObservationButt
         throw new Error("Failed to delete observation");
       }
 
+      showToast("Observation deleted successfully");
+
       // If we're on the observation detail page, go to dashboard
       // Otherwise just refresh the current page
       if (pathname?.startsWith('/observation/')) {
@@ -34,7 +38,7 @@ export function DeleteObservationButton({ observationId }: DeleteObservationButt
       }
     } catch (error) {
       console.error("Error deleting observation:", error);
-      alert("Failed to delete observation. Please try again.");
+      showToast("Failed to delete observation. Please try again.", "error");
     } finally {
       setIsDeleting(false);
       setShowConfirm(false);

@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { users, favorites, observations } from "@/db/schema";
 import { eq, count, desc } from "drizzle-orm";
@@ -7,6 +6,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSpeciesUrl } from "@/lib/species-url";
 import { getObservationUrl } from "@/lib/observation-url";
+import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Dashboard | Native Nature',
+  description: 'Your Native Nature dashboard with favorites, observations, and nature exploration.',
+};
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -184,7 +190,7 @@ export default async function DashboardPage() {
                 {userFavorites.map((favorite) => (
                   <Link
                     key={favorite.id}
-                    href={`/species/${favorite.species.taxonId}-${favorite.species.preferredCommonName?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || favorite.species.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+                    href={getSpeciesUrl(favorite.species.slug, favorite.species.name, favorite.species.preferredCommonName)}
                     className="group"
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
@@ -246,7 +252,11 @@ export default async function DashboardPage() {
                 {userObservations.map((observation) => (
                   <Link
                     key={observation.id}
-                    href={`/observation/${observation.id}`}
+                    href={getObservationUrl(
+                      observation.id,
+                      observation.species.name,
+                      observation.species.preferredCommonName
+                    )}
                     className="group"
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">

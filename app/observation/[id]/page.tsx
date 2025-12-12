@@ -9,6 +9,37 @@ import { DeleteObservationButton } from "@/app/account/observations/DeleteObserv
 import ObservationMap from "./ObservationMap";
 import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
 import { getSpeciesUrl } from "@/lib/species-url";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  
+  const observation = await db.query.observations.findFirst({
+    where: eq(observations.id, parseInt(id)),
+    with: {
+      species: true,
+      user: true,
+    },
+  });
+
+  if (!observation) {
+    return {
+      title: "Observation Not Found | Native Nature",
+    };
+  }
+
+  const speciesName = observation.species.preferredCommonName || observation.species.name;
+  const userName = observation.user.publicName || observation.user.name || 'Anonymous';
+  
+  return {
+    title: `${speciesName} Observation | Native Nature`,
+    description: `${speciesName} observed by ${userName} on ${new Date(observation.observedAt).toLocaleDateString()}`,
+  };
+}
 
 export default async function ObservationDetailPage({
   params,
@@ -17,10 +48,6 @@ export default async function ObservationDetailPage({
 }) {
   const { id } = await params;
   const session = await auth();
-
-  if (!session?.user) {
-    redirect("/auth/signin");
-  }
 
   const observation = await db.query.observations.findFirst({
     where: eq(observations.id, parseInt(id)),
@@ -36,7 +63,7 @@ export default async function ObservationDetailPage({
   }
 
   // Check if user owns this observation
-  const isOwner = observation.userId === session.user.id;
+  const isOwner = session?.user && observation.userId === session.user.id;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -74,13 +101,18 @@ export default async function ObservationDetailPage({
                 </div>
                 <div className="mt-4">
                   <Link
-                    href={getSpeciesUrl(observation.species.taxonId, observation.species.name, observation.species.preferredCommonName)}
+                    href={getSpeciesUrl(observation.species.slug, observation.species.name, observation.species.preferredCommonName)}
                     className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
                   >
                     <span className="mr-2">🔍</span>
                     View Species Details
                   </Link>
                 </div>
+                {observation.description && (
+                  <div className="mt-6 text-gray-300">
+                    <p className="whitespace-pre-wrap">{observation.description}</p>
+                  </div>
+                )}
               </div>
               {isOwner && (
                 <div className="flex-shrink-0 flex gap-2">

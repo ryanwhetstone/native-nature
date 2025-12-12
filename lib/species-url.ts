@@ -1,17 +1,31 @@
 /**
  * Generate a SEO-friendly URL for a species detail page
- * Format: /species/{taxonId}-{species-name-slug}
+ * Format: /species/{common-name-slug}-{scientific-name-slug}
  */
 export function getSpeciesUrl(
-  taxonId: number | string,
-  name: string,
+  slugOrFallback: string | number,
+  name?: string,
   preferredCommonName?: string | null
 ): string {
-  const displayName = preferredCommonName || name;
-  const slug = displayName
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+  // If slug is already provided (from database slug column), use it directly
+  if (typeof slugOrFallback === 'string' && slugOrFallback.length > 0) {
+    return `/species/${slugOrFallback}`;
+  }
   
-  return `/species/${taxonId}-${slug}`;
+  // Fallback: generate slug from common name and scientific name
+  if (!name) {
+    // If no name provided, use numeric ID as last resort
+    return `/species/${slugOrFallback}`;
+  }
+  
+  const commonNameSlug = preferredCommonName
+    ? preferredCommonName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    : '';
+  const scientificNameSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  
+  if (commonNameSlug) {
+    return `/species/${commonNameSlug}-${scientificNameSlug}`;
+  }
+  
+  return `/species/${scientificNameSlug}`;
 }

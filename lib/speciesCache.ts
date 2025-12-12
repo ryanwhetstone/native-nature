@@ -202,23 +202,23 @@ export async function getSpeciesListWithCache(
           const cachedSpecies = cacheDisabled ? null : await getSpeciesByTaxonId(result.taxon.id);
           
           if (cachedSpecies && !cacheDisabled) {
-            // If we have cached species and caching is enabled, use cached data
+            // If we have cached species and caching is enabled, use cached data including slug
             const establishmentData = cachedSpecies.establishmentMeans as any;
-            if (establishmentData && establishmentData[placeId]) {
-              return {
-                ...result,
-                taxon: {
-                  ...result.taxon,
-                  establishment_means: {
-                    establishment_means: establishmentData[placeId],
-                    place: { id: placeId, name: '' }
-                  }
+            const establishmentMeans = establishmentData && establishmentData[placeId]
+              ? {
+                  establishment_means: establishmentData[placeId],
+                  place: { id: placeId, name: '' }
                 }
-              };
-            }
-            // If cached but no establishment means for this place, just return as-is
-            // Don't fetch from API when caching is enabled
-            return result;
+              : undefined;
+            
+            return {
+              ...result,
+              taxon: {
+                ...result.taxon,
+                slug: cachedSpecies.slug, // Include slug from database
+                establishment_means: establishmentMeans
+              }
+            };
           }
           
           // Only fetch from API if caching is disabled OR species not in database

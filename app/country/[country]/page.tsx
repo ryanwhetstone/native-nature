@@ -4,6 +4,27 @@ import CountryDetailMapWrapper from "../CountryDetailMapWrapper";
 import InteractiveSVGMap from "@/components/InteractiveSVGMap";
 import { getSVGConfigForCountry } from "@/lib/svg-mappings";
 import { getCountryBySlug, getAllCountries } from "@/lib/countries";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ country: string }>;
+}): Promise<Metadata> {
+  const { country } = await params;
+  const countryData = getCountryBySlug(country);
+
+  if (!countryData) {
+    return {
+      title: "Country Not Found | Native Nature",
+    };
+  }
+
+  return {
+    title: `${countryData.name} - Wildlife & Nature | Native Nature`,
+    description: `Explore wildlife, flora, and nature observations from ${countryData.name}. Browse species by region and discover the biodiversity of ${countryData.name}.`,
+  };
+}
 
 interface CountryPageProps {
   params: Promise<{

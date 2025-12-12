@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import EditLocationMap from "./EditLocationMap";
+import { useToast } from "@/app/components/Toast";
 
 interface Picture {
   id: number;
@@ -29,6 +30,7 @@ interface EditObservationFormProps {
 
 export default function EditObservationForm({ observation }: EditObservationFormProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
@@ -71,7 +73,7 @@ export default function EditObservationForm({ observation }: EditObservationForm
     e.preventDefault();
 
     if (!selectedLocation) {
-      alert("Please select a location on the map");
+      showToast("Please select a location on the map", "error");
       return;
     }
 
@@ -122,9 +124,10 @@ export default function EditObservationForm({ observation }: EditObservationForm
         throw new Error("Failed to update observation");
       }
 
+      showToast("Observation updated successfully!");
       router.push(`/observation/${observation.id}`);
     } catch (error) {
-      alert("Failed to update observation. Please try again.");
+      showToast("Failed to update observation. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }

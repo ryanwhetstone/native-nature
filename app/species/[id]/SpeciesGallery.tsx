@@ -14,19 +14,19 @@ interface TaxonPhoto {
 
 interface Species {
   id: number;
-  dbId?: number; // Database ID (different from taxon ID)
+  taxonId: number; // iNaturalist taxon ID
   name: string;
   rank: string;
-  preferred_common_name?: string;
-  wikipedia_url?: string;
-  observations_count: number;
-  default_photo?: TaxonPhoto;
-  taxon_photos?: Array<{ photo: TaxonPhoto }>;
-  wikipedia_summary?: string;
-  conservation_status?: {
-    status: string;
-    status_name: string;
-  };
+  preferredCommonName?: string;
+  wikipediaUrl?: string;
+  observationsCount?: number;
+  defaultPhotoUrl?: string;
+  defaultPhotoAttribution?: string;
+  defaultPhotoLicense?: string;
+  taxonPhotos?: any; // JSONB field from database
+  wikipediaSummary?: string;
+  conservationStatus?: string;
+  conservationStatusName?: string;
   kingdom?: string;
   phylum?: string;
   class?: string;
@@ -47,20 +47,20 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
   // Collect all images - convert to format expected by MasonryPhotoGallery
   const allImages: Array<{ src: string; alt: string; attribution: string }> = [];
   
-  if (species.default_photo) {
+  if (species.defaultPhotoUrl) {
     allImages.push({
-      src: species.default_photo.medium_url,
-      alt: species.preferred_common_name || species.name,
-      attribution: `${species.default_photo.attribution} (${species.default_photo.license_code})`,
+      src: species.defaultPhotoUrl,
+      alt: species.preferredCommonName || species.name,
+      attribution: `${species.defaultPhotoAttribution || 'Unknown'} (${species.defaultPhotoLicense || 'Unknown'})`,
     });
   }
 
-  if (species.taxon_photos && species.taxon_photos.length > 0) {
+  if (species.taxonPhotos && Array.isArray(species.taxonPhotos)) {
     // Skip first photo (it's the default) and take up to 11 more (total 12)
-    species.taxon_photos.slice(1, Math.min(12, species.taxon_photos.length)).forEach((item, index) => {
+    species.taxonPhotos.slice(1, Math.min(12, species.taxonPhotos.length)).forEach((item: any, index: number) => {
       allImages.push({
         src: item.photo.medium_url,
-        alt: `${species.preferred_common_name || species.name} photo ${allImages.length + 1}`,
+        alt: `${species.preferredCommonName || species.name} photo ${allImages.length + 1}`,
         attribution: item.photo.attribution,
       });
     });
@@ -81,28 +81,28 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
             <BackButton />
             <div className="flex items-center gap-3">
               <AddObservationButton 
-                speciesId={species.dbId || species.id}
-                speciesName={species.preferred_common_name || species.name}
+                speciesId={species.id}
+                speciesName={species.preferredCommonName || species.name}
                 speciesSlug={slug}
               />
-              <FavoriteButton speciesId={species.id} showLabel={true} />
+              <FavoriteButton speciesId={species.taxonId} showLabel={true} />
             </div>
           </div>
 
           {/* Species Info */}
           <div className="max-w-7xl mx-auto mb-8">
             <h1 className="text-4xl font-bold text-white mb-2">
-              {species.preferred_common_name || species.name}
+              {species.preferredCommonName || species.name}
             </h1>
             <p className="text-2xl text-gray-400 italic mb-4">{species.name}</p>
             
             <div className="flex gap-4 mb-4 text-sm">
               <span className="bg-green-600 text-white px-3 py-1 rounded-full">
-                {species.observations_count.toLocaleString()} observations
+                {(species.observationsCount || 0).toLocaleString()} observations
               </span>
-              {species.conservation_status && (
+              {species.conservationStatusName && (
                 <span className="bg-yellow-600 text-white px-3 py-1 rounded-full">
-                  {species.conservation_status.status_name}
+                  {species.conservationStatusName}
                 </span>
               )}
             </div>
@@ -157,12 +157,12 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
           </div>
 
           {/* About Section */}
-          {species.wikipedia_summary && (
+          {species.wikipediaSummary && (
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-3">About</h2>
               <div 
                 className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: species.wikipedia_summary }}
+                dangerouslySetInnerHTML={{ __html: species.wikipediaSummary }}
               />
             </div>
           )}

@@ -1,8 +1,32 @@
-import { getSpeciesWithCache } from "@/lib/speciesCache";
+import { getSpeciesBySlug } from "@/db/queries";
 import { SpeciesGallery } from "./SpeciesGallery";
 import { FavoriteButton } from "@/app/components/FavoriteButton";
 import { AddObservationButton } from "@/app/components/AddObservationButton";
 import { BackButton } from "./BackButton";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id: slug } = await params;
+  const species = await getSpeciesBySlug(slug);
+
+  if (!species) {
+    return {
+      title: "Species Not Found | Native Nature",
+    };
+  }
+
+  const title = species.preferredCommonName || species.name;
+  return {
+    title: `${title} | Native Nature`,
+    description: species.wikipediaSummary 
+      ? species.wikipediaSummary.substring(0, 160) 
+      : `Learn about ${title}, including photos, taxonomy, and observations.`,
+  };
+}
 
 export default async function SpeciesPage({
   params,
@@ -11,9 +35,7 @@ export default async function SpeciesPage({
 }) {
   const { id: slug } = await params;
   
-  // Extract the numeric ID from the slug (format: "42223-white-tailed-deer")
-  const id = slug.split('-')[0];
-  const species = await getSpeciesWithCache(id);
+  const species = await getSpeciesBySlug(slug);
 
   if (!species) {
     return (

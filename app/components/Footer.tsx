@@ -33,12 +33,13 @@ export async function Footer() {
         taxonId: species.taxonId,
         name: species.name,
         preferredCommonName: species.preferredCommonName,
+        slug: species.slug,
       },
       favCount: count(favorites.id),
     })
     .from(favorites)
     .innerJoin(species, sql`${favorites.speciesId} = ${species.id}`)
-    .groupBy(species.id, species.taxonId, species.name, species.preferredCommonName)
+    .groupBy(species.id, species.taxonId, species.name, species.preferredCommonName, species.slug)
     .orderBy(desc(count(favorites.id)))
     .limit(8);
 
@@ -51,6 +52,7 @@ export async function Footer() {
         taxonId: species.taxonId,
         name: species.name,
         preferredCommonName: species.preferredCommonName,
+        slug: species.slug,
       },
       observedAt: observations.observedAt,
     })
@@ -103,7 +105,7 @@ export async function Footer() {
               {topFavorites.map((item) => (
                 <li key={item.species.id}>
                   <Link
-                    href={getSpeciesUrl(item.species.taxonId, item.species.name, item.species.preferredCommonName)}
+                    href={getSpeciesUrl(item.species.slug, item.species.name, item.species.preferredCommonName)}
                     className="text-sm hover:text-green-400 transition-colors line-clamp-1"
                   >
                     {item.species.preferredCommonName || item.species.name} ({item.favCount})

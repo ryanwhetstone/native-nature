@@ -7,6 +7,31 @@ import Image from "next/image";
 import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
 import { getSpeciesUrl } from "@/lib/species-url";
 import { getObservationUrl } from "@/lib/observation-url";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, id),
+  });
+
+  if (!user) {
+    return {
+      title: "User Not Found | Native Nature",
+    };
+  }
+
+  const displayName = user.publicName || user.name || user.email;
+
+  return {
+    title: `${displayName} | Native Nature`,
+    description: `View ${displayName}'s nature observations, favorite species, and contributions to the Native Nature community.`,
+  };
+}
 
 export default async function UserProfilePage({
   params,
@@ -194,7 +219,7 @@ export default async function UserProfilePage({
               {userFavorites.map((favorite) => (
                 <Link
                   key={favorite.id}
-                  href={getSpeciesUrl(favorite.species.taxonId, favorite.species.name, favorite.species.preferredCommonName)}
+                  href={getSpeciesUrl(favorite.species.slug, favorite.species.name, favorite.species.preferredCommonName)}
                   className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
                 >
                   <div className="relative aspect-square bg-gray-100">

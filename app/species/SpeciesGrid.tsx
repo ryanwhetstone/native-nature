@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { FavoriteButton } from '@/app/components/FavoriteButton';
+import { getSpeciesUrl } from '@/lib/species-url';
 
 type FilterType = 'all' | 'native' | 'invasive';
 
@@ -12,6 +13,7 @@ interface Species {
     id: number;
     name: string;
     preferred_common_name: string;
+    slug?: string; // Added slug field from database
     default_photo?: {
       medium_url: string;
     };
@@ -151,7 +153,11 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
           return (
             <Link 
               key={speciesItem.taxon.id} 
-              href={`/species/${speciesItem.taxon.id}-${speciesItem.taxon.preferred_common_name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || speciesItem.taxon.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`}
+              href={getSpeciesUrl(
+                speciesItem.taxon.slug || speciesItem.taxon.id,
+                speciesItem.taxon.name,
+                speciesItem.taxon.preferred_common_name
+              )}
               className="border border-gray-300 bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow block"
             >
               <div className="relative">

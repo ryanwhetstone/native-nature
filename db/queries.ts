@@ -59,6 +59,13 @@ export async function saveSpeciesFromAPI(taxon: INaturalistTaxon, placeId?: numb
   try {
     const taxonomy = extractTaxonomy(taxon.ancestors);
     
+    // Generate slug from common name and scientific name
+    const commonNameSlug = taxon.preferred_common_name
+      ? taxon.preferred_common_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      : '';
+    const scientificNameSlug = taxon.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const slug = commonNameSlug ? `${commonNameSlug}-${scientificNameSlug}` : scientificNameSlug;
+    
     // Check if species already exists to merge establishment means
     const existing = await db.query.species.findFirst({
       where: eq(species.taxonId, taxon.id),
@@ -78,6 +85,7 @@ export async function saveSpeciesFromAPI(taxon: INaturalistTaxon, placeId?: numb
       taxonId: taxon.id,
       name: taxon.name,
       preferredCommonName: taxon.preferred_common_name,
+      slug: slug,
       rank: taxon.rank,
       kingdom: taxonomy.kingdom,
       phylum: taxonomy.phylum,
@@ -127,5 +135,11 @@ export async function getSpeciesById(id: number) {
 export async function getSpeciesByTaxonId(taxonId: number) {
   return await db.query.species.findFirst({
     where: eq(species.taxonId, taxonId),
+  });
+}
+
+export async function getSpeciesBySlug(slug: string) {
+  return await db.query.species.findFirst({
+    where: eq(species.slug, slug),
   });
 }

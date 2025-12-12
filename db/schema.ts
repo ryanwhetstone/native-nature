@@ -61,6 +61,7 @@ export const species = pgTable('species', {
   // Basic info
   name: varchar('name', { length: 255 }).notNull(), // Scientific name
   preferredCommonName: varchar('preferred_common_name', { length: 255 }),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
   rank: varchar('rank', { length: 50 }).notNull(), // species, genus, family, etc.
   // Classification
   kingdom: varchar('kingdom', { length: 100 }),
@@ -142,6 +143,8 @@ export const observations = pgTable('observations', {
   city: varchar('city', { length: 255 }),
   region: varchar('region', { length: 255 }),
   zipcode: varchar('zipcode', { length: 20 }),
+  // Description
+  description: text('description'),
   // Timestamps
   observedAt: timestamp('observed_at').notNull(), // When the observation was made
   createdAt: timestamp('created_at').defaultNow().notNull(),
