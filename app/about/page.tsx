@@ -84,7 +84,7 @@ export default function AboutPage() {
                   </h3>
                   <p className="text-gray-300">
                     Record precise locations of your wildlife observations with interactive maps 
-                    powered by Mapbox. Visualize where you've encountered different species and 
+                    powered by Mapbox. Visualize where you&apos;ve encountered different species and 
                     explore biodiversity by region.
                   </p>
                 </div>
@@ -182,8 +182,8 @@ export default function AboutPage() {
               Why Conservation Matters
             </h2>
             <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              Every observation you record contributes to a greater understanding of our planet's 
-              biodiversity. By documenting wildlife, you're participating in citizen science and 
+              Every observation you record contributes to a greater understanding of our planet&apos;s 
+              biodiversity. By documenting wildlife, you&apos;re participating in citizen science and 
               helping researchers track species populations, migration patterns, and habitat changes.
             </p>
           </div>

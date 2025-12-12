@@ -17,22 +17,22 @@ interface Species {
   taxonId: number; // iNaturalist taxon ID
   name: string;
   rank: string;
-  preferredCommonName?: string;
-  wikipediaUrl?: string;
-  observationsCount?: number;
-  defaultPhotoUrl?: string;
-  defaultPhotoAttribution?: string;
-  defaultPhotoLicense?: string;
+  preferredCommonName?: string | null;
+  wikipediaUrl?: string | null;
+  observationsCount?: number | null;
+  defaultPhotoUrl?: string | null;
+  defaultPhotoAttribution?: string | null;
+  defaultPhotoLicense?: string | null;
   taxonPhotos?: any; // JSONB field from database
-  wikipediaSummary?: string;
-  conservationStatus?: string;
-  conservationStatusName?: string;
-  kingdom?: string;
-  phylum?: string;
-  class?: string;
-  order?: string;
-  family?: string;
-  genus?: string;
+  wikipediaSummary?: string | null;
+  conservationStatus?: string | null;
+  conservationStatusName?: string | null;
+  kingdom?: string | null;
+  phylum?: string | null;
+  class?: string | null;
+  order?: string | null;
+  family?: string | null;
+  genus?: string | null;
 }
 
 interface SpeciesGalleryProps {

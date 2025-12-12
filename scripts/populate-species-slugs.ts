@@ -20,13 +20,17 @@ async function populateSlugs() {
     }
     
     // Update each species with generated slug
-    for (const row of allSpecies.rows) {
+    type SpeciesRow = {
+      id: number;
+      name: string;
+      preferred_common_name: string | null;
+    };
+    for (const row of allSpecies.rows as SpeciesRow[]) {
       const commonNameSlug = row.preferred_common_name
         ? row.preferred_common_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
         : '';
       const scientificNameSlug = row.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       const slug = commonNameSlug ? `${commonNameSlug}-${scientificNameSlug}` : scientificNameSlug;
-      
       await db.execute(
         sql`UPDATE species SET slug = ${slug} WHERE id = ${row.id}`
       );
