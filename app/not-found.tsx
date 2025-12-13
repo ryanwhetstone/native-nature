@@ -19,7 +19,7 @@ export default function NotFound() {
         </h2>
         
         <p className="text-lg text-gray-600 mb-8">
-          We couldn't find the page you're looking for.
+          We couldn&apos;t find the page you&apos;re looking for.
         </p>
 
         {/* Reasons section */}
