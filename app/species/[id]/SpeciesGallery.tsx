@@ -91,7 +91,7 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
 
           {/* Species Info */}
           <div className="max-w-7xl mx-auto mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="text-4xl font-semibold text-white mb-2">
               {species.preferredCommonName || species.name}
             </h1>
             <p className="text-2xl text-gray-400 italic mb-4">{species.name}</p>

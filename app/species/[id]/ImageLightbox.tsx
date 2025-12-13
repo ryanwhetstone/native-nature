@@ -57,7 +57,7 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
     >
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300 z-10"
+        className="absolute top-4 right-4 text-white text-4xl font-semibold hover:text-gray-300 z-10"
         aria-label="Close lightbox"
       >
         ×
@@ -69,7 +69,7 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
           e.stopPropagation();
           handlePrevious();
         }}
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-5xl font-bold hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-14 h-14 flex items-center justify-center"
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-5xl font-semibold hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-14 h-14 flex items-center justify-center"
         aria-label="Previous image"
       >
         ‹
@@ -81,7 +81,7 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
           e.stopPropagation();
           handleNext();
         }}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-5xl font-bold hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-14 h-14 flex items-center justify-center"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-5xl font-semibold hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-14 h-14 flex items-center justify-center"
         aria-label="Next image"
       >
         ›

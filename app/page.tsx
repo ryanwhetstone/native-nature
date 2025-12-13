@@ -12,7 +12,7 @@ export default function Home() {
       {/* Hero Section */}
       <div className="bg-gradient-to-b from-green-600 to-green-700 text-white py-20 px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold mb-4">Native Nature</h1>
+          <h1 className="text-5xl font-semibold mb-4">Native Nature</h1>
           <p className="text-xl text-green-100">
             Discover and explore native species from around the world
           </p>
@@ -26,7 +26,7 @@ export default function Home() {
 
       {/* Countries Section */}
       <div className="max-w-7xl mx-auto px-8 pb-16">
-        <h2 className="text-3xl font-bold text-gray-900 mb-8">Available Countries</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-8">Available Countries</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {countries.map((country) => (
             <Link
@@ -57,7 +57,7 @@ export default function Home() {
       {/* Features Section */}
       <div className="bg-white py-16 px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Features</h2>
+          <h2 className="text-3xl font-semibold text-gray-900 mb-12 text-center">Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">

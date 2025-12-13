@@ -64,7 +64,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
           >
             ← Back to World
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{countryData.name}</h1>
+          <h1 className="text-4xl font-semibold text-gray-900 mb-2">{countryData.name}</h1>
           <p className="text-lg text-gray-600">
             Explore the diverse wildlife and ecosystems of {countryData.name}
           </p>
@@ -79,7 +79,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
         {/* States/Provinces Grid */}
         {states.length > 0 && (
           <div className="bg-white rounded-lg shadow p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">States & Provinces</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">States & Provinces</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {states.map((state) => {
                 return (

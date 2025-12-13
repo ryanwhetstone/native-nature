@@ -43,7 +43,7 @@ export default async function ProfilePage() {
                   className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
                 />
               ) : (
-                <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-green-600 flex items-center justify-center text-white text-4xl font-bold">
+                <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-green-600 flex items-center justify-center text-white text-4xl font-semibold">
                   {userData.name?.charAt(0).toUpperCase() || userData.email?.charAt(0).toUpperCase() || "U"}
                 </div>
               )}
@@ -59,7 +59,7 @@ export default async function ProfilePage() {
             {/* User Info */}
             <div className="space-y-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">{userData.name || "No name set"}</h1>
+                <h1 className="text-3xl font-semibold text-gray-900">{userData.name || "No name set"}</h1>
                 <p className="text-gray-600">{userData.email}</p>
               </div>
 
@@ -94,7 +94,7 @@ export default async function ProfilePage() {
 
         {/* Activity Section */}
         <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Activity</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Activity</h2>
           <div className="text-center py-12 text-gray-500">
             <p>No activity yet. Start exploring species to see your activity here!</p>
           </div>

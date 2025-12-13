@@ -5,6 +5,7 @@ import { AuthProvider } from "./providers";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { ToastProvider } from "./components/Toast";
+import { auth } from "@/auth";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -17,17 +18,19 @@ export const metadata: Metadata = {
   description: "Native Nature website",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  
   return (
     <html lang="en" className={poppins.variable}>
       <body className="flex flex-col min-h-screen font-sans">
         <AuthProvider>
           <ToastProvider>
-            <Header />
+            <Header session={session} />
             <main className="flex-1">
               {children}
             </main>

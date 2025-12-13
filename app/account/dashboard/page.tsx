@@ -72,7 +72,7 @@ export default async function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-semibold text-gray-900">
             Welcome back, {userData.name || "there"}!
           </h1>
           <p className="mt-2 text-gray-600">Here&apos;s what&apos;s happening with your nature exploration</p>
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Species Viewed</p>
-                <p className="text-3xl font-bold text-gray-900">0</p>
+                <p className="text-3xl font-semibold text-gray-900">0</p>
               </div>
               <div className="text-4xl">🔍</div>
             </div>
@@ -94,7 +94,7 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Favorites</p>
-                <p className="text-3xl font-bold text-gray-900">{favoritesCount}</p>
+                <p className="text-3xl font-semibold text-gray-900">{favoritesCount}</p>
               </div>
               <div className="text-4xl">⭐</div>
             </div>
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Observations</p>
-                <p className="text-3xl font-bold text-gray-900">{observationsCount}</p>
+                <p className="text-3xl font-semibold text-gray-900">{observationsCount}</p>
               </div>
               <div className="text-4xl">📍</div>
             </div>
@@ -114,7 +114,7 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">States Explored</p>
-                <p className="text-3xl font-bold text-gray-900">0</p>
+                <p className="text-3xl font-semibold text-gray-900">0</p>
               </div>
               <div className="text-4xl">🗺️</div>
             </div>
@@ -124,7 +124,7 @@ export default async function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Collections</p>
-                <p className="text-3xl font-bold text-gray-900">0</p>
+                <p className="text-3xl font-semibold text-gray-900">0</p>
               </div>
               <div className="text-4xl">📚</div>
             </div>
@@ -134,7 +134,7 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
             <Link
@@ -172,11 +172,11 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent Activity */}
+        {/* Favorite Species */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Favorite Species</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Favorite Species</h2>
               {favoritesCount > 0 && (
                 <Link href="/account/favorites" className="text-sm text-green-600 hover:text-green-700 font-medium">
                   View All
@@ -238,7 +238,7 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Recent Observations</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Recent Observations</h2>
               {observationsCount > 0 && (
                 <Link href="/account/observations" className="text-sm text-green-600 hover:text-green-700 font-medium">
                   View All
@@ -307,9 +307,9 @@ export default async function DashboardPage() {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow">
+        <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
           </div>
           <div className="p-6">
             <div className="text-center py-12 text-gray-500">
@@ -327,9 +327,9 @@ export default async function DashboardPage() {
         </div>
 
         {/* Featured Categories */}
-        <div className="mt-8 bg-white rounded-lg shadow">
+        <div className="bg-white rounded-lg shadow">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Popular Categories</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Popular Categories</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
             {[

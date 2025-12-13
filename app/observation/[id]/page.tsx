@@ -74,7 +74,7 @@ export default async function ObservationDetailPage({
           <div className="max-w-7xl mx-auto mb-8">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-3xl font-semibold text-white">
                   {observation.species.preferredCommonName || observation.species.name}
                 </h1>
                 {observation.species.preferredCommonName && (

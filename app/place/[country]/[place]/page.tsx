@@ -67,7 +67,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
             ← Back to {countryData.name}
           </Link>
           
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">{placeName}</h1>
+          <h1 className="text-4xl font-semibold text-gray-900 mb-2">{placeName}</h1>
           <p className="text-lg text-gray-600">
             Explore the diverse wildlife and natural species found in {placeName}, {countryData.name}
           </p>
@@ -82,7 +82,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
                 className={`p-8 border-2 border-gray-300 rounded-lg ${info.colors.hover} transition-all bg-white text-center group`}
               >
                 <div className="text-6xl mb-4">{info.emoji}</div>
-                <h2 className={`text-2xl font-bold text-gray-800 ${info.colors.text}`}>
+                <h2 className={`text-2xl font-semibold text-gray-800 ${info.colors.text}`}>
                   {info.displayName}
                 </h2>
                 <p className="text-gray-600 mt-2">Explore {info.pluralName}</p>

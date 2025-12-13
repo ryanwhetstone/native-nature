@@ -34,7 +34,7 @@ export default async function ObservationsPage() {
           >
             ← Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">My Observations</h1>
+          <h1 className="text-3xl font-semibold text-gray-900">My Observations</h1>
           <p className="mt-2 text-gray-600">
             {userObservations.length} {userObservations.length === 1 ? 'observation' : 'observations'} recorded
           </p>
@@ -109,7 +109,7 @@ export default async function ObservationsPage() {
         ) : (
           <div className="bg-white rounded-lg shadow p-12 text-center">
             <div className="text-6xl mb-4">📍</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">No observations yet</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No observations yet</h2>
             <p className="text-gray-600 mb-6">
               Start recording species observations to build your nature journal!
             </p>

@@ -67,7 +67,7 @@ export async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1: About */}
           <div>
-            <h3 className="text-white text-lg font-bold mb-4">Native Nature</h3>
+            <h3 className="text-white text-lg font-semibold mb-4">Native Nature</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
               Discover and document the incredible biodiversity around you. Track your wildlife observations,
               explore species from around the world, and connect with nature in your local area.

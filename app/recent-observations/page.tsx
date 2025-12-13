@@ -47,7 +47,7 @@ export default async function RecentObservationsPage() {
         <div className="w-full px-4">
           {/* Header */}
           <div className="max-w-7xl mx-auto mb-8">
-            <h1 className="text-3xl font-bold text-white">Recent Observations</h1>
+            <h1 className="text-3xl font-semibold text-white">Recent Observations</h1>
             <p className="mt-2 text-gray-300">
               Latest wildlife sightings from the community
             </p>
@@ -56,7 +56,7 @@ export default async function RecentObservationsPage() {
           {/* Photo Gallery */}
           {allPhotos.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-white mb-4">Recent Photos</h2>
+              <h2 className="text-2xl font-semibold text-white mb-4">Recent Photos</h2>
               <MasonryPhotoGallery photos={allPhotos} />
             </div>
           )}
@@ -68,7 +68,7 @@ export default async function RecentObservationsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Observations List Header */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">All Observations</h2>
+            <h2 className="text-2xl font-semibold text-gray-900">All Observations</h2>
           </div>
 
           {/* Observations Grid */}
@@ -140,7 +140,7 @@ export default async function RecentObservationsPage() {
         ) : (
           <div className="bg-white rounded-lg shadow p-12 text-center">
             <div className="text-6xl mb-4">📍</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">No observations yet</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No observations yet</h2>
             <p className="text-gray-600">
               Be the first to record a wildlife observation!
             </p>

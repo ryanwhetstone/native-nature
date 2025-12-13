@@ -105,7 +105,7 @@ export default async function UserProfilePage({
                 </div>
               )}
               <div className="">
-                <h1 className="text-3xl font-bold text-white mb-2">
+                <h1 className="text-3xl font-semibold text-white mb-2">
                   {displayName}
                 </h1>
                 {user.bio && (
@@ -137,7 +137,7 @@ export default async function UserProfilePage({
 
           {/* Photo Gallery */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-4">Observation Photos</h2>
+            <h2 className="text-2xl font-semibold text-white mb-4">Observation Photos</h2>
             {observationPhotos.length > 0 ? (
               <MasonryPhotoGallery photos={observationPhotos} />
             ) : (
@@ -156,7 +156,7 @@ export default async function UserProfilePage({
 
         {/* Observations List */}
         <div className="mb-8 max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Recent Observations</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Recent Observations</h2>
           {userObservations.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userObservations.slice(0, 6).map((observation) => (
@@ -213,7 +213,7 @@ export default async function UserProfilePage({
 
         {/* Favorites */}
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Favorite Species</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Favorite Species</h2>
           {userFavorites.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {userFavorites.map((favorite) => (

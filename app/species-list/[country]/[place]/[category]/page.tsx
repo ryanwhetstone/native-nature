@@ -106,7 +106,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             ← Back to {placeName}
           </Link>
           
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-semibold text-gray-900 mb-2">
             {categoryInfo.displayName} in {placeName}
           </h1>
           <p className="text-lg text-gray-600">
@@ -118,7 +118,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <div className="bg-white rounded-lg shadow p-8">
             <div className="text-center">
               <div className="text-8xl mb-6">{categoryInfo.emoji}</div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-semibold text-gray-900 mb-4">
                 {categoryInfo.pluralName}
               </h2>
               <p className="text-gray-600 text-lg">
