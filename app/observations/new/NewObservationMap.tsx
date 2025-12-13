@@ -116,15 +116,56 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
 
   if (webglError) {
     return (
-      <div className="w-full h-96 rounded-lg border border-gray-300 bg-gray-50 flex flex-col items-center justify-center p-8 text-center">
-        <div className="text-5xl mb-4">🗺️</div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Map Not Available</h3>
-        <p className="text-gray-600 mb-4">
-          Your browser doesn&apos;t support WebGL, which is required for the interactive map.
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          To mark the location on an interactive map, use a browser that supports WebGL.
         </p>
-        <p className="text-sm text-gray-500">
-          Please enter coordinates manually or try a different browser.
-        </p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="manual-lat" className="block text-sm font-medium text-gray-700 mb-1">
+              Latitude
+            </label>
+            <input
+              type="number"
+              id="manual-lat"
+              step="any"
+              value={selectedLocation?.lat ?? ''}
+              onChange={(e) => {
+                const lat = parseFloat(e.target.value);
+                if (!isNaN(lat)) {
+                  onLocationSelect({ 
+                    lat, 
+                    lng: selectedLocation?.lng ?? 0 
+                  });
+                }
+              }}
+              placeholder="e.g., 40.7128"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="manual-lng" className="block text-sm font-medium text-gray-700 mb-1">
+              Longitude
+            </label>
+            <input
+              type="number"
+              id="manual-lng"
+              step="any"
+              value={selectedLocation?.lng ?? ''}
+              onChange={(e) => {
+                const lng = parseFloat(e.target.value);
+                if (!isNaN(lng)) {
+                  onLocationSelect({ 
+                    lat: selectedLocation?.lat ?? 0, 
+                    lng 
+                  });
+                }
+              }}
+              placeholder="e.g., -74.0060"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+        </div>
       </div>
     );
   }
