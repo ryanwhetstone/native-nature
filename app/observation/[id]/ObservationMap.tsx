@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -14,17 +14,30 @@ interface ObservationMapProps {
 export default function ObservationMap({ longitude, latitude }: ObservationMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const [webglError, setWebglError] = useState(false);
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
-    // Initialize map
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [longitude, latitude],
-      zoom: 13,
-    });
+    // Check for WebGL support
+    if (!mapboxgl.supported()) {
+      setWebglError(true);
+      return;
+    }
+
+    try {
+      // Initialize map
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [longitude, latitude],
+        zoom: 13,
+      });
+    } catch (error) {
+      console.error('Failed to initialize map:', error);
+      setWebglError(true);
+      return;
+    }
 
     // Add navigation controls (zoom in/out)
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -42,6 +55,11 @@ export default function ObservationMap({ longitude, latitude }: ObservationMapPr
       }
     };
   }, [longitude, latitude]);
+
+  // Don't render anything if WebGL is not supported
+  if (webglError) {
+    return null;
+  }
 
   return (
     <div 
