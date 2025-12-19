@@ -389,7 +389,7 @@ export default async function DashboardPage() {
                         {project.title}
                       </h3>
                       <p className="text-sm text-gray-600 mb-3 line-clamp-1">
-                        📍 {project.location}
+                        📍 {[project.city, project.region, project.country].filter(Boolean).join(', ')}
                       </p>
                       {project.fundingGoal && (
                         <div className="mt-3 pt-3 border-t border-gray-100">
