@@ -70,7 +70,7 @@ export default async function UserProjectsPage({
             ← Back to Profile
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">
-            {displayName}'s Conservation Projects
+            {displayName}&apos;s Conservation Projects
           </h1>
           <p className="text-gray-600 mt-2">
             {userProjects.length} {userProjects.length === 1 ? 'project' : 'projects'} total
