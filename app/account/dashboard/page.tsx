@@ -1,11 +1,12 @@
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { users, favorites, observations } from "@/db/schema";
+import { users, favorites, observations, conservationProjects } from "@/db/schema";
 import { eq, count, desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
 import { getSpeciesUrl } from "@/lib/species-url";
 import { getObservationUrl } from "@/lib/observation-url";
+import { getProjectUrl } from "@/lib/project-url";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -46,6 +47,14 @@ export default async function DashboardPage() {
   
   const observationsCount = observationsCountResult[0]?.count || 0;
 
+  // Get total count of projects
+  const projectsCountResult = await db
+    .select({ count: count() })
+    .from(conservationProjects)
+    .where(eq(conservationProjects.userId, session.user.id));
+  
+  const projectsCount = projectsCountResult[0]?.count || 0;
+
   // Fetch user's favorite species (limited to 6 for display)
   const userFavorites = await db.query.favorites.findMany({
     where: eq(favorites.userId, session.user.id),
@@ -64,6 +73,16 @@ export default async function DashboardPage() {
       pictures: true,
     },
     orderBy: (observations, { desc }) => [desc(observations.createdAt)],
+    limit: 6,
+  });
+
+  // Fetch user's conservation projects (limited to 6 for display)
+  const userProjects = await db.query.conservationProjects.findMany({
+    where: eq(conservationProjects.userId, session.user.id),
+    with: {
+      pictures: true,
+    },
+    orderBy: (conservationProjects, { desc }) => [desc(conservationProjects.createdAt)],
     limit: 6,
   });
 
@@ -120,15 +139,15 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <Link href="/account/projects" className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Collections</p>
-                <p className="text-3xl font-semibold text-gray-900">0</p>
+                <p className="text-sm text-gray-600">Projects</p>
+                <p className="text-3xl font-semibold text-gray-900">{projectsCount}</p>
               </div>
-              <div className="text-4xl">📚</div>
+              <div className="text-4xl">🌍</div>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Quick Actions */}
@@ -156,6 +175,17 @@ export default async function DashboardPage() {
               <div>
                 <h3 className="font-semibold text-gray-900 group-hover:text-green-600">View Profile</h3>
                 <p className="text-sm text-gray-600">See your public profile</p>
+              </div>
+            </Link>
+
+            <Link
+              href="/account/projects"
+              className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
+            >
+              <div className="text-3xl">🌍</div>
+              <div>
+                <h3 className="font-semibold text-gray-900 group-hover:text-green-600">My Projects</h3>
+                <p className="text-sm text-gray-600">Conservation initiatives</p>
               </div>
             </Link>
 
@@ -300,6 +330,89 @@ export default async function DashboardPage() {
                   className="mt-6 inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors"
                 >
                   Explore Species
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Conservation Projects */}
+        <div className="bg-white rounded-lg shadow mb-8">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">Conservation Projects</h2>
+              {projectsCount > 0 && (
+                <Link href="/account/projects" className="text-sm text-green-600 hover:text-green-700 font-medium">
+                  View All
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className="p-6">
+            {userProjects.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {userProjects.map((project) => (
+                  <Link
+                    key={project.id}
+                    href={getProjectUrl(project.id, project.title)}
+                    className="group border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+                  >
+                    <div className="relative aspect-video bg-gray-100">
+                      {project.pictures && project.pictures.length > 0 ? (
+                        <Image
+                          src={project.pictures[0].imageUrl}
+                          alt={project.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-6xl">
+                          🌍
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span
+                          className={`inline-block px-2 py-1 text-xs font-medium rounded ${
+                            project.status === 'active'
+                              ? 'bg-green-100 text-green-800'
+                              : project.status === 'completed'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-green-600 mb-2 line-clamp-2">
+                        {project.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-1">
+                        📍 {project.location}
+                      </p>
+                      {project.fundingGoal && (
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <div className="flex justify-between text-xs text-gray-600 mb-1">
+                            <span>Funding Goal</span>
+                            <span>${(project.fundingGoal / 100).toLocaleString()}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                <div className="text-5xl mb-4">🌍</div>
+                <p className="text-lg font-medium">No projects yet</p>
+                <p className="mt-2">Start a conservation project to make a difference!</p>
+                <Link
+                  href="/account/projects/new"
+                  className="mt-6 inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors"
+                >
+                  Create Project
                 </Link>
               </div>
             )}

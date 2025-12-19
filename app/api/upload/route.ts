@@ -43,10 +43,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get folder type from query parameter, default to 'observations'
+    const url = new URL(request.url);
+    const folder = url.searchParams.get('folder') || 'observations';
+    
+    // Validate folder type
+    const allowedFolders = ['observations', 'projects'];
+    const folderType = allowedFolders.includes(folder) ? folder : 'observations';
+    
     // Generate unique filename
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(7);
-    const key = `observations/${session.user.id}/${timestamp}-${randomString}.jpg`;
+    const key = `${folderType}/${session.user.id}/${timestamp}-${randomString}.jpg`;
 
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();

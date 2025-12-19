@@ -1,28 +1,22 @@
 import Link from "next/link";
 import { db } from "@/db";
-import { favorites, observations, species } from "@/db/schema";
+import { favorites, observations, species, conservationProjects } from "@/db/schema";
 import { desc, sql, count } from "drizzle-orm";
-import { countries } from "@/lib/countries";
 import { getSpeciesUrl } from "@/lib/species-url";
 import { getObservationUrl } from "@/lib/observation-url";
-
-// Create reverse mapping: country name -> slug
-const countryNameToSlug: Record<string, string> = {};
-Object.values(countries).forEach(country => {
-  countryNameToSlug[country.name] = country.slug;
-});
+import { getProjectUrl } from "@/lib/project-url";
 
 export async function Footer() {
-  // Get top 8 countries by observation count
-  const topCountries = await db
+  // Get 8 most recent conservation projects
+  const recentProjects = await db
     .select({
-      country: observations.country,
-      count: count(observations.id),
+      id: conservationProjects.id,
+      title: conservationProjects.title,
+      status: conservationProjects.status,
+      createdAt: conservationProjects.createdAt,
     })
-    .from(observations)
-    .where(sql`${observations.country} IS NOT NULL`)
-    .groupBy(observations.country)
-    .orderBy(desc(count(observations.id)))
+    .from(conservationProjects)
+    .orderBy(desc(conservationProjects.createdAt))
     .limit(8);
 
   // Get top 8 most favorited species
@@ -74,25 +68,22 @@ export async function Footer() {
             </p>
           </div>
 
-          {/* Column 2: Top Countries */}
+          {/* Column 2: Recent Conservation Projects */}
           <div>
             <h3 className="text-white text-sm font-semibold mb-4 uppercase tracking-wide">
-              Countries
+              Conservation Projects
             </h3>
             <ul className="space-y-2">
-              {topCountries.map((item) => {
-                const slug = item.country ? countryNameToSlug[item.country] : null;
-                return (
-                  <li key={item.country}>
-                    <Link
-                      href={slug ? `/country/${slug}` : '#'}
-                      className="text-sm hover:text-green-400 transition-colors"
-                    >
-                      {item.country} ({item.count})
-                    </Link>
-                  </li>
-                );
-              })}
+              {recentProjects.map((project) => (
+                <li key={project.id}>
+                  <Link
+                    href={getProjectUrl(project.id, project.title)}
+                    className="text-sm hover:text-green-400 transition-colors line-clamp-1"
+                  >
+                    {project.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

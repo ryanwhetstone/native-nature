@@ -1,42 +1,25 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import NewObservationMap from "./NewObservationMap";
-import { getObservationUrl } from "@/lib/observation-url";
+import { useState } from "react";
+import ProjectMap from "@/app/account/projects/ProjectMap";
 import { useToast } from "@/app/components/Toast";
+import { getProjectUrl } from "@/lib/project-url";
 
-interface NewObservationFormProps {
-  speciesId: number;
-  speciesName?: string;
-  speciesSlug?: string;
-  lastLocation?: { lat: number; lng: number };
-}
-
-export default function NewObservationForm({
-  speciesId,
-  speciesName,
-  speciesSlug,
-  lastLocation,
-}: NewObservationFormProps) {
+export default function NewProjectForm() {
   const router = useRouter();
   const { showToast } = useToast();
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-  const [observedAt, setObservedAt] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [fundingGoal, setFundingGoal] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<Array<{ url: string; file: File }>>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [webglError, setWebglError] = useState(false);
-
-  useEffect(() => {
-    // Set default observed date to today
-    const today = new Date().toISOString().split("T")[0];
-    setObservedAt(today);
-  }, []);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -56,13 +39,17 @@ export default function NewObservationForm({
     });
   };
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedLocation) {
       alert("Please select a location on the map");
+      return;
+    }
+
+    const fundingGoalNumber = parseFloat(fundingGoal);
+    if (isNaN(fundingGoalNumber) || fundingGoalNumber <= 0) {
+      alert("Please enter a valid funding goal");
       return;
     }
 
@@ -79,7 +66,7 @@ export default function NewObservationForm({
           const formData = new FormData();
           formData.append('file', image.file);
           
-          const uploadResponse = await fetch('/api/upload', {
+          const uploadResponse = await fetch('/api/upload?folder=projects', {
             method: 'POST',
             body: formData,
           });
@@ -95,88 +82,106 @@ export default function NewObservationForm({
         setUploadingImages(false);
       }
 
-      // Then create the observation with image URLs
-      const response = await fetch("/api/observations", {
+      // Then create the project with image URLs
+      const response = await fetch("/api/projects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          speciesId,
+          title,
+          description,
           latitude: selectedLocation.lat.toString(),
           longitude: selectedLocation.lng.toString(),
-          observedAt: observedAt + 'T12:00:00.000Z',
-          description: description || null,
+          fundingGoal: fundingGoalNumber,
           imageUrls: uploadedImageUrls,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create observation");
+        throw new Error("Failed to create project");
       }
 
-      const observation = await response.json();
+      const project = await response.json();
 
       // Show success toast
-      showToast("Observation saved successfully!");
+      showToast("Project created successfully!");
       
-      router.push(getObservationUrl(observation.id, speciesName || `Species ${speciesId}`));
+      router.push(getProjectUrl(project.id, title));
       router.refresh();
     } catch (error) {
-      console.error("Error creating observation:", error);
-      showToast("Failed to create observation. Please try again.", "error");
+      console.error("Error creating project:", error);
+      showToast("Failed to create project. Please try again.", "error");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 space-y-6">
       <div>
-        <h2 className="text-xl font-semibold mb-2">
-          {speciesName || `Species #${speciesId}`}
-        </h2>
-      </div>
-
-      <div>
-        <label htmlFor="observedAt" className="block text-sm font-medium mb-2">
-          Date Observed *
+        <label htmlFor="title" className="block text-sm font-medium mb-2">
+          Project Title *
         </label>
         <input
-          type="date"
-          id="observedAt"
-          value={observedAt}
-          onChange={(e) => setObservedAt(e.target.value)}
+          type="text"
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           required
-          max={new Date().toISOString().split('T')[0]}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="e.g., Coral Reef Restoration in the Caribbean"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
         />
       </div>
 
       <div>
         <label htmlFor="description" className="block text-sm font-medium mb-2">
-          Description (optional)
+          Project Description *
         </label>
         <textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          rows={4}
-          placeholder="Add notes about this observation..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+          rows={6}
+          placeholder="Describe your conservation project, its goals, and expected impact..."
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
         />
       </div>
 
       <div>
+        <label htmlFor="fundingGoal" className="block text-sm font-medium mb-2">
+          Funding Goal (USD) *
+        </label>
+        <div className="relative">
+          <span className="absolute left-3 top-2 text-gray-500">$</span>
+          <input
+            type="number"
+            id="fundingGoal"
+            value={fundingGoal}
+            onChange={(e) => setFundingGoal(e.target.value)}
+            required
+            min="1"
+            step="0.01"
+            placeholder="10000"
+            className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+        <p className="text-sm text-gray-500 mt-1">
+          Enter the total amount of funding needed for this project
+        </p>
+      </div>
+
+      <div>
         <label className="block text-sm font-medium mb-2">
-          Photos (optional)
+          Project Photos (optional)
         </label>
         <input
           type="file"
           accept="image/*"
           multiple
           onChange={handleImageSelect}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
         />
         {images.length > 0 && (
           <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -202,17 +207,16 @@ export default function NewObservationForm({
 
       <div>
         <label className="block text-sm font-medium mb-2">
-          Location on Map *
+          Project Location *
         </label>
         {!webglError && (
           <p className="text-sm text-gray-600 mb-3">
-            Click on the map to select where you observed this species
+            Click on the map to select the location of your conservation project
           </p>
         )}
-        <NewObservationMap
+        <ProjectMap
           onLocationSelect={setSelectedLocation}
           selectedLocation={selectedLocation}
-          lastLocation={lastLocation}
           onWebGLError={setWebglError}
         />
         {selectedLocation && (
@@ -223,13 +227,13 @@ export default function NewObservationForm({
         )}
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 pt-4">
         <button
           type="submit"
           disabled={isSubmitting || !selectedLocation}
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
-          {uploadingImages ? "Uploading images..." : isSubmitting ? "Saving..." : "Save Observation"}
+          {uploadingImages ? "Uploading images..." : isSubmitting ? "Creating..." : "Create Project"}
         </button>
         <button
           type="button"

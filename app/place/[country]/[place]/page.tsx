@@ -74,6 +74,18 @@ export default async function PlacePage({ params }: PlacePageProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Conservation Efforts Box */}
+          <Link
+            href={`/conservation-efforts/${country}/${place}`}
+            className="p-8 border-2 border-gray-300 rounded-lg hover:border-green-500 hover:shadow-lg transition-all bg-white text-center group"
+          >
+            <div className="text-6xl mb-4">🌱</div>
+            <h2 className="text-2xl font-semibold text-gray-800 group-hover:text-green-600">
+              Conservation Efforts
+            </h2>
+            <p className="text-gray-600 mt-2">Learn about local conservation</p>
+          </Link>
+
           {Object.entries(categoryMapping).map(([slug, info]) => {
             return (
               <Link

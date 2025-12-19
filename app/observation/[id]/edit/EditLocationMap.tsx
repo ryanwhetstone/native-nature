@@ -94,6 +94,9 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
         <p className="text-sm text-gray-600">
           To mark the location on an interactive map, use a browser that supports WebGL.
         </p>
+        <p className="text-sm text-gray-600">
+          To get the latitude and longitude coordinates manually, you can go to <a href="https://www.latlong.net/" target="_blank" rel="noopener noreferrer" className="text-green-600 underline">latlong.net</a>, find the location, and copy the coordinates below:
+        </p>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="manual-lat" className="block text-sm font-medium text-gray-700 mb-1">

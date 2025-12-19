@@ -167,10 +167,48 @@ export const observationPictures = pgTable('observation_pictures', {
 export type ObservationPicture = typeof observationPictures.$inferSelect;
 export type NewObservationPicture = typeof observationPictures.$inferInsert;
 
+// Conservation Projects table
+export const conservationProjects = pgTable('conservation_projects', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description').notNull(),
+  // Location data
+  latitude: text('latitude').notNull(),
+  longitude: text('longitude').notNull(),
+  country: varchar('country', { length: 255 }),
+  city: varchar('city', { length: 255 }),
+  region: varchar('region', { length: 255 }),
+  // Funding
+  fundingGoal: integer('funding_goal').notNull(), // in cents to avoid floating point issues
+  currentFunding: integer('current_funding').default(0).notNull(),
+  // Status
+  status: varchar('status', { length: 50 }).default('active').notNull(), // active, completed, paused
+  // Timestamps
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export type ConservationProject = typeof conservationProjects.$inferSelect;
+export type NewConservationProject = typeof conservationProjects.$inferInsert;
+
+// Project Pictures table
+export const projectPictures = pgTable('project_pictures', {
+  id: serial('id').primaryKey(),
+  projectId: integer('project_id').notNull().references(() => conservationProjects.id, { onDelete: 'cascade' }),
+  imageUrl: text('image_url').notNull(),
+  caption: varchar('caption', { length: 500 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type ProjectPicture = typeof projectPictures.$inferSelect;
+export type NewProjectPicture = typeof projectPictures.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   favorites: many(favorites),
   observations: many(observations),
+  conservationProjects: many(conservationProjects),
 }));
 
 export const speciesRelations = relations(species, ({ many }) => ({
@@ -209,5 +247,20 @@ export const observationPicturesRelations = relations(observationPictures, ({ on
   species: one(species, {
     fields: [observationPictures.speciesId],
     references: [species.id],
+  }),
+}));
+
+export const conservationProjectsRelations = relations(conservationProjects, ({ one, many }) => ({
+  user: one(users, {
+    fields: [conservationProjects.userId],
+    references: [users.id],
+  }),
+  pictures: many(projectPictures),
+}));
+
+export const projectPicturesRelations = relations(projectPictures, ({ one }) => ({
+  project: one(conservationProjects, {
+    fields: [projectPictures.projectId],
+    references: [conservationProjects.id],
   }),
 }));

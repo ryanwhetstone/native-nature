@@ -6,14 +6,14 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
-interface NewObservationMapProps {
+interface ProjectMapProps {
   onLocationSelect: (location: { lat: number; lng: number }) => void;
   selectedLocation: { lat: number; lng: number } | null;
-  lastLocation?: { lat: number; lng: number };
+  initialLocation?: { lat: number; lng: number };
   onWebGLError?: (hasError: boolean) => void;
 }
 
-export default function NewObservationMap({ onLocationSelect, selectedLocation, lastLocation, onWebGLError }: NewObservationMapProps) {
+export default function ProjectMap({ onLocationSelect, selectedLocation, initialLocation, onWebGLError }: ProjectMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const marker = useRef<mapboxgl.Marker | null>(null);
@@ -29,11 +29,11 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
       return;
     }
 
-    // Use last observation location if available, otherwise default to world view
-    const initialCenter: [number, number] = lastLocation 
-      ? [lastLocation.lng, lastLocation.lat]
-      : [0, 0];
-    const initialZoom = lastLocation ? 6 : 2; // Zoom 6 is approximately state level
+    // Use initial location if available, otherwise default to world view
+    const initialCenter: [number, number] = initialLocation 
+      ? [initialLocation.lng, initialLocation.lat]
+      : [0, 20];
+    const initialZoom = initialLocation ? 6 : 2;
 
     try {
       // Initialize map
@@ -62,7 +62,7 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
         marker.current.setLngLat([lng, lat]);
       } else {
         marker.current = new mapboxgl.Marker({ 
-          color: '#3b82f6',
+          color: '#16a34a',
           draggable: true 
         })
           .setLngLat([lng, lat])
@@ -101,7 +101,7 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
       marker.current.setLngLat([selectedLocation.lng, selectedLocation.lat]);
     } else {
       marker.current = new mapboxgl.Marker({ 
-        color: '#3b82f6',
+        color: '#16a34a',
         draggable: true 
       })
         .setLngLat([selectedLocation.lng, selectedLocation.lat])
@@ -119,59 +119,12 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
 
   if (webglError) {
     return (
-      <div className="space-y-4">
-        <p className="text-sm text-gray-600">
-          To mark the location on an interactive map, use a browser that supports WebGL.
-        </p>
-        <p className="text-sm text-gray-600">
-          To get the latitude and longitude coordinates manually, you can go to <a href="https://www.latlong.net/" target="_blank" rel="noopener noreferrer" className="text-green-600 underline">latlong.net</a>, find the location, and copy the coordinates below:
-        </p>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="manual-lat" className="block text-sm font-medium text-gray-700 mb-1">
-              Latitude
-            </label>
-            <input
-              type="number"
-              id="manual-lat"
-              step="any"
-              value={selectedLocation?.lat ?? ''}
-              onChange={(e) => {
-                const lat = parseFloat(e.target.value);
-                if (!isNaN(lat)) {
-                  onLocationSelect({ 
-                    lat, 
-                    lng: selectedLocation?.lng ?? 0 
-                  });
-                }
-              }}
-              placeholder="e.g., 40.7128"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div>
-            <label htmlFor="manual-lng" className="block text-sm font-medium text-gray-700 mb-1">
-              Longitude
-            </label>
-            <input
-              type="number"
-              id="manual-lng"
-              step="any"
-              value={selectedLocation?.lng ?? ''}
-              onChange={(e) => {
-                const lng = parseFloat(e.target.value);
-                if (!isNaN(lng)) {
-                  onLocationSelect({ 
-                    lat: selectedLocation?.lat ?? 0, 
-                    lng 
-                  });
-                }
-              }}
-              placeholder="e.g., -74.0060"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-        </div>
+      <div className="w-full h-96 bg-gray-100 rounded-lg flex flex-col items-center justify-center p-6 text-center">
+        <svg className="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+        </svg>
+        <p className="text-gray-600 mb-2">Interactive map is not available in your browser.</p>
+        <p className="text-sm text-gray-500">Please enter coordinates manually or use a browser with WebGL support.</p>
       </div>
     );
   }
@@ -180,6 +133,7 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
     <div 
       ref={mapContainer} 
       className="w-full h-96 rounded-lg overflow-hidden border border-gray-300"
+      style={{ minHeight: '400px' }}
     />
   );
 }
