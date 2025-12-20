@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getObservationUrl } from '@/lib/observation-url';
@@ -36,6 +36,13 @@ export default function MasonryPhotoGallery({
   columns = { default: 2, md: 3, lg: 4 }
 }: MasonryPhotoGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (selectedIndex !== null && lightboxRef.current) {
+      lightboxRef.current.focus();
+    }
+  }, [selectedIndex]);
 
   const openLightbox = (index: number) => {
     setSelectedIndex(index);
@@ -126,6 +133,7 @@ export default function MasonryPhotoGallery({
       {/* Lightbox Modal */}
       {selectedIndex !== null && (
         <div
+          ref={lightboxRef}
           className="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center"
           onClick={closeLightbox}
           onKeyDown={handleKeyDown}
