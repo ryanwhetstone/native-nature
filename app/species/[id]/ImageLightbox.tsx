@@ -57,10 +57,12 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
     >
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white text-4xl font-semibold hover:text-gray-300 z-10"
+        className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
         aria-label="Close lightbox"
       >
-        ×
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
 
       {/* Previous Button */}
@@ -69,10 +71,12 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
           e.stopPropagation();
           handlePrevious();
         }}
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-5xl font-semibold hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-14 h-14 flex items-center justify-center"
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 z-10"
         aria-label="Previous image"
       >
-        ‹
+        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
 
       {/* Next Button */}
@@ -81,10 +85,12 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
           e.stopPropagation();
           handleNext();
         }}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-5xl font-semibold hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-14 h-14 flex items-center justify-center"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 z-10"
         aria-label="Next image"
       >
-        ›
+        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
       </button>
 
       <div className="relative max-w-7xl max-h-full" onClick={(e) => e.stopPropagation()}>
