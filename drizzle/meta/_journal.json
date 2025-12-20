@@ -92,6 +92,13 @@
       "when": 1766101785952,
       "tag": "0012_calm_silver_sable",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1766235658282,
+      "tag": "0013_stiff_absorbing_man",
+      "breakpoints": true
     }
   ]
 }

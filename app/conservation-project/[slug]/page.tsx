@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import { parseProjectSlug } from "@/lib/project-url";
 import { DeleteProjectButton } from "@/app/account/projects/DeleteProjectButton";
 import ProjectDisplayMap from "./ProjectDisplayMap";
+import DonateButton from "./DonateButton";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -132,7 +133,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                   {project.title}
                 </h1>
                 <div className="mb-4">
-                  <p className="whitespace-pre-wrap text-white text-lg">{project.description}</p>
+                  <p className="whitespace-pre-wrap text-white text-lg lg:pr-64">{project.description}</p>
                 </div>
 
               </div>
@@ -175,7 +176,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           {/* Funding Progress Card */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Funding Progress</h2>
-            <div className="">
+            <div className="mb-6">
               <div className="flex justify-between items-baseline mb-2">
                 <h3 className="text-3xl font-bold text-gray-900">
                   ${(project.currentFunding / 100).toLocaleString()}
@@ -194,6 +195,14 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                 {fundingPercentage.toFixed(1)}% funded
               </p>
             </div>
+            
+            {/* Donate Button */}
+            <DonateButton 
+              projectId={project.id}
+              projectTitle={project.title}
+              currentFunding={project.currentFunding}
+              fundingGoal={project.fundingGoal}
+            />
           </div>
           {/* Location Map */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">

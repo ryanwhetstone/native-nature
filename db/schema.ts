@@ -204,11 +204,31 @@ export const projectPictures = pgTable('project_pictures', {
 export type ProjectPicture = typeof projectPictures.$inferSelect;
 export type NewProjectPicture = typeof projectPictures.$inferInsert;
 
+// Donations table
+export const donations = pgTable('donations', {
+  id: serial('id').primaryKey(),
+  projectId: integer('project_id').notNull().references(() => conservationProjects.id, { onDelete: 'cascade' }),
+  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }), // nullable in case user deletes account
+  amount: integer('amount').notNull(), // in cents
+  stripeSessionId: varchar('stripe_session_id', { length: 255 }).unique(),
+  stripePaymentIntentId: varchar('stripe_payment_intent_id', { length: 255 }),
+  status: varchar('status', { length: 50 }).default('pending').notNull(), // pending, completed, failed, refunded
+  donorName: varchar('donor_name', { length: 255 }), // For anonymous donations
+  donorEmail: varchar('donor_email', { length: 255 }), // For anonymous donations
+  message: text('message'), // Optional message from donor
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  completedAt: timestamp('completed_at'),
+});
+
+export type Donation = typeof donations.$inferSelect;
+export type NewDonation = typeof donations.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   favorites: many(favorites),
   observations: many(observations),
   conservationProjects: many(conservationProjects),
+  donations: many(donations),
 }));
 
 export const speciesRelations = relations(species, ({ many }) => ({
@@ -256,11 +276,23 @@ export const conservationProjectsRelations = relations(conservationProjects, ({ 
     references: [users.id],
   }),
   pictures: many(projectPictures),
+  donations: many(donations),
 }));
 
 export const projectPicturesRelations = relations(projectPictures, ({ one }) => ({
   project: one(conservationProjects, {
     fields: [projectPictures.projectId],
     references: [conservationProjects.id],
+  }),
+}));
+
+export const donationsRelations = relations(donations, ({ one }) => ({
+  project: one(conservationProjects, {
+    fields: [donations.projectId],
+    references: [conservationProjects.id],
+  }),
+  user: one(users, {
+    fields: [donations.userId],
+    references: [users.id],
   }),
 }));
