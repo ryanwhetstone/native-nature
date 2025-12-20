@@ -52,8 +52,11 @@ export async function POST(request: NextRequest) {
         const projectId = parseInt(session.metadata?.projectId || "0");
         const userId = session.metadata?.userId;
         const amount = parseInt(session.metadata?.amount || "0");
+        const projectAmount = parseInt(session.metadata?.projectAmount || "0");
+        const siteTip = parseInt(session.metadata?.siteTip || "0");
+        const coversFees = session.metadata?.coversFees === 'true';
 
-        if (!projectId || !amount) {
+        if (!projectId || !amount || !projectAmount) {
           console.error("Missing metadata in checkout session");
           return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
         }
@@ -63,13 +66,16 @@ export async function POST(request: NextRequest) {
           projectId,
           userId: userId || null,
           amount,
+          projectAmount,
+          siteTip,
+          coversFees,
           stripeSessionId: session.id,
           stripePaymentIntentId: session.payment_intent as string,
           status: "completed",
           completedAt: new Date(),
         }).returning();
 
-        // Update project's current funding
+        // Update project's current funding with the project amount (not total)
         const [project] = await db
           .select()
           .from(conservationProjects)
@@ -79,7 +85,7 @@ export async function POST(request: NextRequest) {
           await db
             .update(conservationProjects)
             .set({
-              currentFunding: (project.currentFunding || 0) + amount,
+              currentFunding: (project.currentFunding || 0) + projectAmount,
               updatedAt: new Date(),
             })
             .where(eq(conservationProjects.id, projectId));

@@ -19,16 +19,53 @@ export default function DonateButton({
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
+  const [coverFees, setCoverFees] = useState(true); // Default to true
+  const [siteTipPercent, setSiteTipPercent] = useState(0);
+  const [customTipPercent, setCustomTipPercent] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
   const presetAmounts = [10, 25, 50, 100, 250, 500];
+  const tipPercentages = [0, 5, 10, 15];
+
+  // Calculate donation breakdown
+  const getDonationBreakdown = () => {
+    const donationAmount = amount === 'custom' ? parseFloat(customAmount) : parseFloat(amount);
+    if (!donationAmount || donationAmount < 1) {
+      return null;
+    }
+
+    // Stripe fee: 2.9% + $0.30
+    const stripeFee = Math.ceil((donationAmount * 0.029 + 0.30) * 100) / 100;
+    
+    // Calculate site tip
+    const tipPercent = siteTipPercent === -1 ? parseFloat(customTipPercent || '0') : siteTipPercent;
+    const siteTip = Math.ceil((donationAmount * tipPercent / 100) * 100) / 100;
+    
+    // Calculate total
+    let total = donationAmount;
+    if (coverFees) {
+      total += stripeFee;
+    }
+    total += siteTip;
+    
+    // Amount that actually goes to project
+    const projectAmount = coverFees ? donationAmount : donationAmount - stripeFee;
+    
+    return {
+      donation: donationAmount,
+      stripeFee,
+      siteTip,
+      projectAmount,
+      total,
+    };
+  };
+
+  const breakdown = getDonationBreakdown();
 
   const handleDonate = async () => {
-    const donationAmount = amount === 'custom' ? parseFloat(customAmount) : parseFloat(amount);
-
-    if (!donationAmount || donationAmount < 1) {
+    if (!breakdown) {
       setError('Please enter an amount of at least $1.00');
       return;
     }
@@ -44,7 +81,10 @@ export default function DonateButton({
         },
         body: JSON.stringify({
           projectId,
-          amount: Math.round(donationAmount * 100), // Convert to cents
+          amount: Math.round(breakdown.total * 100), // Total amount in cents
+          projectAmount: Math.round(breakdown.projectAmount * 100), // Amount to credit to project
+          siteTip: Math.round(breakdown.siteTip * 100), // Site tip in cents
+          coversFees: coverFees,
         }),
       });
 
@@ -183,6 +223,128 @@ export default function DonateButton({
                 </div>
               )}
             </div>
+
+            {/* Cover Transaction Fees */}
+            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <label className="flex items-start cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={coverFees}
+                  onChange={(e) => setCoverFees(e.target.checked)}
+                  disabled={isProcessing}
+                  className="mt-1 mr-3 h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                />
+                <div>
+                  <span className="font-medium text-gray-900">Cover transaction fees</span>
+                  {breakdown && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Add ${breakdown.stripeFee.toFixed(2)} so 100% of your ${breakdown.donation.toFixed(2)} donation goes to the project
+                    </p>
+                  )}
+                </div>
+              </label>
+            </div>
+
+            {/* Support the Site */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Support Native Nature (Optional)
+              </label>
+              <p className="text-xs text-gray-600 mb-3">
+                100% of your donation goes to the project. Consider adding a tip to help us maintain the platform.
+              </p>
+              <div className="grid grid-cols-4 gap-2 mb-2">
+                {tipPercentages.map((percent) => (
+                  <button
+                    key={percent}
+                    onClick={() => {
+                      setSiteTipPercent(percent);
+                      setError('');
+                    }}
+                    disabled={isProcessing}
+                    className={`py-2 px-2 rounded-lg border-2 transition-colors text-sm ${
+                      siteTipPercent === percent
+                        ? 'border-green-600 bg-green-50 text-green-700'
+                        : 'border-gray-300 hover:border-green-400'
+                    }`}
+                  >
+                    {percent === 0 ? 'None' : `${percent}%`}
+                  </button>
+                ))}
+              </div>
+              
+              <button
+                onClick={() => {
+                  setSiteTipPercent(-1);
+                  setError('');
+                }}
+                disabled={isProcessing}
+                className={`w-full py-2 px-4 rounded-lg border-2 transition-colors text-sm ${
+                  siteTipPercent === -1
+                    ? 'border-green-600 bg-green-50 text-green-700'
+                    : 'border-gray-300 hover:border-green-400'
+                }`}
+              >
+                Custom %
+              </button>
+
+              {siteTipPercent === -1 && (
+                <div className="relative mt-2">
+                  <input
+                    type="number"
+                    value={customTipPercent}
+                    onChange={(e) => {
+                      setCustomTipPercent(e.target.value);
+                      setError('');
+                    }}
+                    placeholder="Enter percentage"
+                    min="0"
+                    max="100"
+                    step="1"
+                    disabled={isProcessing}
+                    className="w-full pr-8 pl-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                  <span className="absolute right-3 top-2.5 text-gray-500">%</span>
+                </div>
+              )}
+            </div>
+
+            {/* Donation Breakdown */}
+            {breakdown && (
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="font-medium text-gray-900 mb-2">Payment Summary</h3>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Your donation</span>
+                    <span>${breakdown.donation.toFixed(2)}</span>
+                  </div>
+                  {coverFees && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Transaction fees</span>
+                      <span>${breakdown.stripeFee.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {breakdown.siteTip > 0 && (
+                    <div className="flex justify-between text-gray-600">
+                      <span>Site support tip</span>
+                      <span>${breakdown.siteTip.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-300 pt-1 mt-2">
+                    <div className="flex justify-between font-semibold text-gray-900">
+                      <span>Total charge</span>
+                      <span>${breakdown.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+                  <div className="pt-2 mt-2 border-t border-gray-300">
+                    <div className="flex justify-between text-green-700 font-medium">
+                      <span>Goes to project</span>
+                      <span>${breakdown.projectAmount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (

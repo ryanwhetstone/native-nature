@@ -87,13 +87,34 @@ Use any future expiration date, any 3-digit CVC, and any zip code.
 
 1. User clicks "Donate Now" on a project page
 2. User selects donation amount in modal
-3. Frontend calls `/api/checkout` with project ID and amount
-4. API creates a Stripe Checkout session
-5. User is redirected to Stripe's hosted checkout page
-6. User enters payment details and completes payment
-7. User is redirected back to project page with success/cancel status
-8. Stripe sends webhook to `/api/webhooks/stripe`
-9. Webhook handler creates donation record and updates project funding
+3. User optionally chooses to:
+   - Cover transaction fees (ensures 100% of donation goes to project)
+   - Add a tip to support the site (0%, 5%, 10%, 15%, or custom)
+4. Modal shows detailed payment breakdown
+5. Frontend calls `/api/checkout` with project ID, amounts, and options
+6. API creates a Stripe Checkout session
+7. User is redirected to Stripe's hosted checkout page
+8. User enters payment details and completes payment
+9. User is redirected back to project page with success/cancel status
+10. Stripe sends webhook to `/api/webhooks/stripe`
+11. Webhook handler creates donation record and updates project funding
+
+### Fee Handling
+
+**Transaction Fees**: Stripe charges 2.9% + $0.30 per transaction
+
+**Option 1 - Cover Fees (Default)**: Donor can choose to cover transaction fees
+- Example: $25 donation + $1.03 fee = $26.03 charged
+- Full $25.00 goes to the project
+
+**Option 2 - Don't Cover Fees**: Transaction fees are deducted from donation
+- Example: $25 charged, $0.73 in fees
+- $24.27 goes to the project
+
+**Site Support Tip**: Optional percentage (0-100%) added to support platform maintenance
+- Example: $25 donation + 10% tip ($2.50) = adds $2.50 to total
+- Tracked separately in `donations.siteTip` field
+- Does not affect project funding amount
 
 ### Database Schema
 
@@ -101,7 +122,10 @@ Use any future expiration date, any 3-digit CVC, and any zip code.
 - `id`: Primary key
 - `projectId`: Foreign key to conservation_projects
 - `userId`: Foreign key to users (nullable for anonymous donations)
-- `amount`: Donation amount in cents
+- `amount`: Total amount charged in cents (includes fees if covered and site tip)
+- `projectAmount`: Amount credited to project in cents (after fees if not covered)
+- `siteTip`: Optional tip to support the site in cents
+- `coversFees`: Boolean - whether donor chose to cover transaction fees
 - `stripeSessionId`: Stripe checkout session ID
 - `stripePaymentIntentId`: Stripe payment intent ID
 - `status`: pending, completed, failed, refunded
@@ -110,6 +134,20 @@ Use any future expiration date, any 3-digit CVC, and any zip code.
 - `message`: Optional message from donor
 - `createdAt`: Timestamp of donation creation
 - `completedAt`: Timestamp when payment completed
+
+**Example Scenarios**:
+
+1. $25 donation, cover fees, 10% tip:
+   - `amount`: $28.53 (total charged)
+   - `projectAmount`: $25.00 (to project)
+   - `siteTip`: $2.50 (to site)
+   - `coversFees`: true
+
+2. $25 donation, no fee coverage, no tip:
+   - `amount`: $25.00 (total charged)
+   - `projectAmount`: $24.27 (to project after $0.73 Stripe fee)
+   - `siteTip`: $0
+   - `coversFees`: false
 
 ### Security
 

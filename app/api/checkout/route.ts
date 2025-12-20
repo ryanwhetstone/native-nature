@@ -24,11 +24,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { projectId, amount } = await request.json();
+    const { projectId, amount, projectAmount, siteTip, coversFees } = await request.json();
 
     if (!projectId || !amount || amount < 100) {
       return NextResponse.json(
         { error: "Invalid project ID or amount (minimum $1.00)" },
+        { status: 400 }
+      );
+    }
+
+    if (!projectAmount) {
+      return NextResponse.json(
+        { error: "Project amount is required" },
         { status: 400 }
       );
     }
@@ -54,9 +61,9 @@ export async function POST(request: NextRequest) {
             currency: "usd",
             product_data: {
               name: `Donation to ${project.title}`,
-              description: project.description.substring(0, 200),
+              description: `${coversFees ? 'Includes transaction fees. ' : ''}${siteTip > 0 ? `Includes $${(siteTip / 100).toFixed(2)} tip to support Native Nature. ` : ''}${project.description.substring(0, 150)}`,
             },
-            unit_amount: amount, // amount in cents
+            unit_amount: amount, // total amount in cents
           },
           quantity: 1,
         },
@@ -68,6 +75,9 @@ export async function POST(request: NextRequest) {
         projectId: projectId.toString(),
         userId: session.user.id,
         amount: amount.toString(),
+        projectAmount: projectAmount.toString(),
+        siteTip: (siteTip || 0).toString(),
+        coversFees: coversFees ? 'true' : 'false',
       },
     });
 

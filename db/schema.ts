@@ -209,7 +209,10 @@ export const donations = pgTable('donations', {
   id: serial('id').primaryKey(),
   projectId: integer('project_id').notNull().references(() => conservationProjects.id, { onDelete: 'cascade' }),
   userId: text('user_id').references(() => users.id, { onDelete: 'set null' }), // nullable in case user deletes account
-  amount: integer('amount').notNull(), // in cents
+  amount: integer('amount').notNull(), // Total amount charged in cents
+  projectAmount: integer('project_amount').notNull(), // Amount credited to project in cents (after fees if not covered)
+  siteTip: integer('site_tip').default(0).notNull(), // Optional tip to support the site in cents
+  coversFees: boolean('covers_fees').default(false).notNull(), // Whether donor covered transaction fees
   stripeSessionId: varchar('stripe_session_id', { length: 255 }).unique(),
   stripePaymentIntentId: varchar('stripe_payment_intent_id', { length: 255 }),
   status: varchar('status', { length: 50 }).default('pending').notNull(), // pending, completed, failed, refunded
