@@ -10,6 +10,7 @@ import { parseProjectSlug } from "@/lib/project-url";
 import { DeleteProjectButton } from "@/app/account/projects/DeleteProjectButton";
 import ProjectDisplayMap from "./ProjectDisplayMap";
 import DonateButton from "./DonateButton";
+import ThankYouModal from "./ThankYouModal";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -70,6 +71,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
   return (
     <main className="min-h-screen bg-gray-50">
+      <ThankYouModal />
       {/* Dark section for header and photos */}
       <div className="bg-slate-900 py-8">
         <div className="w-full px-4">
