@@ -59,16 +59,26 @@ export async function POST(request: NextRequest) {
       try {
         const balTx = await stripe.balanceTransactions.retrieve(balTxId);
         
+        // Get the transaction to calculate actual site tip
+        const [transaction] = await db
+          .select()
+          .from(stripeTransactions)
+          .where(eq(stripeTransactions.stripeChargeId, charge.id))
+          .limit(1);
+        
+        const siteTipActualAmount = transaction ? balTx.net - transaction.projectAmount : null;
+        
         await db
           .update(stripeTransactions)
           .set({
             stripeFeeActual: balTx.fee,
             netAmount: balTx.net,
+            siteTipActualAmount,
             balanceTransaction: balTx as any,
           })
           .where(eq(stripeTransactions.stripeChargeId, charge.id));
         
-        console.log("✅ Updated transaction", charge.id, "with fee:", balTx.fee, "cents");
+        console.log("✅ Updated transaction", charge.id, "with fee:", balTx.fee, "cents, site tip actual:", siteTipActualAmount, "cents");
       } catch (error) {
         console.error("Error updating transaction with fees:", error);
       }

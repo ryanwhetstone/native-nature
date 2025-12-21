@@ -1,0 +1,1 @@
+ALTER TABLE "stripe_transactions" ADD COLUMN "site_tip_actual_amount" integer;
