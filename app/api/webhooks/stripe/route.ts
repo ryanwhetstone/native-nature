@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "@/db";
-import { donations, conservationProjects } from "@/db/schema";
+import { donations, conservationProjects, stripeTransactions } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -61,6 +61,19 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
         }
 
+        // Get project and recipient info
+        const project = await db.query.conservationProjects.findFirst({
+          where: eq(conservationProjects.id, projectId),
+          with: {
+            user: true,
+          },
+        });
+
+        if (!project) {
+          console.error("Project not found:", projectId);
+          return NextResponse.json({ error: "Project not found" }, { status: 404 });
+        }
+
         // Create donation record
         const [donation] = await db.insert(donations).values({
           projectId,
@@ -75,23 +88,82 @@ export async function POST(request: NextRequest) {
           completedAt: new Date(),
         }).returning();
 
-        // Update project's current funding with the project amount (not total)
-        const [project] = await db
-          .select()
-          .from(conservationProjects)
-          .where(eq(conservationProjects.id, projectId));
+        // Retrieve the charge and balance transaction for exact fee information
+        let stripeFeeActual = null;
+        let balanceTransaction = null;
+        let chargeDetails = null;
 
-        if (project) {
-          await db
-            .update(conservationProjects)
-            .set({
-              currentFunding: (project.currentFunding || 0) + projectAmount,
-              updatedAt: new Date(),
-            })
-            .where(eq(conservationProjects.id, projectId));
+        try {
+          if (session.payment_intent) {
+            const paymentIntent = await stripe.paymentIntents.retrieve(
+              session.payment_intent as string,
+              { expand: ['latest_charge'] }
+            );
+
+            const charge = paymentIntent.latest_charge as Stripe.Charge;
+            if (charge) {
+              chargeDetails = {
+                id: charge.id,
+                amount: charge.amount,
+                currency: charge.currency,
+                status: charge.status,
+                payment_method: charge.payment_method,
+              };
+
+              if (charge.balance_transaction) {
+                const balTx = await stripe.balanceTransactions.retrieve(
+                  charge.balance_transaction as string
+                );
+                balanceTransaction = balTx;
+                stripeFeeActual = balTx.fee; // Actual Stripe fee in cents
+              }
+
+              // Get payment method details
+              if (charge.payment_method_details?.card) {
+                const card = charge.payment_method_details.card;
+                
+                // Create Stripe transaction record
+                await db.insert(stripeTransactions).values({
+                  donationId: donation.id,
+                  projectId,
+                  donorUserId: userId || null,
+                  recipientUserId: project.userId,
+                  stripeChargeId: charge.id,
+                  stripePaymentIntentId: session.payment_intent as string,
+                  stripeSessionId: session.id,
+                  amount,
+                  projectAmount,
+                  siteTip,
+                  stripeFeeActual,
+                  netAmount: balanceTransaction ? balanceTransaction.net : null,
+                  currency: charge.currency,
+                  status: charge.status,
+                  paymentMethod: charge.payment_method_details.type,
+                  cardBrand: card.brand,
+                  cardLast4: card.last4,
+                  stripeEventType: event.type,
+                  stripeEventData: event.data.object as any,
+                  balanceTransaction: balanceTransaction as any,
+                  processedAt: new Date(),
+                });
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error retrieving Stripe details:", error);
+          // Continue anyway - we still have the donation record
         }
 
-        console.log("Donation processed:", donation.id);
+        // Update project's current funding
+        await db
+          .update(conservationProjects)
+          .set({
+            currentFunding: (project.currentFunding || 0) + projectAmount,
+            updatedAt: new Date(),
+          })
+          .where(eq(conservationProjects.id, projectId));
+
+        console.log("Donation processed:", donation.id, "Actual Stripe fee:", stripeFeeActual);
         break;
       }
 

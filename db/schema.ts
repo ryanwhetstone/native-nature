@@ -226,6 +226,42 @@ export const donations = pgTable('donations', {
 export type Donation = typeof donations.$inferSelect;
 export type NewDonation = typeof donations.$inferInsert;
 
+// Stripe Transactions table - complete audit trail of Stripe events
+export const stripeTransactions = pgTable('stripe_transactions', {
+  id: serial('id').primaryKey(),
+  // Foreign keys
+  donationId: integer('donation_id').references(() => donations.id, { onDelete: 'set null' }),
+  projectId: integer('project_id').references(() => conservationProjects.id, { onDelete: 'set null' }),
+  donorUserId: text('donor_user_id').references(() => users.id, { onDelete: 'set null' }),
+  recipientUserId: text('recipient_user_id').references(() => users.id, { onDelete: 'set null' }), // Project owner
+  // Stripe identifiers
+  stripeChargeId: varchar('stripe_charge_id', { length: 255 }).unique(),
+  stripePaymentIntentId: varchar('stripe_payment_intent_id', { length: 255 }),
+  stripeSessionId: varchar('stripe_session_id', { length: 255 }),
+  // Amount breakdown (all in cents)
+  amount: integer('amount').notNull(), // Total amount charged
+  projectAmount: integer('project_amount').notNull(), // Amount to project
+  siteTip: integer('site_tip').default(0).notNull(), // Site tip amount
+  stripeFeeActual: integer('stripe_fee_actual'), // Actual fee from Stripe balance transaction
+  netAmount: integer('net_amount'), // Amount after all fees
+  // Transaction details
+  currency: varchar('currency', { length: 10 }).default('usd').notNull(),
+  status: varchar('status', { length: 50 }).notNull(), // succeeded, failed, refunded, etc.
+  paymentMethod: varchar('payment_method', { length: 50 }), // card, etc.
+  cardBrand: varchar('card_brand', { length: 50 }), // visa, mastercard, etc.
+  cardLast4: varchar('card_last4', { length: 4 }),
+  // Raw Stripe data for complete audit trail
+  stripeEventType: varchar('stripe_event_type', { length: 100 }),
+  stripeEventData: jsonb('stripe_event_data'), // Full event payload
+  balanceTransaction: jsonb('balance_transaction'), // Balance transaction details with exact fees
+  // Timestamps
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  processedAt: timestamp('processed_at'),
+});
+
+export type StripeTransaction = typeof stripeTransactions.$inferSelect;
+export type NewStripeTransaction = typeof stripeTransactions.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   favorites: many(favorites),
@@ -296,6 +332,29 @@ export const donationsRelations = relations(donations, ({ one }) => ({
   }),
   user: one(users, {
     fields: [donations.userId],
+    references: [users.id],
+  }),
+  stripeTransaction: one(stripeTransactions, {
+    fields: [donations.id],
+    references: [stripeTransactions.donationId],
+  }),
+}));
+
+export const stripeTransactionsRelations = relations(stripeTransactions, ({ one }) => ({
+  donation: one(donations, {
+    fields: [stripeTransactions.donationId],
+    references: [donations.id],
+  }),
+  project: one(conservationProjects, {
+    fields: [stripeTransactions.projectId],
+    references: [conservationProjects.id],
+  }),
+  donorUser: one(users, {
+    fields: [stripeTransactions.donorUserId],
+    references: [users.id],
+  }),
+  recipientUser: one(users, {
+    fields: [stripeTransactions.recipientUserId],
     references: [users.id],
   }),
 }));
