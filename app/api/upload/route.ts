@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const folder = url.searchParams.get('folder') || 'observations';
     
     // Validate folder type
-    const allowedFolders = ['observations', 'projects'];
+    const allowedFolders = ['observations', 'projects', 'project-updates'];
     const folderType = allowedFolders.includes(folder) ? folder : 'observations';
     
     // Generate unique filename

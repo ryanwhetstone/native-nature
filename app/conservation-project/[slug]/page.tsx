@@ -206,6 +206,50 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
       {/* Light section for additional details */}
       <div className="py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+
+          {/* Project Updates Section */}
+          {updates.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-6">Project Updates</h2>
+              <div className="space-y-8">
+                {updates.map((update) => (
+                  <div key={update.id} className="border-b border-gray-200 last:border-0 pb-8 last:pb-0">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">{update.title}</h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {new Date(update.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-gray-700 whitespace-pre-wrap mb-4">{update.description}</p>
+                    
+                    {/* Update Pictures */}
+                    {update.pictures.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {update.pictures.map((picture) => (
+                          <div key={picture.id} className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+                            <Image
+                              src={picture.imageUrl}
+                              alt={picture.caption || 'Update photo'}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Funding Progress Card */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4">Funding Progress</h2>
@@ -326,49 +370,6 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               </div>
             </div>
           )}
-
-          {/* Project Updates Section */}
-          {updates.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-xl font-semibold mb-6">Project Updates</h2>
-              <div className="space-y-8">
-                {updates.map((update) => (
-                  <div key={update.id} className="border-b border-gray-200 last:border-0 pb-8 last:pb-0">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{update.title}</h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {new Date(update.createdAt).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 whitespace-pre-wrap mb-4">{update.description}</p>
-                    
-                    {/* Update Pictures */}
-                    {update.pictures.length > 0 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {update.pictures.map((picture) => (
-                          <div key={picture.id} className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                            <Image
-                              src={picture.imageUrl}
-                              alt={picture.caption || 'Update photo'}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
         </div>
       </div>
     </main>
