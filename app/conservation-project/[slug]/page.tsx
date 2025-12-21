@@ -194,7 +194,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                 />
               </div>
               <p className="text-sm text-gray-600">
-                {fundingPercentage.toFixed(1)}% funded
+                {fundingPercentage >= 100 ? 'Fully funded' : `${fundingPercentage.toFixed(1)}% funded`}
               </p>
             </div>
             

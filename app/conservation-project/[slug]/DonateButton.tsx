@@ -159,7 +159,7 @@ export default function DonateButton({
                 />
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {fundingPercentage.toFixed(1)}% funded
+                {fundingPercentage >= 100 ? 'Fully funded' : `${fundingPercentage.toFixed(1)}% funded`}
               </p>
             </div>
 
