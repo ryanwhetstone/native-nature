@@ -11,6 +11,7 @@ import ProjectDisplayMap from "./ProjectDisplayMap";
 import DonateButton from "./DonateButton";
 import ThankYouModal from "./ThankYouModal";
 import ProjectActions from "./ProjectActions";
+import UpdateImage from "./UpdateImage";
 import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -104,6 +105,55 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
   const isOwner = session?.user?.id === project.userId;
   const fundingPercentage = (project.currentFunding / project.fundingGoal) * 100;
 
+  // Combine update pictures and project pictures for the gallery
+  // Update pictures come first
+  const allPhotos = [
+    // Map update pictures to gallery format
+    ...updates.flatMap(update => 
+      update.pictures.map(pic => ({
+        id: `update-${pic.id}`,
+        imageUrl: pic.imageUrl,
+        caption: `${update.title}: ${pic.caption || ''}`.trim(),
+        createdAt: pic.createdAt,
+        observation: {
+          id: project.id,
+          observedAt: update.createdAt,
+          user: {
+            publicName: project.user.publicName,
+            name: project.user.name,
+          },
+        },
+        species: {
+          name: project.title,
+          preferredCommonName: null,
+          slug: '',
+        },
+        updateId: update.id,
+        updatePictureId: pic.id,
+      }))
+    ),
+    // Then add project pictures
+    ...project.pictures.map(pic => ({
+      id: `project-${pic.id}`,
+      imageUrl: pic.imageUrl,
+      caption: pic.caption,
+      createdAt: pic.createdAt,
+      observation: {
+        id: project.id,
+        observedAt: project.createdAt,
+        user: {
+          publicName: project.user.publicName,
+          name: project.user.name,
+        },
+      },
+      species: {
+        name: project.title,
+        preferredCommonName: null,
+        slug: '',
+      },
+    }))
+  ];
+
   return (
     <main className="min-h-screen bg-gray-50">
       <ThankYouModal />
@@ -174,28 +224,10 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           </div>
 
           {/* Photos Gallery */}
-          {project.pictures.length > 0 && (
-            <div className="mb-8">
+          {allPhotos.length > 0 && (
+            <div className="mb-8" id="photo-gallery">
               <MasonryPhotoGallery 
-                photos={project.pictures.map(pic => ({
-                  id: pic.id,
-                  imageUrl: pic.imageUrl,
-                  caption: pic.caption,
-                  createdAt: pic.createdAt,
-                  observation: {
-                    id: project.id,
-                    observedAt: project.createdAt,
-                    user: {
-                      publicName: project.user.publicName,
-                      name: project.user.name,
-                    },
-                  },
-                  species: {
-                    name: project.title,
-                    preferredCommonName: null,
-                    slug: '',
-                  },
-                }))}
+                photos={allPhotos}
                 columns={{ default: 1, md: 2, lg: 3 }}
               />
             </div>
@@ -233,14 +265,13 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                     {update.pictures.length > 0 && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {update.pictures.map((picture) => (
-                          <div key={picture.id} className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                            <Image
-                              src={picture.imageUrl}
-                              alt={picture.caption || 'Update photo'}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
+                          <UpdateImage
+                            key={picture.id}
+                            imageUrl={picture.imageUrl}
+                            caption={picture.caption}
+                            updatePictureId={picture.id}
+                            allPhotos={allPhotos}
+                          />
                         ))}
                       </div>
                     )}

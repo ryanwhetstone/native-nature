@@ -104,6 +104,7 @@ export default function MasonryPhotoGallery({
         {photos.map((photo, index) => (
           <button
             key={photo.id}
+            data-photo-index={index}
             onClick={() => openLightbox(index)}
             className="group relative w-full break-inside-avoid mb-4 rounded-lg overflow-hidden bg-gray-100 cursor-pointer block"
           >
