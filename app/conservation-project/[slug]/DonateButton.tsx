@@ -27,7 +27,7 @@ export default function DonateButton({
   const router = useRouter();
 
   const presetAmounts = [10, 25, 50, 100, 250, 500];
-  const tipPercentages = [0, 5, 10, 15];
+  const tipPercentages = [0, 10];
 
   // Calculate donation breakdown
   const getDonationBreakdown = () => {
@@ -253,7 +253,7 @@ export default function DonateButton({
               <p className="text-xs text-gray-600 mb-3">
                 100% of your donation goes to the project. Consider adding a tip to help us maintain the platform.
               </p>
-              <div className="grid grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-3 gap-2 mb-2">
                 {tipPercentages.map((percent) => (
                   <button
                     key={percent}
@@ -271,22 +271,22 @@ export default function DonateButton({
                     {percent === 0 ? 'None' : `${percent}%`}
                   </button>
                 ))}
-              </div>
               
-              <button
-                onClick={() => {
-                  setSiteTipPercent(-1);
-                  setError('');
-                }}
-                disabled={isProcessing}
-                className={`w-full py-2 px-4 rounded-lg border-2 transition-colors text-sm ${
-                  siteTipPercent === -1
-                    ? 'border-green-600 bg-green-50 text-green-700'
-                    : 'border-gray-300 hover:border-green-400'
-                }`}
-              >
-                Custom %
-              </button>
+                <button
+                  onClick={() => {
+                    setSiteTipPercent(-1);
+                    setError('');
+                  }}
+                  disabled={isProcessing}
+                  className={`py-2 px-4 rounded-lg border-2 transition-colors text-sm ${
+                    siteTipPercent === -1
+                      ? 'border-green-600 bg-green-50 text-green-700'
+                      : 'border-gray-300 hover:border-green-400'
+                  }`}
+                >
+                  Custom %
+                </button>
+              </div>
 
               {siteTipPercent === -1 && (
                 <div className="relative mt-2">
