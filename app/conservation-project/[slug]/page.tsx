@@ -115,7 +115,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                   <div className="flex items-center gap-3">
                     <span className={`px-3 py-1 text-sm rounded-full ${
                       project.status === 'active' ? 'bg-green-600 text-white' :
-                      project.status === 'completed' ? 'bg-blue-600 text-white' :
+                      project.status === 'funded' ? 'bg-blue-600 text-white' :
                       'bg-gray-600 text-white'
                     }`}>
                       {project.status.charAt(0).toUpperCase() + project.status.slice(1)} Conservation Project

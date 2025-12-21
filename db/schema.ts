@@ -183,7 +183,7 @@ export const conservationProjects = pgTable('conservation_projects', {
   fundingGoal: integer('funding_goal').notNull(), // in cents to avoid floating point issues
   currentFunding: integer('current_funding').default(0).notNull(),
   // Status
-  status: varchar('status', { length: 50 }).default('active').notNull(), // active, completed, paused
+  status: varchar('status', { length: 50 }).default('active').notNull(), // active, funded, paused
   // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

@@ -207,10 +207,10 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date(),
         };
         
-        // If funding goal is reached or exceeded, mark project as completed
-        if (newFunding >= project.fundingGoal && project.status !== 'completed') {
-          updateData.status = 'completed';
-          console.log("🎉 Project", projectId, "reached funding goal! Marking as completed.");
+        // If funding goal is reached or exceeded, mark project as funded
+        if (newFunding >= project.fundingGoal && project.status !== 'funded') {
+          updateData.status = 'funded';
+          console.log("🎉 Project", projectId, "reached funding goal! Marking as funded.");
         }
         
         await db

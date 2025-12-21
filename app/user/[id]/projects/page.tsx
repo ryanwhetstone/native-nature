@@ -114,7 +114,7 @@ export default async function UserProjectsPage({
                       </h3>
                       <span className={`px-2 py-1 text-xs rounded-full flex-shrink-0 ml-2 ${
                         project.status === 'active' ? 'bg-green-100 text-green-800' :
-                        project.status === 'completed' ? 'bg-blue-100 text-blue-800' :
+                        project.status === 'funded' ? 'bg-blue-100 text-blue-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {project.status}

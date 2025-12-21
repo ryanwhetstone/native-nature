@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if project is completed (no longer accepting donations)
-    if (project.status === 'completed') {
+    // Check if project is funded (no longer accepting donations)
+    if (project.status === 'funded') {
       return NextResponse.json(
         { error: "This project has reached its funding goal and is no longer accepting donations" },
         { status: 400 }

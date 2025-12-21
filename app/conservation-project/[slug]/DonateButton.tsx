@@ -107,7 +107,7 @@ export default function DonateButton({
   };
 
   const fundingPercentage = Math.min(100, (currentFunding / fundingGoal) * 100);
-  const isCompleted = status === 'completed';
+  const isCompleted = status === 'funded';
 
   return (
     <>
