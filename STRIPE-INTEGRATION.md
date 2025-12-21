@@ -46,6 +46,7 @@ For local testing, use the Stripe CLI:
 3. Enter your endpoint URL: `https://yourdomain.com/api/webhooks/stripe`
 4. Select events to listen for:
    - `checkout.session.completed`
+   - `charge.succeeded`
    - `payment_intent.payment_failed`
 5. Click "Add endpoint"
 6. Copy the "Signing secret" and add to your production environment variables

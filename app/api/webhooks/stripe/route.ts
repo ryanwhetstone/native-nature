@@ -101,6 +101,8 @@ export async function POST(request: NextRequest) {
             );
 
             const charge = paymentIntent.latest_charge as Stripe.Charge;
+            console.log("Charge retrieved:", charge?.id, "Balance TX:", charge?.balance_transaction);
+            
             if (charge) {
               chargeDetails = {
                 id: charge.id,
@@ -111,11 +113,16 @@ export async function POST(request: NextRequest) {
               };
 
               if (charge.balance_transaction) {
-                const balTx = await stripe.balanceTransactions.retrieve(
-                  charge.balance_transaction as string
-                );
+                const balTxId = typeof charge.balance_transaction === 'string' 
+                  ? charge.balance_transaction 
+                  : charge.balance_transaction.id;
+                  
+                const balTx = await stripe.balanceTransactions.retrieve(balTxId);
                 balanceTransaction = balTx;
                 stripeFeeActual = balTx.fee; // Actual Stripe fee in cents
+                console.log("Balance transaction retrieved:", balTx.id, "Fee:", balTx.fee);
+              } else {
+                console.log("No balance_transaction on charge yet");
               }
 
               // Get payment method details
@@ -164,6 +171,41 @@ export async function POST(request: NextRequest) {
           .where(eq(conservationProjects.id, projectId));
 
         console.log("Donation processed:", donation.id, "Actual Stripe fee:", stripeFeeActual);
+        break;
+      }
+
+      case "charge.succeeded": {
+        const charge = event.data.object as Stripe.Charge;
+        console.log("Charge succeeded event:", charge.id);
+
+        // Check if we already have a transaction record for this charge
+        const existingTx = await db.query.stripeTransactions.findFirst({
+          where: eq(stripeTransactions.stripeChargeId, charge.id),
+        });
+
+        if (existingTx) {
+          console.log("Transaction already exists, updating with balance transaction data");
+          
+          // Update with balance transaction data if we have it now
+          if (charge.balance_transaction) {
+            const balTxId = typeof charge.balance_transaction === 'string' 
+              ? charge.balance_transaction 
+              : charge.balance_transaction.id;
+              
+            const balTx = await stripe.balanceTransactions.retrieve(balTxId);
+            
+            await db
+              .update(stripeTransactions)
+              .set({
+                stripeFeeActual: balTx.fee,
+                netAmount: balTx.net,
+                balanceTransaction: balTx as any,
+              })
+              .where(eq(stripeTransactions.stripeChargeId, charge.id));
+            
+            console.log("Updated transaction with fee:", balTx.fee);
+          }
+        }
         break;
       }
 
