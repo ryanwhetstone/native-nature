@@ -120,6 +120,12 @@ export async function PUT(
     // Convert funding goal to cents if provided
     const fundingGoalInCents = fundingGoal ? Math.round(parseFloat(fundingGoal) * 100) : undefined;
 
+    // Determine status: if new funding goal is higher than current funding, set to active
+    let projectStatus = status || existingProject.status;
+    if (fundingGoalInCents && fundingGoalInCents > existingProject.currentFunding) {
+      projectStatus = 'active';
+    }
+
     // Reverse geocode if location changed
     let locationData = null;
     if (latitude && longitude) {
@@ -132,7 +138,7 @@ export async function PUT(
         title: title || existingProject.title,
         description: description || existingProject.description,
         fundingGoal: fundingGoalInCents || existingProject.fundingGoal,
-        status: status || existingProject.status,
+        status: projectStatus,
         latitude: latitude || existingProject.latitude,
         longitude: longitude || existingProject.longitude,
         country: locationData?.country || existingProject.country,
