@@ -52,6 +52,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if project is completed (no longer accepting donations)
+    if (project.status === 'completed') {
+      return NextResponse.json(
+        { error: "This project has reached its funding goal and is no longer accepting donations" },
+        { status: 400 }
+      );
+    }
+
     // Create Stripe checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],

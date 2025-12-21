@@ -201,12 +201,21 @@ export async function POST(request: NextRequest) {
         }
 
         // Update project's current funding
+        const newFunding = (project.currentFunding || 0) + projectAmount;
+        const updateData: any = {
+          currentFunding: newFunding,
+          updatedAt: new Date(),
+        };
+        
+        // If funding goal is reached or exceeded, mark project as completed
+        if (newFunding >= project.fundingGoal && project.status !== 'completed') {
+          updateData.status = 'completed';
+          console.log("🎉 Project", projectId, "reached funding goal! Marking as completed.");
+        }
+        
         await db
           .update(conservationProjects)
-          .set({
-            currentFunding: (project.currentFunding || 0) + projectAmount,
-            updatedAt: new Date(),
-          })
+          .set(updateData)
           .where(eq(conservationProjects.id, projectId));
 
         console.log("Donation processed:", donation.id, "Actual Stripe fee:", stripeFeeActual);

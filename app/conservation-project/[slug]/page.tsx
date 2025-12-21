@@ -222,6 +222,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               projectTitle={project.title}
               currentFunding={project.currentFunding}
               fundingGoal={project.fundingGoal}
+              status={project.status}
             />
           </div>
           {/* Location Map */}

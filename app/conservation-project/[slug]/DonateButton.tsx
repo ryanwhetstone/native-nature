@@ -8,13 +8,15 @@ interface DonateButtonProps {
   projectTitle: string;
   currentFunding: number;
   fundingGoal: number;
+  status: string;
 }
 
 export default function DonateButton({ 
   projectId, 
   projectTitle,
   currentFunding,
-  fundingGoal 
+  fundingGoal,
+  status
 }: DonateButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
@@ -105,14 +107,20 @@ export default function DonateButton({
   };
 
   const fundingPercentage = Math.min(100, (currentFunding / fundingGoal) * 100);
+  const isCompleted = status === 'completed';
 
   return (
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 font-medium transition-colors"
+        disabled={isCompleted}
+        className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
+          isCompleted 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-green-600 text-white hover:bg-green-700'
+        }`}
       >
-        Donate Now
+        {isCompleted ? 'Funding Goal Reached' : 'Donate Now'}
       </button>
 
       {/* Modal */}
