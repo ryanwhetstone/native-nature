@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { conservationProjects } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { conservationProjects, donations } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
@@ -65,6 +65,24 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
   if (!project) {
     notFound();
   }
+
+  // Fetch donations for this project
+  const projectDonations = await db.query.donations.findMany({
+    where: eq(donations.projectId, projectId),
+    orderBy: [desc(donations.completedAt)],
+    with: {
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          publicName: true,
+        },
+      },
+    },
+  });
+
+  // Filter only completed donations
+  const completedDonations = projectDonations.filter(d => d.status === 'completed');
 
   const isOwner = session?.user?.id === project.userId;
   const fundingPercentage = (project.currentFunding / project.fundingGoal) * 100;
@@ -258,6 +276,42 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               </div>
             </div>
           </div>
+
+          {/* Donors Section */}
+          {completedDonations.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-4">
+                Thank you to the following donors! 🌿
+              </h2>
+              <div className="space-y-3">
+                {completedDonations.map((donation) => {
+                  const displayName = donation.user?.publicName || donation.user?.name || donation.donorName || 'Anonymous Donor';
+                  return (
+                    <div key={donation.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-green-600">❤️</span>
+                        <span className="text-gray-900 font-medium">{displayName}</span>
+                      </div>
+                      <span className="text-gray-600 font-semibold">
+                        ${(donation.projectAmount / 100).toLocaleString()}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 font-semibold">Total contributions:</span>
+                  <span className="text-green-600 font-bold text-lg">
+                    ${(completedDonations.reduce((sum, d) => sum + d.projectAmount, 0) / 100).toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  {completedDonations.length} {completedDonations.length === 1 ? 'donation' : 'donations'}
+                </p>
+              </div>
+            </div>
+          )}
 
         </div>
       </div>
