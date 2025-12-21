@@ -80,7 +80,7 @@ export default function ThankYouModal() {
         </h2>
         
         <p className="text-center text-gray-600 mb-6 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-          Your generous donation is helping make a real difference for conservation. Together, we're growing a better future for our planet!
+          Your generous donation is helping make a real difference for conservation. Together, we&apos;re growing a better future for our planet!
         </p>
 
         <button
