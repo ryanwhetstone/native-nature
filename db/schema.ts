@@ -183,7 +183,7 @@ export const conservationProjects = pgTable('conservation_projects', {
   fundingGoal: integer('funding_goal').notNull(), // in cents to avoid floating point issues
   currentFunding: integer('current_funding').default(0).notNull(),
   // Status
-  status: varchar('status', { length: 50 }).default('active').notNull(), // active, funded, paused
+  status: varchar('status', { length: 50 }).default('active').notNull(), // active, funded, completed, paused
   // Timestamps
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -203,6 +203,31 @@ export const projectPictures = pgTable('project_pictures', {
 
 export type ProjectPicture = typeof projectPictures.$inferSelect;
 export type NewProjectPicture = typeof projectPictures.$inferInsert;
+
+// Project Updates table
+export const projectUpdates = pgTable('project_updates', {
+  id: serial('id').primaryKey(),
+  projectId: integer('project_id').notNull().references(() => conservationProjects.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type ProjectUpdate = typeof projectUpdates.$inferSelect;
+export type NewProjectUpdate = typeof projectUpdates.$inferInsert;
+
+// Project Update Pictures table
+export const projectUpdatePictures = pgTable('project_update_pictures', {
+  id: serial('id').primaryKey(),
+  updateId: integer('update_id').notNull().references(() => projectUpdates.id, { onDelete: 'cascade' }),
+  imageUrl: text('image_url').notNull(),
+  caption: varchar('caption', { length: 500 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type ProjectUpdatePicture = typeof projectUpdatePictures.$inferSelect;
+export type NewProjectUpdatePicture = typeof projectUpdatePictures.$inferInsert;
 
 // Donations table
 export const donations = pgTable('donations', {
@@ -316,12 +341,32 @@ export const conservationProjectsRelations = relations(conservationProjects, ({ 
   }),
   pictures: many(projectPictures),
   donations: many(donations),
+  updates: many(projectUpdates),
 }));
 
 export const projectPicturesRelations = relations(projectPictures, ({ one }) => ({
   project: one(conservationProjects, {
     fields: [projectPictures.projectId],
     references: [conservationProjects.id],
+  }),
+}));
+
+export const projectUpdatesRelations = relations(projectUpdates, ({ one, many }) => ({
+  project: one(conservationProjects, {
+    fields: [projectUpdates.projectId],
+    references: [conservationProjects.id],
+  }),
+  user: one(users, {
+    fields: [projectUpdates.userId],
+    references: [users.id],
+  }),
+  pictures: many(projectUpdatePictures),
+}));
+
+export const projectUpdatePicturesRelations = relations(projectUpdatePictures, ({ one }) => ({
+  update: one(projectUpdates, {
+    fields: [projectUpdatePictures.updateId],
+    references: [projectUpdates.id],
   }),
 }));
 

@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { conservationProjects, donations } from "@/db/schema";
+import { conservationProjects, donations, projectUpdates } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -7,10 +7,11 @@ import { auth } from "@/auth";
 import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
 import type { Metadata } from "next";
 import { parseProjectSlug } from "@/lib/project-url";
-import { DeleteProjectButton } from "@/app/account/projects/DeleteProjectButton";
 import ProjectDisplayMap from "./ProjectDisplayMap";
 import DonateButton from "./DonateButton";
 import ThankYouModal from "./ThankYouModal";
+import ProjectActions from "./ProjectActions";
+import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -84,6 +85,22 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
   // Filter only completed donations
   const completedDonations = projectDonations.filter(d => d.status === 'completed');
 
+  // Fetch project updates
+  const updates = await db.query.projectUpdates.findMany({
+    where: eq(projectUpdates.projectId, projectId),
+    orderBy: [desc(projectUpdates.createdAt)],
+    with: {
+      pictures: true,
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          publicName: true,
+        },
+      },
+    },
+  });
+
   const isOwner = session?.user?.id === project.userId;
   const fundingPercentage = (project.currentFunding / project.fundingGoal) * 100;
 
@@ -97,17 +114,12 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           <div className="max-w-7xl mx-auto mb-8">
             <div className="flex justify-end mb-4">
               {/* Owner Actions */}
-              {isOwner && (
-                <div className="flex-shrink-0 flex gap-2">
-                  <Link
-                    href={`/account/projects/${project.id}/edit`}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap"
-                  >
-                    Edit
-                  </Link>
-                  <DeleteProjectButton projectId={project.id} />
-                </div>
-              )}
+              <ProjectActions
+                projectId={project.id}
+                projectTitle={project.title}
+                projectStatus={project.status}
+                isOwner={isOwner}
+              />
             </div>
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
@@ -116,6 +128,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                     <span className={`px-3 py-1 text-sm rounded-full ${
                       project.status === 'active' ? 'bg-green-600 text-white' :
                       project.status === 'funded' ? 'bg-blue-600 text-white' :
+                      project.status === 'completed' ? 'bg-purple-600 text-white' :
                       'bg-gray-600 text-white'
                     }`}>
                       {project.status.charAt(0).toUpperCase() + project.status.slice(1)} Conservation Project
@@ -310,6 +323,48 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                 <p className="text-sm text-gray-500 mt-2">
                   {completedDonations.length} {completedDonations.length === 1 ? 'donation' : 'donations'}
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* Project Updates Section */}
+          {updates.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <h2 className="text-xl font-semibold mb-6">Project Updates</h2>
+              <div className="space-y-8">
+                {updates.map((update) => (
+                  <div key={update.id} className="border-b border-gray-200 last:border-0 pb-8 last:pb-0">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">{update.title}</h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {new Date(update.createdAt).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-gray-700 whitespace-pre-wrap mb-4">{update.description}</p>
+                    
+                    {/* Update Pictures */}
+                    {update.pictures.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {update.pictures.map((picture) => (
+                          <div key={picture.id} className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+                            <Image
+                              src={picture.imageUrl}
+                              alt={picture.caption || 'Update photo'}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}

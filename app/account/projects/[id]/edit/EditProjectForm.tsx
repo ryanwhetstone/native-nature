@@ -209,6 +209,7 @@ export default function EditProjectForm({ project }: { project: Project }) {
         >
           <option value="active">Active</option>
           <option value="funded">Funded</option>
+          <option value="completed">Completed</option>
         </select>
       </div>
 

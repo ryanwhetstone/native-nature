@@ -120,6 +120,13 @@
       "when": 1766287880092,
       "tag": "0016_breezy_jack_flag",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1766325567756,
+      "tag": "0017_living_iron_fist",
+      "breakpoints": true
     }
   ]
 }
