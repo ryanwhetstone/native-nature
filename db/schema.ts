@@ -245,7 +245,6 @@ export const stripeTransactions = pgTable('stripe_transactions', {
   stripeFeeActual: integer('stripe_fee_actual'), // Actual fee from Stripe balance transaction
   netAmount: integer('net_amount'), // Amount after all fees
   siteTipActualAmount: integer('site_tip_actual_amount'), // Actual site tip (netAmount - projectAmount)
-  // Transaction details
   currency: varchar('currency', { length: 10 }).default('usd').notNull(),
   status: varchar('status', { length: 50 }).notNull(), // succeeded, failed, refunded, etc.
   paymentMethod: varchar('payment_method', { length: 50 }), // card, etc.
