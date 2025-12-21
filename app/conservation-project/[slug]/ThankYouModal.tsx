@@ -9,16 +9,16 @@ export default function ThankYouModal() {
   const router = useRouter();
 
   useEffect(() => {
-    if (searchParams.get('success') === 'true') {
+    if (searchParams.get('payment') === 'success') {
       setIsOpen(true);
     }
   }, [searchParams]);
 
   const handleClose = () => {
     setIsOpen(false);
-    // Remove the success param from URL
+    // Remove the payment param from URL
     const url = new URL(window.location.href);
-    url.searchParams.delete('success');
+    url.searchParams.delete('payment');
     router.replace(url.pathname + url.search);
   };
 
