@@ -107,7 +107,29 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
   // Combine update pictures and project pictures for the gallery
   // Update pictures come first
-  const allPhotos = [
+  type GalleryPhoto = {
+    id: number | string;
+    imageUrl: string;
+    caption: string | null;
+    createdAt: Date;
+    observation: {
+      id: number;
+      observedAt: Date;
+      user: {
+        publicName: string | null;
+        name: string | null;
+      };
+    };
+    species: {
+      name: string;
+      preferredCommonName: string | null;
+      slug: string;
+    };
+    updateId?: number;
+    updatePictureId?: number;
+  };
+
+  const allPhotos: GalleryPhoto[] = [
     // Map update pictures to gallery format
     ...updates.flatMap(update => 
       update.pictures.map(pic => ({
@@ -229,6 +251,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               <MasonryPhotoGallery 
                 photos={allPhotos}
                 columns={{ default: 1, md: 2, lg: 3 }}
+                isProjectGallery={true}
               />
             </div>
           )}

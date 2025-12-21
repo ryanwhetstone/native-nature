@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { getObservationUrl } from '@/lib/observation-url';
 
 interface Photo {
-  id: number;
+  id: number | string;
   imageUrl: string;
   observation: {
     id: number;
@@ -19,7 +19,9 @@ interface Photo {
   species: {
     name: string;
     preferredCommonName: string | null;
+    slug?: string;
   };
+  caption?: string | null;
 }
 
 interface MasonryPhotoGalleryProps {
@@ -29,11 +31,13 @@ interface MasonryPhotoGalleryProps {
     md?: number;
     lg?: number;
   };
+  isProjectGallery?: boolean;
 }
 
 export default function MasonryPhotoGallery({ 
   photos, 
-  columns = { default: 2, md: 3, lg: 4 }
+  columns = { default: 2, md: 3, lg: 4 },
+  isProjectGallery = false
 }: MasonryPhotoGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
@@ -203,7 +207,7 @@ export default function MasonryPhotoGallery({
                     }}
                     scroll={true}
                   >
-                    Observed on {new Date(photos[selectedIndex].observation.observedAt).toLocaleDateString()}
+                    {isProjectGallery ? 'Uploaded' : 'Observed'} on {new Date(photos[selectedIndex].observation.observedAt).toLocaleDateString()}
                   </Link>
                 </p>
                 <p className="text-gray-400 text-xs mt-2">
