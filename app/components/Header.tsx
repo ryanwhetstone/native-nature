@@ -86,20 +86,6 @@ export function Header({ session }: { session: any }) {
               </div>
             )}
             
-            {/* Regular Nav Links */}
-            <Link
-              href="/"
-              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
-            >
-              About
-            </Link>
-            
             {/* Search Icon */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -118,6 +104,20 @@ export function Header({ session }: { session: any }) {
                 <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
+            
+            {/* Regular Nav Links */}
+            <Link
+              href="/"
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="/about"
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+            >
+              About
+            </Link>
             
             {session?.user && (
               <Link

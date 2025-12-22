@@ -55,11 +55,11 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="text-center">
-              <div className="text-5xl mb-4">🌱</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Conserve</h3>
+              <div className="text-5xl mb-4">💚</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Support</h3>
               <p className="text-gray-600">
-                Raise awareness about biodiversity and inspire others to appreciate and protect 
-                our natural world.
+                Fund conservation projects that protect habitats and native species around 
+                the world.
               </p>
             </div>
           </div>
@@ -170,6 +170,90 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Conservation Projects Section */}
+      <div className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+              Conservation Projects
+            </h2>
+            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              Native Nature empowers individuals and organizations to create and fund conservation 
+              projects that make a real difference. From habitat restoration to wildlife protection, 
+              our platform connects passionate conservationists with donors who want to support 
+              meaningful environmental initiatives.
+            </p>
+          </div>
+
+          <div className="bg-green-50 rounded-lg shadow-lg p-8 mb-8">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
+              How Conservation Projects Work
+            </h3>
+            <div className="space-y-6 text-gray-700">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                  1
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Create a Project</h4>
+                  <p>
+                    Conservation organizations and individuals can create projects with detailed 
+                    descriptions, funding goals, and photo documentation of their conservation efforts.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                  2
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Community Support</h4>
+                  <p>
+                    The Native Nature community can browse and donate to projects they care about. 
+                    Donors can contribute any amount and leave messages of support for project creators.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                  3
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Progress Updates</h4>
+                  <p>
+                    Once funded, project creators share updates with photos showing the real-world 
+                    impact of the conservation work. Donors and the community can see exactly how 
+                    their contributions are making a difference.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                  4
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Transparent Impact</h4>
+                  <p>
+                    All donations, donor messages, and project updates are publicly visible. This 
+                    transparency ensures accountability and allows everyone to see the collective 
+                    impact of conservation efforts.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/conservation-efforts"
+              className="inline-block px-8 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Browse Conservation Projects
+            </Link>
           </div>
         </div>
       </div>
