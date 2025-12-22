@@ -113,7 +113,7 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
                 Once marked as completed:
               </p>
               <ul className="list-disc list-inside text-gray-700 space-y-1 ml-2">
-                <li>The project status will change from "Funded" to "Completed"</li>
+                <li>The project status will change from &quot;Funded&quot; to &quot;Completed&quot;</li>
                 <li>You can still post updates about the project</li>
                 <li>Donors will see that the work has been successfully finished</li>
               </ul>

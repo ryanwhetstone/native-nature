@@ -446,7 +446,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                       </div>
                       {donation.message && (
                         <p className="text-gray-600 text-sm ml-7 mt-1 italic">
-                          "{donation.message}"
+                          &quot;{donation.message}&quot;
                         </p>
                       )}
                     </div>
