@@ -249,7 +249,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           {allPhotos.length > 0 && (
             <div className="mb-8" id="photo-gallery">
               <MasonryPhotoGallery 
-                photos={allPhotos}
+                photos={allPhotos as any[]}
                 columns={{ default: 1, md: 2, lg: 3 }}
                 isProjectGallery={true}
               />
@@ -397,16 +397,58 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               </h2>
               <div className="space-y-3">
                 {completedDonations.map((donation) => {
-                  const displayName = donation.user?.publicName || donation.user?.name || donation.donorName || 'Anonymous Donor';
+                  let displayName = 'Anonymous Donor';
+                  
+                  // If donation is tied to a user account, use their public name
+                  if (donation.user) {
+                    displayName = donation.user.publicName || donation.user.name || 'Anonymous Donor';
+                  } 
+                  // Otherwise, format the donor name from Stripe (first name + last initial)
+                  else if (donation.donorName) {
+                    const nameParts = donation.donorName.trim().split(' ');
+                    if (nameParts.length > 1) {
+                      const firstName = nameParts[0];
+                      const lastInitial = nameParts[nameParts.length - 1].charAt(0).toUpperCase();
+                      displayName = `${firstName} ${lastInitial}.`;
+                    } else {
+                      displayName = donation.donorName;
+                    }
+                  }
+                  
                   return (
-                    <div key={donation.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-green-600">❤️</span>
-                        <span className="text-gray-900 font-medium">{displayName}</span>
+                    <div key={donation.id} className="py-3 border-b border-gray-100 last:border-0">
+                      <div className="flex justify-between items-start mb-1">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-600">❤️</span>
+                            {donation.user ? (
+                              <Link 
+                                href={`/user/${donation.user.id}/profile`}
+                                className="text-gray-900 font-medium hover:text-blue-600 transition-colors"
+                              >
+                                {displayName}
+                              </Link>
+                            ) : (
+                              <span className="text-gray-900 font-medium">{displayName}</span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 ml-7 mt-1">
+                            {new Date(donation.completedAt || donation.createdAt).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric' 
+                            })}
+                          </p>
+                        </div>
+                        <span className="text-gray-600 font-semibold">
+                          ${(donation.projectAmount / 100).toLocaleString()}
+                        </span>
                       </div>
-                      <span className="text-gray-600 font-semibold">
-                        ${(donation.projectAmount / 100).toLocaleString()}
-                      </span>
+                      {donation.message && (
+                        <p className="text-gray-600 text-sm ml-7 mt-1 italic">
+                          "{donation.message}"
+                        </p>
+                      )}
                     </div>
                   );
                 })}

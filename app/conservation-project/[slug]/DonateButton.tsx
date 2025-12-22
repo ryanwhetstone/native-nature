@@ -22,13 +22,14 @@ export default function DonateButton({
   const [amount, setAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
   const [coverFees, setCoverFees] = useState(true); // Default to true
-  const [siteTipPercent, setSiteTipPercent] = useState(0);
+  const [siteTipPercent, setSiteTipPercent] = useState(10);
   const [customTipPercent, setCustomTipPercent] = useState('');
+  const [message, setMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const presetAmounts = [10, 25, 50, 100, 250, 500];
+  const presetAmounts = [10, 25, 50, 100, 250];
   const tipPercentages = [0, 10];
 
   // Calculate donation breakdown
@@ -87,6 +88,7 @@ export default function DonateButton({
           projectAmount: Math.round(breakdown.projectAmount * 100), // Amount to credit to project
           siteTip: Math.round(breakdown.siteTip * 100), // Site tip in cents
           coversFees: coverFees,
+          message: message.trim() || undefined,
         }),
       });
 
@@ -126,11 +128,11 @@ export default function DonateButton({
       {/* Modal */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto"
           onClick={() => !isProcessing && setIsOpen(false)}
         >
           <div
-            className="bg-white rounded-lg max-w-md w-full p-6"
+            className="bg-white rounded-lg max-w-lg w-full p-6 my-8 max-h-[calc(100vh-4rem)] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -151,7 +153,7 @@ export default function DonateButton({
             </div>
 
             {/* Progress Bar */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-600">
                   ${(currentFunding / 100).toLocaleString()} raised
@@ -169,7 +171,7 @@ export default function DonateButton({
               <p className="text-xs text-gray-500 mt-1">
                 {fundingPercentage >= 100 ? 'Fully funded' : `${fundingPercentage.toFixed(1)}% funded`}
               </p>
-            </div>
+            </div> */}
 
             {/* Amount Selection */}
             <div className="mb-4">
@@ -194,23 +196,21 @@ export default function DonateButton({
                     ${preset}
                   </button>
                 ))}
+                <button
+                  onClick={() => {
+                    setAmount('custom');
+                    setError('');
+                  }}
+                  disabled={isProcessing}
+                  className={`py-2 px-4 rounded-lg border-2 transition-colors ${
+                    amount === 'custom'
+                      ? 'border-green-600 bg-green-50 text-green-700'
+                      : 'border-gray-300 hover:border-green-400'
+                  }`}
+                >
+                  Custom
+                </button>
               </div>
-
-              {/* Custom Amount */}
-              <button
-                onClick={() => {
-                  setAmount('custom');
-                  setError('');
-                }}
-                disabled={isProcessing}
-                className={`w-full py-2 px-4 rounded-lg border-2 transition-colors mb-3 ${
-                  amount === 'custom'
-                    ? 'border-green-600 bg-green-50 text-green-700'
-                    : 'border-gray-300 hover:border-green-400'
-                }`}
-              >
-                Custom Amount
-              </button>
 
               {amount === 'custom' && (
                 <div className="relative">
@@ -230,6 +230,25 @@ export default function DonateButton({
                   />
                 </div>
               )}
+            </div>
+
+            {/* Optional Message */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add a message (Optional)
+              </label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="I love this project, good luck!"
+                maxLength={500}
+                rows={1}
+                disabled={isProcessing}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                {message.length}/500 characters
+              </p>
             </div>
 
             {/* Cover Transaction Fees */}

@@ -17,14 +17,10 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth();
     
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    // Allow both authenticated and anonymous donations
+    const userId = session?.user?.id || null;
 
-    const { projectId, amount, projectAmount, siteTip, coversFees } = await request.json();
+    const { projectId, amount, projectAmount, siteTip, coversFees, message } = await request.json();
 
     if (!projectId || !amount || amount < 100) {
       return NextResponse.json(
@@ -63,6 +59,7 @@ export async function POST(request: NextRequest) {
     // Create Stripe checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
+      billing_address_collection: 'auto',
       line_items: [
         {
           price_data: {
@@ -81,11 +78,12 @@ export async function POST(request: NextRequest) {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/conservation-project/${projectId}-${project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}?payment=cancelled`,
       metadata: {
         projectId: projectId.toString(),
-        userId: session.user.id,
+        userId: userId || '',
         amount: amount.toString(),
         projectAmount: projectAmount.toString(),
         siteTip: (siteTip || 0).toString(),
         coversFees: coversFees ? 'true' : 'false',
+        message: message || '',
       },
     });
 

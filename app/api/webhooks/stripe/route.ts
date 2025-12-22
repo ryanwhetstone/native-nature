@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
         const projectAmount = parseInt(session.metadata?.projectAmount || "0");
         const siteTip = parseInt(session.metadata?.siteTip || "0");
         const coversFees = session.metadata?.coversFees === 'true';
+        const message = session.metadata?.message || null;
 
         if (!projectId || !amount || !projectAmount) {
           console.error("Missing metadata in checkout session");
@@ -113,6 +114,10 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "Project not found" }, { status: 404 });
         }
 
+        // Extract customer details from Stripe session
+        const donorEmail = session.customer_details?.email || session.customer_email || null;
+        const donorName = session.customer_details?.name || null;
+
         // Create donation record
         const [donation] = await db.insert(donations).values({
           projectId,
@@ -121,6 +126,9 @@ export async function POST(request: NextRequest) {
           projectAmount,
           siteTip,
           coversFees,
+          message: message || null,
+          donorName,
+          donorEmail,
           stripeSessionId: session.id,
           stripePaymentIntentId: session.payment_intent as string,
           status: "completed",

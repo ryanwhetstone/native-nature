@@ -16,15 +16,12 @@ interface ProjectActionsProps {
 
 export default function ProjectActions({ projectId, projectTitle, projectStatus, isOwner }: ProjectActionsProps) {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
 
   const handleMarkCompleted = async () => {
-    if (!confirm('Are you sure you want to mark this project as completed? This indicates that all work is finished.')) {
-      return;
-    }
-
     setIsCompleting(true);
     try {
       const response = await fetch(`/api/projects/${projectId}/complete`, {
@@ -36,6 +33,7 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
       }
 
       showToast('Project marked as completed! 🎉');
+      setShowCompleteModal(false);
       router.refresh();
     } catch (error) {
       console.error('Error completing project:', error);
@@ -62,11 +60,11 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
               Give an Update
             </button>
             <button
-              onClick={handleMarkCompleted}
+              onClick={() => setShowCompleteModal(true)}
               disabled={isCompleting}
               className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors whitespace-nowrap disabled:opacity-50"
             >
-              {isCompleting ? 'Completing...' : 'Mark as Completed'}
+              Mark as Completed
             </button>
           </>
         )}
@@ -93,6 +91,52 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
           projectTitle={projectTitle}
           onClose={() => setShowUpdateForm(false)}
         />
+      )}
+
+      {/* Complete Project Modal */}
+      {showCompleteModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4"
+          onClick={() => !isCompleting && setShowCompleteModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg max-w-md w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Mark Project as Completed?</h2>
+            
+            <div className="mb-6">
+              <p className="text-gray-700 mb-3">
+                Marking a project as completed indicates that all conservation work has been accomplished for this project.
+              </p>
+              <p className="text-gray-700 mb-3">
+                Once marked as completed:
+              </p>
+              <ul className="list-disc list-inside text-gray-700 space-y-1 ml-2">
+                <li>The project status will change from "Funded" to "Completed"</li>
+                <li>You can still post updates about the project</li>
+                <li>Donors will see that the work has been successfully finished</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCompleteModal(false)}
+                disabled={isCompleting}
+                className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMarkCompleted}
+                disabled={isCompleting}
+                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 disabled:bg-green-400 transition-colors"
+              >
+                {isCompleting ? 'Completing...' : 'Mark as Completed'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
