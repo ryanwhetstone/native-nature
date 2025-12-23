@@ -33,7 +33,7 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
       // Initialize map
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/outdoors-v12',
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: [longitude, latitude],
         zoom: 13,
       });
