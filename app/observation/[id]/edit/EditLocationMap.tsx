@@ -48,7 +48,7 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
 
     // Add geocoder (search) control
     const geocoder = new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken,
+      accessToken: mapboxgl.accessToken || '',
       mapboxgl: mapboxgl as any,
       marker: false, // We'll handle the marker ourselves
       placeholder: 'Search for a city, state, or address',
