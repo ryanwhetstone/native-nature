@@ -64,6 +64,32 @@ export default function ManageQuestions({
     }
   };
 
+  const handleDeleteResponse = async (questionId: number) => {
+    if (!confirm('Are you sure you want to delete this response? This will move the question back to the unanswered section.')) {
+      return;
+    }
+
+    setError('');
+    setIsSubmitting(questionId);
+
+    try {
+      const res = await fetch(`/api/conservation-project/${projectId}/questions/${questionId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to delete response');
+      }
+
+      // Success - reload the page
+      window.location.reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete response');
+      setIsSubmitting(null);
+    }
+  };
+
   if (unansweredQuestions.length === 0 && answeredQuestions.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
@@ -194,15 +220,24 @@ const isEditing = editingQuestionId === question.id;
                       <div className="flex items-start justify-between mb-2">
                         <p className="text-sm text-gray-600 font-medium">Your Response:</p>
                         {!isEditing && (
-                          <button
-                            onClick={() => {
-                              setEditingQuestionId(question.id);
-                              setResponses(prev => ({ ...prev, [question.id]: question.response || '' }));
-                            }}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                          >
-                            Edit
-                          </button>
+                          <>
+                            <button
+                              onClick={() => {
+                                setEditingQuestionId(question.id);
+                                setResponses(prev => ({ ...prev, [question.id]: question.response || '' }));
+                              }}
+                              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteResponse(question.id)}
+                              disabled={isSubmitting === question.id}
+                              className="text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Delete
+                            </button>
+                          </>
                         )}
                       </div>
                       {isEditing ? (

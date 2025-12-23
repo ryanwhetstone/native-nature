@@ -86,3 +86,76 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string; questionId: string }> }
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id, questionId } = await params;
+    const projectId = parseInt(id);
+    const qId = parseInt(questionId);
+
+    if (isNaN(projectId) || isNaN(qId)) {
+      return NextResponse.json(
+        { error: "Invalid project or question ID" },
+        { status: 400 }
+      );
+    }
+
+    // Verify the user owns the project
+    const project = await db.query.conservationProjects.findFirst({
+      where: eq(conservationProjects.id, projectId),
+    });
+
+    if (!project) {
+      return NextResponse.json(
+        { error: "Project not found" },
+        { status: 404 }
+      );
+    }
+
+    if (project.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "You don't have permission to delete responses for this project" },
+        { status: 403 }
+      );
+    }
+
+    // Delete the response by setting it to null
+    const [updatedQuestion] = await db
+      .update(projectQuestions)
+      .set({
+        response: null,
+        respondedAt: null,
+      })
+      .where(
+        and(
+          eq(projectQuestions.id, qId),
+          eq(projectQuestions.projectId, projectId)
+        )
+      )
+      .returning();
+
+    if (!updatedQuestion) {
+      return NextResponse.json(
+        { error: "Question not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting response:", error);
+    return NextResponse.json(
+      { error: "Failed to delete response" },
+      { status: 500 }
+    );
+  }
+}
