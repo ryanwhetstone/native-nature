@@ -26,6 +26,7 @@ export default function ManageQuestions({
   questions: Question[];
 }) {
   const [expandedQuestionId, setExpandedQuestionId] = useState<number | null>(null);
+  const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
   const [responses, setResponses] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
   const [error, setError] = useState('');
@@ -165,6 +166,7 @@ export default function ManageQuestions({
               const askerName = question.user 
                 ? (question.user.publicName || question.user.name || 'Anonymous')
                 : (question.askerName || 'Anonymous');
+const isEditing = editingQuestionId === question.id;
 
               return (
                 <div key={question.id} className="border border-gray-200 rounded-lg p-4">
@@ -189,15 +191,65 @@ export default function ManageQuestions({
                   </div>
                   {question.response && (
                     <div className="bg-green-50 rounded-lg p-3">
-                      <p className="text-sm text-gray-600 font-medium mb-1">Your Response:</p>
-                      <p className="text-gray-900 whitespace-pre-wrap">{question.response}</p>
-                      {question.respondedAt && (
-                        <p className="text-xs text-gray-500 mt-2">
-                          Responded on {new Date(question.respondedAt).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
+                      <div className="flex items-start justify-between mb-2">
+                        <p className="text-sm text-gray-600 font-medium">Your Response:</p>
+                        {!isEditing && (
+                          <button
+                            onClick={() => {
+                              setEditingQuestionId(question.id);
+                              setResponses(prev => ({ ...prev, [question.id]: question.response || '' }));
+                            }}
+                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            Edit
+                          </button>
+                        )}
+                      </div>
+                      {isEditing ? (
+                        <div>
+                          <textarea
+                            value={responses[question.id] || ''}
+                            onChange={(e) => setResponses(prev => ({ ...prev, [question.id]: e.target.value }))}
+                            rows={4}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-3"
+                            placeholder="Type your answer here..."
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleSubmitResponse(question.id)}
+                              disabled={isSubmitting === question.id}
+                              className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {isSubmitting === question.id ? 'Saving...' : 'Save Changes'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingQuestionId(null);
+                                setResponses(prev => {
+                                  const newResponses = { ...prev };
+                                  delete newResponses[question.id];
+                                  return newResponses;
+                                });
+                              }}
+                              className="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-gray-900 whitespace-pre-wrap">{question.response}</p>
+                          {question.respondedAt && (
+                            <p className="text-xs text-gray-500 mt-2">
+                              Responded on {new Date(question.respondedAt).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                              })}
+                            </p>
+                          )}
+                        </)}
                         </p>
                       )}
                     </div>
