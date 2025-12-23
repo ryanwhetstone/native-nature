@@ -66,7 +66,9 @@ export default function ManageQuestions({
       setIsSubmitting(null);
     }
   };
-setError('');
+
+  const handleDeleteResponse = async (questionId: number) => {
+    setError('');
     setIsSubmitting(questionId);
 
     try {
