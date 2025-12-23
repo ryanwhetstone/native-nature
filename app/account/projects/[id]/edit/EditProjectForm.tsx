@@ -283,7 +283,7 @@ export default function EditProjectForm({ project }: { project: Project }) {
         </label>
         {!webglError && (
           <p className="text-sm text-gray-600 mb-3">
-            Click on the map or drag the marker to update the location
+            Search for a location using the search box on the map, click on the map, or drag the marker to update the location
           </p>
         )}
         <ProjectMap

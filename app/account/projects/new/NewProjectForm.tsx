@@ -211,7 +211,7 @@ export default function NewProjectForm() {
         </label>
         {!webglError && (
           <p className="text-sm text-gray-600 mb-3">
-            Click on the map to select the location of your conservation project
+            Search for a location using the search box on the map, or click directly on the map to select the location of your conservation project
           </p>
         )}
         <ProjectMap
