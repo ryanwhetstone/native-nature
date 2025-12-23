@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
@@ -43,6 +45,33 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
 
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    // Add geocoder (search) control
+    const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl as any,
+      marker: false, // We'll handle the marker ourselves
+      placeholder: 'Search for a city, state, or address',
+    });
+
+    map.current.addControl(geocoder, 'top-left');
+
+    // Handle geocoder result
+    geocoder.on('result', (e) => {
+      const { center } = e.result;
+      const [lng, lat] = center;
+      
+      if (marker.current) {
+        marker.current.setLngLat([lng, lat]);
+        onLocationChange({ lat, lng });
+        
+        // Fly to the location
+        map.current?.flyTo({
+          center: [lng, lat],
+          zoom: 12,
+        });
+      }
+    });
 
     // Create draggable marker
     marker.current = new mapboxgl.Marker({ 

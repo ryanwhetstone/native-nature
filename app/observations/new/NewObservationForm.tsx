@@ -206,7 +206,7 @@ export default function NewObservationForm({
         </label>
         {!webglError && (
           <p className="text-sm text-gray-600 mb-3">
-            Click on the map to select where you observed this species
+            Search for a location using the search box on the map, or click on the map to select where you observed this species
           </p>
         )}
         <NewObservationMap
