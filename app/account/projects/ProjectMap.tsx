@@ -41,7 +41,7 @@ export default function ProjectMap({ onLocationSelect, selectedLocation, initial
       // Initialize map
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/outdoors-v12',
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: initialCenter,
         zoom: initialZoom,
       });
