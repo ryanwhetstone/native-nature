@@ -8,6 +8,15 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "You must be signed in to ask a question" },
+        { status: 401 }
+      );
+    }
+
     const { id } = await params;
     const projectId = parseInt(id);
 
@@ -19,22 +28,11 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { question, askerName } = body;
+    const { question } = body;
 
     if (!question || question.trim().length === 0) {
       return NextResponse.json(
         { error: "Question is required" },
-        { status: 400 }
-      );
-    }
-
-    const session = await auth();
-    const userId = session?.user?.id || null;
-
-    // If not logged in and no askerName provided, require a name
-    if (!userId && (!askerName || askerName.trim().length === 0)) {
-      return NextResponse.json(
-        { error: "Name is required for anonymous questions" },
         { status: 400 }
       );
     }
@@ -44,8 +42,7 @@ export async function POST(
       .insert(projectQuestions)
       .values({
         projectId,
-        userId,
-        askerName: userId ? null : askerName,
+        userId: session.user.id,
         question: question.trim(),
       })
       .returning();
