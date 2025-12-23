@@ -127,6 +127,13 @@
       "when": 1766325567756,
       "tag": "0017_living_iron_fist",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1766461825161,
+      "tag": "0018_panoramic_victor_mancha",
+      "breakpoints": true
     }
   ]
 }

@@ -77,6 +77,12 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
           </button>
         )}
         <Link
+          href={`/conservation-project/${projectId}-${projectTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/questions`}
+          className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors whitespace-nowrap"
+        >
+          Manage Q&A
+        </Link>
+        <Link
           href={`/account/projects/${projectId}/edit`}
           className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap"
         >

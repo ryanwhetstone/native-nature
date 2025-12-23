@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { conservationProjects, donations, projectUpdates } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { conservationProjects, donations, projectUpdates, projectQuestions } from "@/db/schema";
+import { eq, desc, isNotNull } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
@@ -13,6 +13,7 @@ import ThankYouModal from "./ThankYouModal";
 import ProjectActions from "./ProjectActions";
 import UpdateImage from "./UpdateImage";
 import Image from "next/image";
+import AskQuestionForm from "./AskQuestionForm";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -101,6 +102,24 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
       },
     },
   });
+
+  // Fetch answered questions
+  const answeredQuestions = await db.query.projectQuestions.findMany({
+    where: eq(projectQuestions.projectId, projectId),
+    orderBy: [desc(projectQuestions.createdAt)],
+    with: {
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          publicName: true,
+        },
+      },
+    },
+  });
+
+  // Filter to only show questions that have responses
+  const questionsWithAnswers = answeredQuestions.filter(q => q.response);
 
   const isOwner = session?.user?.id === project.userId;
   const fundingPercentage = (project.currentFunding / project.fundingGoal) * 100;
@@ -463,6 +482,76 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                 <p className="text-sm text-gray-500 mt-2">
                   {completedDonations.length} {completedDonations.length === 1 ? 'donation' : 'donations'}
                 </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Q&A Section */}
+        <div className="max-w-3xl mx-auto px-4 py-8">
+          <AskQuestionForm projectId={project.id} />
+
+          {/* Display answered questions */}
+          {questionsWithAnswers.length > 0 && (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Questions & Answers</h2>
+              <div className="space-y-6">
+                {questionsWithAnswers.map((qa) => {
+                  const askerName = qa.user 
+                    ? (qa.user.publicName || qa.user.name || 'Anonymous')
+                    : (qa.askerName || 'Anonymous');
+                  
+                  return (
+                    <div key={qa.id} className="border-b border-gray-200 last:border-0 pb-6 last:pb-0">
+                      {/* Question */}
+                      <div className="mb-4">
+                        <div className="flex items-start gap-2 mb-2">
+                          <span className="text-blue-600 text-lg">Q:</span>
+                          <div className="flex-1">
+                            <p className="text-gray-900 font-medium">{qa.question}</p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              Asked by {qa.user ? (
+                                <Link 
+                                  href={`/user/${qa.user.id}/profile`}
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  {askerName}
+                                </Link>
+                              ) : (
+                                <span>{askerName}</span>
+                              )} on {new Date(qa.createdAt).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Answer */}
+                      {qa.response && (
+                        <div className="ml-6 bg-green-50 rounded-lg p-4">
+                          <div className="flex items-start gap-2">
+                            <span className="text-green-600 text-lg font-semibold">A:</span>
+                            <div className="flex-1">
+                              <p className="text-gray-900 whitespace-pre-wrap">{qa.response}</p>
+                              {qa.respondedAt && (
+                                <p className="text-sm text-gray-600 mt-2">
+                                  Answered by {project.user.publicName || project.user.name} on {new Date(qa.respondedAt).toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                  })}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

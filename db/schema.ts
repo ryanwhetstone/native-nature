@@ -287,6 +287,21 @@ export const stripeTransactions = pgTable('stripe_transactions', {
 export type StripeTransaction = typeof stripeTransactions.$inferSelect;
 export type NewStripeTransaction = typeof stripeTransactions.$inferInsert;
 
+// Project Questions table
+export const projectQuestions = pgTable('project_questions', {
+  id: serial('id').primaryKey(),
+  projectId: integer('project_id').notNull().references(() => conservationProjects.id, { onDelete: 'cascade' }),
+  userId: text('user_id').references(() => users.id, { onDelete: 'set null' }), // nullable for anonymous questions
+  askerName: varchar('asker_name', { length: 255 }), // For anonymous questions
+  question: text('question').notNull(),
+  response: text('response'), // Project owner's response
+  respondedAt: timestamp('responded_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type ProjectQuestion = typeof projectQuestions.$inferSelect;
+export type NewProjectQuestion = typeof projectQuestions.$inferInsert;
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   favorites: many(favorites),
@@ -342,6 +357,7 @@ export const conservationProjectsRelations = relations(conservationProjects, ({ 
   pictures: many(projectPictures),
   donations: many(donations),
   updates: many(projectUpdates),
+  questions: many(projectQuestions),
 }));
 
 export const projectPicturesRelations = relations(projectPictures, ({ one }) => ({
@@ -400,6 +416,17 @@ export const stripeTransactionsRelations = relations(stripeTransactions, ({ one 
   }),
   recipientUser: one(users, {
     fields: [stripeTransactions.recipientUserId],
+    references: [users.id],
+  }),
+}));
+
+export const projectQuestionsRelations = relations(projectQuestions, ({ one }) => ({
+  project: one(conservationProjects, {
+    fields: [projectQuestions.projectId],
+    references: [conservationProjects.id],
+  }),
+  user: one(users, {
+    fields: [projectQuestions.userId],
     references: [users.id],
   }),
 }));
