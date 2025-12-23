@@ -97,9 +97,9 @@ export default function ManageQuestions({
 
   if (unansweredQuestions.length === 0 && answeredQuestions.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Project Questions</h3>
-        <p className="text-gray-600">No questions have been asked yet.</p>
+      <div className="card">
+        <h3 className="heading-4 mb-2">Project Questions</h3>
+        <p className="text-muted">No questions have been asked yet.</p>
       </div>
     );
   }
@@ -108,13 +108,13 @@ export default function ManageQuestions({
     <div className="space-y-6">
       {/* Unanswered Questions */}
       {unansweredQuestions.length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="card">
+          <h3 className="heading-4 mb-4">
             Unanswered Questions ({unansweredQuestions.length})
           </h3>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <div className="error-box">
               {error}
             </div>
           )}
@@ -128,11 +128,11 @@ export default function ManageQuestions({
               const isExpanded = expandedQuestionId === question.id;
 
               return (
-                <div key={question.id} className="border border-gray-200 rounded-lg p-4">
+                <div key={question.id} className="card-bordered">
                   <div className="flex items-start justify-between gap-4 mb-2">
                     <div className="flex-1">
                       <p className="text-gray-900 font-medium mb-1">{question.question}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-small">
                         Asked by {question.user ? (
                           <Link 
                             href={`/user/${question.user.id}/profile`}
@@ -151,7 +151,7 @@ export default function ManageQuestions({
                     </div>
                     <button
                       onClick={() => setExpandedQuestionId(isExpanded ? null : question.id)}
-                      className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                      className="btn-primary-sm"
                     >
                       {isExpanded ? 'Cancel' : 'Answer'}
                     </button>
@@ -159,7 +159,7 @@ export default function ManageQuestions({
 
                   {isExpanded && (
                     <div className="mt-4 pt-4 border-t border-gray-200">
-                      <label htmlFor={`response-${question.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                      <label htmlFor={`response-${question.id}`} className="form-label">
                         Your Response
                       </label>
                       <textarea
@@ -167,13 +167,13 @@ export default function ManageQuestions({
                         value={responses[question.id] || ''}
                         onChange={(e) => setResponses(prev => ({ ...prev, [question.id]: e.target.value }))}
                         rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-3"
+                        className="textarea mb-3"
                         placeholder="Type your answer here..."
                       />
                       <button
                         onClick={() => handleSubmitResponse(question.id)}
                         disabled={isSubmitting === question.id}
-                        className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-primary-sm btn-disabled"
                       >
                         {isSubmitting === question.id ? 'Submitting...' : 'Submit Response'}
                       </button>
@@ -188,8 +188,8 @@ export default function ManageQuestions({
 
       {/* Answered Questions */}
       {answeredQuestions.length > 0 && (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="card">
+          <h3 className="heading-4 mb-4">
             Answered Questions ({answeredQuestions.length})
           </h3>
           <div className="space-y-4">
@@ -200,10 +200,10 @@ export default function ManageQuestions({
 const isEditing = editingQuestionId === question.id;
 
               return (
-                <div key={question.id} className="border border-gray-200 rounded-lg p-4">
+                <div key={question.id} className="card-bordered">
                   <div className="mb-3">
                     <p className="text-gray-900 font-medium mb-1">{question.question}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-small">
                       Asked by {question.user ? (
                         <Link 
                           href={`/user/${question.user.id}/profile`}
@@ -221,9 +221,9 @@ const isEditing = editingQuestionId === question.id;
                     </p>
                   </div>
                   {question.response && (
-                    <div className="bg-green-50 rounded-lg p-3">
+                    <div className="card-highlight">
                       <div className="flex items-start justify-between mb-2">
-                        <p className="text-sm text-gray-600 font-medium">Your Response:</p>
+                        <p className="text-small font-medium">Your Response:</p>
                         {!isEditing && deletingQuestionId !== question.id && (
                           <div>
                             <button
@@ -231,13 +231,13 @@ const isEditing = editingQuestionId === question.id;
                                 setEditingQuestionId(question.id);
                                 setResponses(prev => ({ ...prev, [question.id]: question.response || '' }));
                               }}
-                              className="text-sm text-blue-600 hover:text-blue-700 font-medium mr-4"
+                              className="btn-text-primary mr-4"
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => setDeletingQuestionId(question.id)}
-                              className="text-sm text-red-600 hover:text-red-700 font-medium"
+                              className="btn-text-danger"
                             >
                               Delete
                             </button>
@@ -248,14 +248,14 @@ const isEditing = editingQuestionId === question.id;
                             <button
                               onClick={() => handleDeleteResponse(question.id)}
                               disabled={isSubmitting === question.id}
-                              className="text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed mr-4"
+                              className="btn-text-danger btn-disabled mr-4"
                             >
                               {isSubmitting === question.id ? 'Deleting...' : 'Confirm'}
                             </button>
                             <button
                               onClick={() => setDeletingQuestionId(null)}
                               disabled={isSubmitting === question.id}
-                              className="text-sm text-gray-600 hover:text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="btn-text-gray btn-disabled"
                             >
                               Cancel
                             </button>
@@ -268,14 +268,14 @@ const isEditing = editingQuestionId === question.id;
                             value={responses[question.id] || ''}
                             onChange={(e) => setResponses(prev => ({ ...prev, [question.id]: e.target.value }))}
                             rows={4}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent mb-3"
+                            className="textarea mb-3"
                             placeholder="Type your answer here..."
                           />
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleSubmitResponse(question.id)}
                               disabled={isSubmitting === question.id}
-                              className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="btn-primary-sm btn-disabled"
                             >
                               {isSubmitting === question.id ? 'Saving...' : 'Save Changes'}
                             </button>
@@ -288,7 +288,7 @@ const isEditing = editingQuestionId === question.id;
                                   return newResponses;
                                 });
                               }}
-                              className="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                              className="btn-secondary-sm"
                             >
                               Cancel
                             </button>
@@ -298,7 +298,7 @@ const isEditing = editingQuestionId === question.id;
                         <>
                           <p className="text-gray-900 whitespace-pre-wrap">{question.response}</p>
                           {question.respondedAt && (
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-tiny mt-2">
                               Responded on {new Date(question.respondedAt).toLocaleDateString('en-US', { 
                                 year: 'numeric', 
                                 month: 'long', 
