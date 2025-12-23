@@ -249,8 +249,7 @@ const isEditing = editingQuestionId === question.id;
                               })}
                             </p>
                           )}
-                        </)}
-                        </p>
+                        </>
                       )}
                     </div>
                   )}
