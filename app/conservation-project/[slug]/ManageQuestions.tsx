@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useToast } from '@/app/components/Toast';
 
 type Question = {
   id: number;
@@ -27,9 +28,11 @@ export default function ManageQuestions({
 }) {
   const [expandedQuestionId, setExpandedQuestionId] = useState<number | null>(null);
   const [editingQuestionId, setEditingQuestionId] = useState<number | null>(null);
+  const [deletingQuestionId, setDeletingQuestionId] = useState<number | null>(null);
   const [responses, setResponses] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<number | null>(null);
   const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const unansweredQuestions = questions.filter(q => !q.response);
   const answeredQuestions = questions.filter(q => q.response);
@@ -63,13 +66,7 @@ export default function ManageQuestions({
       setIsSubmitting(null);
     }
   };
-
-  const handleDeleteResponse = async (questionId: number) => {
-    if (!confirm('Are you sure you want to delete this response? This will move the question back to the unanswered section.')) {
-      return;
-    }
-
-    setError('');
+setError('');
     setIsSubmitting(questionId);
 
     try {
@@ -82,9 +79,15 @@ export default function ManageQuestions({
         throw new Error(data.error || 'Failed to delete response');
       }
 
+      showToast('Response deleted successfully');
       // Success - reload the page
       window.location.reload();
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete response';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
+      setIsSubmitting(null);
+      setDeletingQuestionId
       setError(err instanceof Error ? err.message : 'Failed to delete response');
       setIsSubmitting(null);
     }
@@ -219,7 +222,7 @@ const isEditing = editingQuestionId === question.id;
                     <div className="bg-green-50 rounded-lg p-3">
                       <div className="flex items-start justify-between mb-2">
                         <p className="text-sm text-gray-600 font-medium">Your Response:</p>
-                        {!isEditing && (
+                        {!isEditing && deletingQuestionId !== question.id && (
                           <>
                             <button
                               onClick={() => {
@@ -231,11 +234,28 @@ const isEditing = editingQuestionId === question.id;
                               Edit
                             </button>
                             <button
+                              onClick={() => setDeletingQuestionId(question.id)}
+                              className="text-sm text-red-600 hover:text-red-700 font-medium"
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                        {deletingQuestionId === question.id && (
+                          <>
+                            <button
                               onClick={() => handleDeleteResponse(question.id)}
                               disabled={isSubmitting === question.id}
                               className="text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              Delete
+                              {isSubmitting === question.id ? 'Deleting...' : 'Confirm'}
+                            </button>
+                            <button
+                              onClick={() => setDeletingQuestionId(null)}
+                              disabled={isSubmitting === question.id}
+                              className="text-sm text-gray-600 hover:text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Cancel
                             </button>
                           </>
                         )}
