@@ -1,0 +1,55 @@
+@layer components {
+  /* Headings */
+  .heading-1 {
+    @apply text-4xl font-bold text-gray-900;
+  }
+
+  .heading-2 {
+    @apply text-3xl font-bold text-gray-900;
+  }
+
+  .heading-3 {
+    @apply text-2xl font-bold text-gray-900;
+  }
+
+  .heading-4 {
+    @apply text-xl font-semibold text-gray-900;
+  }
+
+  /* Text Variants */
+  .text-muted {
+    @apply text-gray-600;
+  }
+
+  .text-small {
+    @apply text-sm text-gray-600;
+  }
+
+  .text-tiny {
+    @apply text-xs text-gray-500;
+  }
+
+  /* Links */
+  .link {
+    @apply text-blue-600 hover:underline;
+  }
+
+  .link-muted {
+    @apply text-gray-600 hover:text-gray-900 hover:underline;
+  }
+
+  /* Description Text */
+  .description {
+    @apply text-gray-700 leading-relaxed;
+  }
+
+  /* Section Title */
+  .section-title {
+    @apply text-3xl font-bold text-gray-900 mb-8;
+  }
+
+  /* Card Title */
+  .card-title {
+    @apply text-xl font-semibold text-gray-900 mb-2;
+  }
+}

@@ -1,0 +1,65 @@
+@layer components {
+  /* Container */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section */
+  .section {
+    @apply py-12;
+  }
+
+  .section-lg {
+    @apply py-16;
+  }
+
+  .section-xl {
+    @apply py-20;
+  }
+
+  /* Grid Layouts */
+  .grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  .grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  .grid-4 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    @apply bg-slate-900 text-white py-20;
+  }
+
+  /* Page Header */
+  .page-header {
+    @apply mb-8 pb-4 border-b border-gray-200;
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4;
+  }
+
+  /* Modal Content */
+  .modal-content {
+    @apply bg-white rounded-lg max-w-md w-full p-6;
+  }
+
+  .modal-content-lg {
+    @apply bg-white rounded-lg max-w-2xl w-full p-6;
+  }
+
+  .modal-content-scrollable {
+    @apply bg-white rounded-lg max-w-2xl w-full max-h-[calc(100vh-4rem)] overflow-y-auto p-6;
+  }
+
+  /* Step Number (for process flows) */
+  .step-number {
+    @apply flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl;
+  }
+}

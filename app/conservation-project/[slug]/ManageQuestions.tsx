@@ -225,13 +225,13 @@ const isEditing = editingQuestionId === question.id;
                       <div className="flex items-start justify-between mb-2">
                         <p className="text-sm text-gray-600 font-medium">Your Response:</p>
                         {!isEditing && deletingQuestionId !== question.id && (
-                          <>
+                          <div>
                             <button
                               onClick={() => {
                                 setEditingQuestionId(question.id);
                                 setResponses(prev => ({ ...prev, [question.id]: question.response || '' }));
                               }}
-                              className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                              className="text-sm text-blue-600 hover:text-blue-700 font-medium mr-4"
                             >
                               Edit
                             </button>
@@ -241,14 +241,14 @@ const isEditing = editingQuestionId === question.id;
                             >
                               Delete
                             </button>
-                          </>
+                          </div>
                         )}
                         {deletingQuestionId === question.id && (
-                          <>
+                          <div>
                             <button
                               onClick={() => handleDeleteResponse(question.id)}
                               disabled={isSubmitting === question.id}
-                              className="text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed mr-4"
                             >
                               {isSubmitting === question.id ? 'Deleting...' : 'Confirm'}
                             </button>
@@ -259,7 +259,7 @@ const isEditing = editingQuestionId === question.id;
                             >
                               Cancel
                             </button>
-                          </>
+                          </div>
                         )}
                       </div>
                       {isEditing ? (

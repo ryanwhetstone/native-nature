@@ -5,6 +5,14 @@
 /* Leaflet CSS */
 @import 'leaflet/dist/leaflet.css';
 
+/* Component Styles */
+@import './styles/buttons.css';
+@import './styles/cards.css';
+@import './styles/forms.css';
+@import './styles/badges.css';
+@import './styles/layout.css';
+@import './styles/typography.css';
+
 @keyframes slide-in-right {
   from {
     transform: translateX(100%);
