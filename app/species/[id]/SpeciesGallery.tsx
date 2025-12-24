@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ImageLightbox, LightboxGallery } from './ImageLightbox';
 import { FavoriteButton } from '@/app/components/FavoriteButton';
 import { AddObservationButton } from '@/app/components/AddObservationButton';
@@ -118,11 +119,13 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
                     onClick={() => openLightbox(index)}
                     className="group relative w-full break-inside-avoid mb-4 rounded-lg overflow-hidden bg-gray-100 cursor-pointer block"
                   >
-                    <div className="relative w-full">
-                      <img
+                    <div className="relative w-full aspect-video">
+                      <Image
                         src={image.src}
                         alt={image.alt}
-                        className="w-full h-auto object-cover group-hover:scale-105 transition-transform"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Image from "next/image";
 import ProjectMap from "@/app/account/projects/ProjectMap";
 import { useToast } from "@/app/components/Toast";
 import { getProjectUrl } from "@/lib/project-url";
@@ -187,10 +188,12 @@ export default function NewProjectForm() {
           <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
             {images.map((image, index) => (
               <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                <img
+                <Image
                   src={image.url}
                   alt={`Preview ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 50vw, 33vw"
                 />
                 <button
                   type="button"

@@ -193,10 +193,12 @@ export default function SearchPage() {
                           >
                             <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-3">
                               {species.defaultPhotoUrl ? (
-                                <img
+                                <Image
                                   src={species.defaultPhotoUrl}
                                   alt={species.preferredCommonName || species.name}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform"
+                                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-5xl">
@@ -273,10 +275,12 @@ export default function SearchPage() {
                           >
                             <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-3">
                               {observation.imageUrl ? (
-                                <img
+                                <Image
                                   src={observation.imageUrl}
                                   alt={observation.species.preferredCommonName || observation.species.name}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform"
+                                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-5xl">

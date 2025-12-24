@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { observations } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
+import Image from "next/image";
 import { getObservationUrl } from "@/lib/observation-url";
 
 export default async function ObservationsPage() {
@@ -53,16 +54,20 @@ export default async function ObservationsPage() {
                 >
                   <div className="relative aspect-video bg-gray-100">
                     {observation.pictures && observation.pictures.length > 0 ? (
-                      <img
+                      <Image
                         src={observation.pictures[0].imageUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : observation.species.defaultPhotoUrl ? (
-                      <img
+                      <Image
                         src={observation.species.defaultPhotoUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-6xl">

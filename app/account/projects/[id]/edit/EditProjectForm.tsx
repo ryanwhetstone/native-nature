@@ -258,10 +258,12 @@ export default function EditProjectForm({ project }: { project: Project }) {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {newImages.map((image, index) => (
                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img
+                  <Image
                     src={image.url}
                     alt={`New preview ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, 33vw"
                   />
                   <button
                     type="button"

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { FavoriteButton } from '@/app/components/FavoriteButton';
 import { getSpeciesUrl } from '@/lib/species-url';
 
@@ -160,12 +161,14 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
               )}
               className="border border-gray-300 bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow block"
             >
-              <div className="relative">
+              <div className="relative h-48">
                 {speciesItem.taxon.default_photo && (
-                  <img
+                  <Image
                     src={speciesItem.taxon.default_photo.medium_url}
                     alt={speciesItem.taxon.preferred_common_name || speciesItem.taxon.name}
-                    className="w-full h-48 object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   />
                 )}
                 {isIntroduced && (

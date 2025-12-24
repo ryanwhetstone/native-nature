@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface ImageData {
   src: string;
@@ -94,11 +95,16 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
       </button>
 
       <div className="relative max-w-7xl max-h-full" onClick={(e) => e.stopPropagation()}>
-        <img
-          src={largeSrc}
-          alt={currentImage.alt}
-          className="max-w-full max-h-[85vh] object-contain"
-        />
+        <div className="relative max-w-full max-h-[85vh]">
+          <Image
+            src={largeSrc}
+            alt={currentImage.alt}
+            width={1200}
+            height={900}
+            className="max-w-full max-h-[85vh] object-contain w-auto h-auto"
+            sizes="(max-width: 768px) 100vw, 1200px"
+          />
+        </div>
         <div className="text-white text-sm mt-4 text-center">
           <p>{currentImage.attribution}</p>
           <p className="text-gray-400 mt-2">
@@ -114,12 +120,16 @@ export function ImageLightbox({ images, currentIndex, onOpen, className }: Image
   const currentImage = images[currentIndex];
   
   return (
-    <img
-      src={currentImage.src}
-      alt={currentImage.alt}
-      className={`${className} cursor-pointer hover:opacity-90 transition-opacity`}
-      onClick={onOpen}
-    />
+    <div className="relative aspect-square">
+      <Image
+        src={currentImage.src}
+        alt={currentImage.alt}
+        fill
+        className={`${className} cursor-pointer hover:opacity-90 transition-opacity object-cover`}
+        onClick={onOpen}
+        sizes="(max-width: 768px) 100vw, 50vw"
+      />
+    </div>
   );
 }
 

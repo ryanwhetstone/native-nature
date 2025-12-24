@@ -225,10 +225,12 @@ export default async function DashboardPage() {
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
                       {favorite.species.defaultPhotoUrl ? (
-                        <img
+                        <Image
                           src={favorite.species.defaultPhotoUrl}
                           alt={favorite.species.preferredCommonName || favorite.species.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                          sizes="(max-width: 768px) 50vw, 33vw"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl">
@@ -291,16 +293,20 @@ export default async function DashboardPage() {
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-2">
                       {observation.pictures && observation.pictures.length > 0 ? (
-                        <img
+                        <Image
                           src={observation.pictures[0].imageUrl}
                           alt={observation.species.preferredCommonName || observation.species.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                          sizes="(max-width: 768px) 50vw, 33vw"
                         />
                       ) : observation.species.defaultPhotoUrl ? (
-                        <img
+                        <Image
                           src={observation.species.defaultPhotoUrl}
                           alt={observation.species.preferredCommonName || observation.species.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                          sizes="(max-width: 768px) 50vw, 33vw"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl">

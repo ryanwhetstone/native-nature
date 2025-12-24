@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -37,11 +38,15 @@ export default async function ProfilePage() {
             {/* Avatar */}
             <div className="flex items-end -mt-16 mb-4">
               {userData.image ? (
-                <img
-                  src={userData.image}
-                  alt={userData.name || "User"}
-                  className="w-32 h-32 rounded-full border-4 border-white shadow-lg"
-                />
+                <div className="relative w-32 h-32">
+                  <Image
+                    src={userData.image}
+                    alt={userData.name || "User"}
+                    fill
+                    className="rounded-full border-4 border-white shadow-lg object-cover"
+                    sizes="128px"
+                  />
+                </div>
               ) : (
                 <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-green-600 flex items-center justify-center text-white text-4xl font-semibold">
                   {userData.name?.charAt(0).toUpperCase() || userData.email?.charAt(0).toUpperCase() || "U"}

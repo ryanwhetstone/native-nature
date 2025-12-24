@@ -212,7 +212,7 @@ export default function EditObservationForm({ observation }: EditObservationForm
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {newImages.map((image, index) => (
                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
-                  <img src={image.url} alt="Preview" className="w-full h-full object-cover" />
+                  <Image src={image.url} alt="Preview" fill className="object-cover" sizes="(max-width: 640px) 50vw, 33vw" />
                   <button
                     type="button"
                     onClick={() => handleRemoveNewImage(index)}
