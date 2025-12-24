@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-type TabType = "species" | "places" | "observations";
+type TabType = "species" | "places" | "observations" | "projects";
 
 interface Species {
   id: number | string;
@@ -36,6 +36,19 @@ interface Observation {
   location: string | null;
 }
 
+interface ConservationProject {
+  id: number;
+  title: string;
+  slug: string;
+  description: string | null;
+  thumbnailUrl: string | null;
+  status: string;
+  goalAmount: number;
+  currentAmount: number;
+  country: string | null;
+  createdAt: string;
+}
+
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -45,6 +58,7 @@ export default function SearchPage() {
   const [speciesResults, setSpeciesResults] = useState<Species[]>([]);
   const [placesResults, setPlacesResults] = useState<Place[]>([]);
   const [observationsResults, setObservationsResults] = useState<Observation[]>([]);
+  const [projectsResults, setProjectsResults] = useState<ConservationProject[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,12 +77,15 @@ export default function SearchPage() {
         setSpeciesResults(data.species || []);
         setPlacesResults(data.places || []);
         setObservationsResults(data.observations || []);
+        setProjectsResults(data.projects || []);
         
         // Auto-select tab based on results
         if ((data.species || []).length === 0 && (data.places || []).length > 0) {
           setActiveTab("places");
         } else if ((data.species || []).length === 0 && (data.places || []).length === 0 && (data.observations || []).length > 0) {
           setActiveTab("observations");
+        } else if ((data.species || []).length === 0 && (data.places || []).length === 0 && (data.observations || []).length === 0 && (data.projects || []).length > 0) {
+          setActiveTab("projects");
         } else {
           setActiveTab("species");
         }
@@ -84,6 +101,7 @@ export default function SearchPage() {
     { id: "species" as TabType, label: "Species", count: speciesResults.length },
     { id: "places" as TabType, label: "Places", count: placesResults.length },
     { id: "observations" as TabType, label: "Observations", count: observationsResults.length },
+    { id: "projects" as TabType, label: "Projects", count: projectsResults.length },
   ];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -281,6 +299,73 @@ export default function SearchPage() {
                       <div className="text-center py-12 text-gray-500">
                         <div className="text-5xl mb-4">📸</div>
                         <p className="text-lg font-medium">No observations found</p>
+                        <p className="mt-2">Try searching with different keywords</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Conservation Projects Results */}
+                {activeTab === "projects" && (
+                  <div>
+                    {projectsResults.length > 0 ? (
+                      <div className="space-y-4">
+                        {projectsResults.map((project) => (
+                          <Link
+                            key={project.id}
+                            href={`/conservation-project/${project.slug}`}
+                            className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="flex gap-4">
+                              {project.thumbnailUrl && (
+                                <div className="relative w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden">
+                                  <Image
+                                    src={project.thumbnailUrl}
+                                    alt={project.title}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between mb-2">
+                                  <h3 className="font-medium text-gray-900 line-clamp-1">
+                                    {project.title}
+                                  </h3>
+                                  <span className={`ml-2 px-2 py-1 text-xs rounded-full flex-shrink-0 ${
+                                    project.status === 'funded' ? 'bg-green-100 text-green-800' :
+                                    project.status === 'completed' ? 'bg-purple-100 text-purple-800' :
+                                    'bg-yellow-100 text-yellow-800'
+                                  }`}>
+                                    {project.status === 'funded' ? 'Funded' :
+                                     project.status === 'completed' ? 'Completed' :
+                                     'Active'}
+                                  </span>
+                                </div>
+                                {project.description && (
+                                  <p className="text-small line-clamp-2 mb-2">
+                                    {project.description}
+                                  </p>
+                                )}
+                                <div className="flex items-center gap-4 text-small">
+                                  {project.country && (
+                                    <span>📍 {project.country}</span>
+                                  )}
+                                  {project.status === 'active' && (
+                                    <span className="font-medium text-green-600">
+                                      ${project.currentAmount.toLocaleString()} of ${project.goalAmount.toLocaleString()}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 text-gray-500">
+                        <div className="text-5xl mb-4">🌱</div>
+                        <p className="text-lg font-medium">No conservation projects found</p>
                         <p className="mt-2">Try searching with different keywords</p>
                       </div>
                     )}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { species, observations, observationPictures } from "@/db/schema";
+import { species, observations, observationPictures, conservationProjects } from "@/db/schema";
 import { ilike, or, sql, inArray } from "drizzle-orm";
 // @ts-ignore
 import csc from "countrycitystatejson";
@@ -283,10 +283,35 @@ export async function GET(request: NextRequest) {
     // Limit total results
     const limitedPlacesResults = placesResults.slice(0, 50);
 
+    // Search conservation projects
+    const projectResults = await db
+      .select({
+        id: conservationProjects.id,
+        title: conservationProjects.title,
+        slug: conservationProjects.slug,
+        description: conservationProjects.description,
+        thumbnailUrl: conservationProjects.thumbnailUrl,
+        status: conservationProjects.status,
+        goalAmount: conservationProjects.goalAmount,
+        currentAmount: conservationProjects.currentAmount,
+        country: conservationProjects.country,
+        createdAt: conservationProjects.createdAt,
+      })
+      .from(conservationProjects)
+      .where(
+        or(
+          ilike(conservationProjects.title, searchTerm),
+          ilike(conservationProjects.description, searchTerm),
+          ilike(conservationProjects.country, searchTerm)
+        )
+      )
+      .limit(20);
+
     return NextResponse.json({
       species: speciesResults,
       places: limitedPlacesResults,
       observations: formattedObservations,
+      projects: projectResults,
     });
   } catch (error) {
     console.error("Search error:", error);
