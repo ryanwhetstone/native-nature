@@ -2,29 +2,47 @@ import Link from "next/link";
 import { WorldMap } from "./WorldMap";
 import { db } from "@/db";
 import { observations, conservationProjects } from "@/db/schema";
-import { desc, and, lt } from "drizzle-orm";
+import { desc, and, lt, sql } from "drizzle-orm";
 import Image from "next/image";
 import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
 import { getObservationUrl } from "@/lib/observation-url";
+import { getProjectUrl } from "@/lib/project-url";
 
 export default async function Home() {
-  // Fetch recent observations with images
-  const recentObservations = await db.query.observations.findMany({
+  // Fetch 5 random observations with images
+  const randomObservations = await db.query.observations.findMany({
     with: {
       species: true,
       pictures: true,
       user: true,
     },
-    orderBy: [desc(observations.createdAt)],
-    limit: 20,
+    orderBy: sql`RANDOM()`,
+    limit: 50, // Get more than needed to filter for pictures
   });
 
-  // Filter observations that have pictures and select 4
-  const observationsWithPictures = recentObservations.filter(obs => obs.pictures.length > 0);
-  const selectedObservations = observationsWithPictures.slice(0, 4);
+  // Filter observations that have pictures and select 5
+  const observationsWithPictures = randomObservations.filter(obs => obs.pictures.length > 0).slice(0, 5);
 
-  // Get all observation photos for the masonry gallery
-  const allPhotos = selectedObservations.flatMap((obs) =>
+  // Fetch 5 random conservation projects with images
+  const randomProjects = await db.query.conservationProjects.findMany({
+    with: {
+      user: {
+        columns: {
+          publicName: true,
+          name: true,
+        },
+      },
+      pictures: true,
+    },
+    orderBy: sql`RANDOM()`,
+    limit: 50, // Get more than needed to filter for pictures
+  });
+
+  // Filter projects that have pictures and select 5
+  const projectsWithPictures = randomProjects.filter(proj => proj.pictures.length > 0).slice(0, 5);
+
+  // Combine photos from both observations and projects for the masonry gallery
+  const observationPhotos = observationsWithPictures.flatMap((obs) =>
     obs.pictures.map((pic) => ({
       ...pic,
       observation: {
@@ -38,6 +56,36 @@ export default async function Home() {
       species: obs.species,
     }))
   );
+
+  const projectPhotos = projectsWithPictures.flatMap((proj) =>
+    proj.pictures.map((pic) => ({
+      id: `project-${pic.id}`,
+      imageUrl: pic.imageUrl,
+      caption: pic.caption,
+      createdAt: pic.createdAt,
+      observation: {
+        id: proj.id,
+        observedAt: proj.createdAt,
+        user: {
+          publicName: proj.user.publicName,
+          name: proj.user.name,
+        },
+      },
+      species: {
+        name: proj.title,
+        preferredCommonName: null,
+        slug: '',
+      },
+      projectId: proj.id,
+      projectTitle: proj.title,
+    }))
+  );
+
+  // Combine and shuffle photos
+  const allPhotos = [...observationPhotos, ...projectPhotos].sort(() => Math.random() - 0.5);
+
+  // Select 4 observations to display in cards
+  const selectedObservations = observationsWithPictures.slice(0, 4);
 
   // Fetch unfunded conservation projects (not funded or completed)
   const unfundedProjects = await db.query.conservationProjects.findMany({
@@ -66,77 +114,14 @@ export default async function Home() {
           <div className="max-w-7xl mx-auto mb-8 text-center">
             <h1 className="text-5xl font-semibold mb-4 text-white">Native Nature</h1>
             <p className="text-xl text-gray-300">
-              Discover and explore native species from around the world
+              Discover and explore native species and conservation projects from around the world
             </p>
           </div>
 
           {/* Photo Gallery */}
           {allPhotos.length > 0 && (
             <div className="mb-8">
-              <div className="max-w-7xl mx-auto mb-4">
-                <h2 className="text-2xl font-semibold text-white">Recent Observations</h2>
-              </div>
               <MasonryPhotoGallery photos={allPhotos} />
-            </div>
-          )}
-
-          {/* Observations Row */}
-          {selectedObservations.length > 0 && (
-            <div className="max-w-7xl mx-auto mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {selectedObservations.map((observation) => (
-                  <Link
-                    key={observation.id}
-                    href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
-                    className="bg-slate-800 rounded-lg overflow-hidden group hover:bg-slate-700 transition-all"
-                  >
-                    <div className="relative aspect-video bg-slate-700">
-                      {observation.pictures && observation.pictures.length > 0 && (
-                        <Image
-                          src={observation.pictures[0].imageUrl}
-                          alt={observation.species.preferredCommonName || observation.species.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        />
-                      )}
-                      {observation.pictures && observation.pictures.length > 1 && (
-                        <div className="absolute bottom-3 right-3 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                          +{observation.pictures.length - 1} more
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-white group-hover:text-green-400 mb-1 line-clamp-1">
-                        {observation.species.preferredCommonName || observation.species.name}
-                      </h3>
-                      <p className="text-sm text-gray-400 italic mb-2 line-clamp-1">
-                        {observation.species.name}
-                      </p>
-                      <div className="text-sm text-gray-400">
-                        <div className="flex items-center mb-1">
-                          <span className="mr-2">👤</span>
-                          <span className="line-clamp-1">{observation.user.publicName || observation.user.name || 'Anonymous'}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="mr-2">📍</span>
-                          <span className="line-clamp-1">
-                            {[observation.city, observation.region, observation.country].filter(Boolean).join(', ') || 'Location recorded'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              <div className="text-center mt-8">
-                <Link
-                  href="/recent-observations"
-                  className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-                >
-                  View All Observations →
-                </Link>
-              </div>
             </div>
           )}
         </div>
@@ -145,7 +130,7 @@ export default async function Home() {
       {/* World Map Section */}
       <div className="py-16 px-8 bg-gray-50">
         <div className="max-w-7xl mx-auto mb-8">
-          <h2 className="text-3xl font-semibold text-gray-900 mb-4 text-center">Explore by Location</h2>
+          <h2 className="text-3xl font-semibold text-gray-900 mb-4 text-center">Explore Species by Location</h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto">
             Click on any country to discover native species in that region
           </p>
@@ -212,6 +197,71 @@ export default async function Home() {
               >
                 View All Projects →
               </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Observations Row */}
+      {selectedObservations.length > 0 && (
+        <div className="bg-slate-900 py-16">
+          <div className="w-full px-4">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-2xl font-semibold text-white mb-6 text-center">Recent Observations</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {selectedObservations.map((observation) => (
+                  <Link
+                    key={`obs-${observation.id}`}
+                    href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
+                    className="bg-slate-800 rounded-lg overflow-hidden group hover:bg-slate-700 transition-all"
+                  >
+                    <div className="relative aspect-video bg-slate-700">
+                      {observation.pictures && observation.pictures.length > 0 && (
+                        <Image
+                          src={observation.pictures[0].imageUrl}
+                          alt={observation.species.preferredCommonName || observation.species.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        />
+                      )}
+                      {observation.pictures && observation.pictures.length > 1 && (
+                        <div className="absolute bottom-3 right-3 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                          +{observation.pictures.length - 1} more
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-white group-hover:text-green-400 mb-1 line-clamp-1">
+                        {observation.species.preferredCommonName || observation.species.name}
+                      </h3>
+                      <p className="text-sm text-gray-400 italic mb-2 line-clamp-1">
+                        {observation.species.name}
+                      </p>
+                      <div className="text-sm text-gray-400">
+                        <div className="flex items-center mb-1">
+                          <span className="mr-2">👤</span>
+                          <span className="line-clamp-1">{observation.user.publicName || observation.user.name || 'Anonymous'}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="mr-2">📍</span>
+                          <span className="line-clamp-1">
+                            {[observation.city, observation.region, observation.country].filter(Boolean).join(', ') || 'Location recorded'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <div className="text-center mt-8 flex gap-4 justify-center">
+                <Link
+                  href="/recent-observations"
+                  className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                >
+                  View All Observations →
+                </Link>
+              </div>
             </div>
           </div>
         </div>

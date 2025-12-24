@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProjectUpdateForm from './ProjectUpdateForm';
+import CongratsModal from './CongratsModal';
 import { useToast } from '@/app/components/Toast';
 import { DeleteProjectButton } from '@/app/account/projects/DeleteProjectButton';
 
@@ -17,6 +18,7 @@ interface ProjectActionsProps {
 export default function ProjectActions({ projectId, projectTitle, projectStatus, isOwner }: ProjectActionsProps) {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [showCongratsModal, setShowCongratsModal] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
@@ -32,8 +34,8 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
         throw new Error('Failed to complete project');
       }
 
-      showToast('Project marked as completed! 🎉');
       setShowCompleteModal(false);
+      setShowCongratsModal(true);
       router.refresh();
     } catch (error) {
       console.error('Error completing project:', error);
@@ -98,6 +100,13 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
           onClose={() => setShowUpdateForm(false)}
         />
       )}
+
+      {/* Congratulations Modal */}
+      <CongratsModal
+        isOpen={showCongratsModal}
+        onClose={() => setShowCongratsModal(false)}
+        projectTitle={projectTitle}
+      />
 
       {/* Complete Project Modal */}
       {showCompleteModal && (

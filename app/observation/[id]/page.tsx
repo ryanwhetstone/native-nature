@@ -145,6 +145,7 @@ export default async function ObservationDetailPage({
                   species: observation.species,
                 }))}
                 columns={{ default: 1, md: 2, lg: 3 }}
+                currentObservationId={observation.id}
               />
             </div>
           )}

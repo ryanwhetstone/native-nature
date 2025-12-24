@@ -171,6 +171,8 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
         },
         updateId: update.id,
         updatePictureId: pic.id,
+        projectId: project.id,
+        projectTitle: project.title,
       }))
     ),
     // Then add project pictures
@@ -192,6 +194,8 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
         preferredCommonName: null,
         slug: '',
       },
+      projectId: project.id,
+      projectTitle: project.title,
     }))
   ];
 
@@ -271,6 +275,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                 photos={allPhotos as any[]}
                 columns={{ default: 1, md: 2, lg: 3 }}
                 isProjectGallery={true}
+                currentProjectId={project.id}
               />
             </div>
           )}
