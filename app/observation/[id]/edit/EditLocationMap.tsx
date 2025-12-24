@@ -108,7 +108,7 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
         map.current = null;
       }
     };
-  }, []);
+  }, [latitude, longitude, onLocationChange]);
 
   // Update marker position when props change
   useEffect(() => {

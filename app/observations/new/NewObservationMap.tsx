@@ -138,7 +138,7 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
         map.current = null;
       }
     };
-  }, [onLocationSelect]);
+  }, [onLocationSelect, lastLocation, onWebGLError]);
 
   // Update marker when selected location changes externally
   useEffect(() => {

@@ -59,13 +59,6 @@ export default function SearchPage() {
   const [projectsResults, setProjectsResults] = useState<ConservationProject[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setSearchInput(query);
-    if (query) {
-      fetchSearchResults();
-    }
-  }, [query]);
-
   const fetchSearchResults = async () => {
     setLoading(true);
     try {
@@ -94,6 +87,14 @@ export default function SearchPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    setSearchInput(query);
+    if (query) {
+      fetchSearchResults();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const tabs = [
     { id: "species" as TabType, label: "Species", count: speciesResults.length },

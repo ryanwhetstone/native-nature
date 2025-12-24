@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 
 interface ImageData {
@@ -25,6 +25,14 @@ interface LightboxGalleryProps {
 }
 
 function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: LightboxGalleryProps) {
+  const handlePrevious = useCallback(() => {
+    onNavigate(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
+  }, [currentIndex, images.length, onNavigate]);
+
+  const handleNext = useCallback(() => {
+    onNavigate(currentIndex === images.length - 1 ? 0 : currentIndex + 1);
+  }, [currentIndex, images.length, onNavigate]);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -36,15 +44,7 @@ function LightboxGallery({ images, isOpen, currentIndex, onClose, onNavigate }: 
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, currentIndex]);
-
-  const handlePrevious = () => {
-    onNavigate(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
-  };
-
-  const handleNext = () => {
-    onNavigate(currentIndex === images.length - 1 ? 0 : currentIndex + 1);
-  };
+  }, [isOpen, handlePrevious, handleNext, onClose]);
 
   if (!isOpen) return null;
 

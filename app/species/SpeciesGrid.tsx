@@ -110,6 +110,7 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
         observerRef.current.disconnect();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, hasMore, page, filter]);
 
   return (
