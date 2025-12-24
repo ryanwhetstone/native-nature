@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
         species: [],
         places: [],
         observations: [],
+        projects: [],
       });
     }
 
@@ -288,12 +289,10 @@ export async function GET(request: NextRequest) {
       .select({
         id: conservationProjects.id,
         title: conservationProjects.title,
-        slug: conservationProjects.slug,
         description: conservationProjects.description,
-        thumbnailUrl: conservationProjects.thumbnailUrl,
         status: conservationProjects.status,
-        goalAmount: conservationProjects.goalAmount,
-        currentAmount: conservationProjects.currentAmount,
+        goalAmount: conservationProjects.fundingGoal,
+        currentAmount: conservationProjects.currentFunding,
         country: conservationProjects.country,
         createdAt: conservationProjects.createdAt,
       })
@@ -301,8 +300,7 @@ export async function GET(request: NextRequest) {
       .where(
         or(
           ilike(conservationProjects.title, searchTerm),
-          ilike(conservationProjects.description, searchTerm),
-          ilike(conservationProjects.country, searchTerm)
+          ilike(conservationProjects.description, searchTerm)
         )
       )
       .limit(20);

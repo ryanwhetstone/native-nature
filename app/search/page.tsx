@@ -39,9 +39,7 @@ interface Observation {
 interface ConservationProject {
   id: number;
   title: string;
-  slug: string;
   description: string | null;
-  thumbnailUrl: string | null;
   status: string;
   goalAmount: number;
   currentAmount: number;
@@ -310,23 +308,15 @@ export default function SearchPage() {
                   <div>
                     {projectsResults.length > 0 ? (
                       <div className="space-y-4">
-                        {projectsResults.map((project) => (
+                        {projectsResults.map((project) => {
+                          const slug = `${project.id}-${project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+                          return (
                           <Link
                             key={project.id}
-                            href={`/conservation-project/${project.slug}`}
+                            href={`/conservation-project/${slug}`}
                             className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                           >
                             <div className="flex gap-4">
-                              {project.thumbnailUrl && (
-                                <div className="relative w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden">
-                                  <Image
-                                    src={project.thumbnailUrl}
-                                    alt={project.title}
-                                    fill
-                                    className="object-cover"
-                                  />
-                                </div>
-                              )}
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-start justify-between mb-2">
                                   <h3 className="font-medium text-gray-900 line-clamp-1">
@@ -353,14 +343,15 @@ export default function SearchPage() {
                                   )}
                                   {project.status === 'active' && (
                                     <span className="font-medium text-green-600">
-                                      ${project.currentAmount.toLocaleString()} of ${project.goalAmount.toLocaleString()}
+                                      ${(project.currentAmount / 100).toLocaleString()} of ${(project.goalAmount / 100).toLocaleString()}
                                     </span>
                                   )}
                                 </div>
                               </div>
                             </div>
                           </Link>
-                        ))}
+                        );
+                        })}
                       </div>
                     ) : (
                       <div className="text-center py-12 text-gray-500">
