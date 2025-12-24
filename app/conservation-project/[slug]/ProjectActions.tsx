@@ -55,14 +55,14 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
           <>
             <button
               onClick={() => setShowUpdateForm(true)}
-              className="px-4 py-2 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700 transition-colors whitespace-nowrap"
+              className="btn-purple"
             >
               Give an Update
             </button>
             <button
               onClick={() => setShowCompleteModal(true)}
               disabled={isCompleting}
-              className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors whitespace-nowrap disabled:opacity-50"
+              className="btn-primary-sm btn-disabled"
             >
               Mark as Completed
             </button>
@@ -71,20 +71,20 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
         {isCompleted && (
           <button
             onClick={() => setShowUpdateForm(true)}
-            className="px-4 py-2 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700 transition-colors whitespace-nowrap"
+            className="btn-purple"
           >
             Give an Update
           </button>
         )}
         <Link
           href={`/conservation-project/${projectId}-${projectTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/questions`}
-          className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700 transition-colors whitespace-nowrap"
+          className="btn-indigo"
         >
           Manage Q&A
         </Link>
         <Link
           href={`/account/projects/${projectId}/edit`}
-          className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap"
+          className="btn-blue"
         >
           Edit
         </Link>
@@ -102,14 +102,14 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
       {/* Complete Project Modal */}
       {showCompleteModal && (
         <div
-          className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4"
+          className="modal-overlay"
           onClick={() => !isCompleting && setShowCompleteModal(false)}
         >
           <div
-            className="bg-white rounded-lg max-w-md w-full p-6"
+            className="modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Mark Project as Completed?</h2>
+            <h2 className="heading-3 mb-4">Mark Project as Completed?</h2>
             
             <div className="mb-6">
               <p className="text-gray-700 mb-3">
@@ -129,14 +129,14 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
               <button
                 onClick={() => setShowCompleteModal(false)}
                 disabled={isCompleting}
-                className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                className="btn-secondary flex-1 btn-disabled"
               >
                 Cancel
               </button>
               <button
                 onClick={handleMarkCompleted}
                 disabled={isCompleting}
-                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 disabled:bg-green-400 transition-colors"
+                className="btn-primary flex-1 btn-disabled"
               >
                 {isCompleting ? 'Completing...' : 'Mark as Completed'}
               </button>

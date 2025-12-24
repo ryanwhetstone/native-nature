@@ -39,14 +39,14 @@ export default function AskQuestionForm({ projectId }: { projectId: number }) {
 
   if (!session?.user) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Ask a Question</h2>
-        <p className="text-gray-600 mb-4">
+      <div className="card mb-6">
+        <h2 className="heading-3 mb-4">Ask a Question</h2>
+        <p className="text-muted mb-4">
           Have questions about this project? Sign in to ask the project creator!
         </p>
         <Link
           href="/auth/signin"
-          className="inline-block w-full text-center bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium"
+          className="btn-primary-sm inline-block w-full text-center"
         >
           Sign In to Ask a Question
         </Link>
@@ -55,21 +55,21 @@ export default function AskQuestionForm({ projectId }: { projectId: number }) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-4">Ask a Question</h2>
-      <p className="text-gray-600 mb-4">
+    <div className="card mb-6">
+      <h2 className="heading-3 mb-4">Ask a Question</h2>
+      <p className="text-muted mb-4">
         Have questions about this project? Ask the project creator!
       </p>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="error-box">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="question" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="question" className="form-label">
             Your Question
           </label>
           <textarea
@@ -78,14 +78,14 @@ export default function AskQuestionForm({ projectId }: { projectId: number }) {
             onChange={(e) => setQuestion(e.target.value)}
             required
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="textarea"
             placeholder="Ask anything about this conservation project..."
           />
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary-sm w-full btn-disabled"
         >
           {isSubmitting ? 'Submitting...' : 'Submit Question'}
         </button>
