@@ -60,7 +60,7 @@ export default async function ProfilePage() {
             <div className="space-y-4">
               <div>
                 <h1 className="text-3xl font-semibold text-gray-900">{userData.name || "No name set"}</h1>
-                <p className="text-gray-600">{userData.email}</p>
+                <p className="text-muted">{userData.email}</p>
               </div>
 
               {userData.bio && (

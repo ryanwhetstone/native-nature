@@ -74,7 +74,7 @@ export default async function ProjectsPage() {
                 <Link
                   key={project.id}
                   href={getProjectUrl(project.id, project.title)}
-                  className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                  className="project-card"
                 >
                   {/* Project Image */}
                   {mainImage ? (
@@ -124,7 +124,7 @@ export default async function ProjectsPage() {
                     {/* Funding Progress */}
                     <div className="mb-2">
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">Funding Progress</span>
+                        <span className="text-muted">Funding Progress</span>
                         <span className="font-semibold text-gray-900">
                           ${(project.currentFunding / 100).toLocaleString()} / ${(project.fundingGoal / 100).toLocaleString()}
                         </span>

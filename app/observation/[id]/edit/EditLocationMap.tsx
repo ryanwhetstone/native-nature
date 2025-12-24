@@ -120,15 +120,15 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
   if (webglError) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-gray-600">
+        <p className="text-small">
           To mark the location on an interactive map, use a browser that supports WebGL.
         </p>
-        <p className="text-sm text-gray-600">
+        <p className="text-small">
           To get the latitude and longitude coordinates manually, you can go to <a href="https://www.latlong.net/" target="_blank" rel="noopener noreferrer" className="text-green-600 underline">latlong.net</a>, find the location, and copy the coordinates below:
         </p>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="manual-lat" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="manual-lat" className="form-label">
               Latitude
             </label>
             <input
@@ -147,7 +147,7 @@ export default function EditLocationMap({ longitude, latitude, onLocationChange 
             />
           </div>
           <div>
-            <label htmlFor="manual-lng" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="manual-lng" className="form-label">
               Longitude
             </label>
             <input

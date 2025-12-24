@@ -118,7 +118,7 @@ export default async function ObservationDetailPage({
                 <div className="flex-shrink-0 flex gap-2">
                   <Link
                     href={`/observation/${observation.id}/edit`}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors whitespace-nowrap"
+                    className="btn-blue"
                   >
                     Edit
                   </Link>
@@ -159,13 +159,13 @@ export default async function ObservationDetailPage({
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="text-xl font-semibold mr-8">Location</h2>
             {(observation.city || observation.region || observation.country) && (
-              <p className="text-gray-600">
+              <p className="text-muted">
                 {[observation.city, observation.region, observation.country].filter(Boolean).join(', ')}
               </p>
             )}
               <p>
                 <span className="text-gray-600 w-32 flex-shrink-0">Coordinates:</span>
-              <span className="text-gray-600">
+              <span className="text-muted">
                 {parseFloat(observation.latitude).toFixed(6)}, {parseFloat(observation.longitude).toFixed(6)}
               </span>
               </p>

@@ -107,7 +107,7 @@ export default async function ObservationsPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+          <div className="empty-state">
             <div className="text-6xl mb-4">📍</div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">No observations yet</h2>
             <p className="text-gray-600 mb-6">

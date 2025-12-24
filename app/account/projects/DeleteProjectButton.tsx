@@ -65,7 +65,7 @@ export function DeleteProjectButton({ projectId }: { projectId: number }) {
   return (
     <button
       onClick={() => setShowConfirm(true)}
-      className="px-4 py-2 bg-red-50 text-red-600 text-sm rounded-md hover:bg-red-100 transition-colors whitespace-nowrap"
+      className="btn-danger"
     >
       Delete
     </button>

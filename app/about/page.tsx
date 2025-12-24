@@ -41,7 +41,7 @@ export default function AboutPage() {
             <div className="text-center">
               <div className="text-5xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Discover</h3>
-              <p className="text-gray-600">
+              <p className="text-muted">
                 Explore thousands of species from around the world with detailed information 
                 and stunning photography.
               </p>
@@ -49,7 +49,7 @@ export default function AboutPage() {
             <div className="text-center">
               <div className="text-5xl mb-4">📸</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Document</h3>
-              <p className="text-gray-600">
+              <p className="text-muted">
                 Record your wildlife observations with photos, locations, and dates to build 
                 your personal nature journal.
               </p>
@@ -57,7 +57,7 @@ export default function AboutPage() {
             <div className="text-center">
               <div className="text-5xl mb-4">💚</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Support</h3>
-              <p className="text-gray-600">
+              <p className="text-muted">
                 Fund conservation projects that protect habitats and native species around 
                 the world.
               </p>
@@ -195,7 +195,7 @@ export default function AboutPage() {
             </h3>
             <div className="space-y-6 text-gray-700">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                <div className="step-number">
                   1
                 </div>
                 <div>
@@ -207,7 +207,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                <div className="step-number">
                   2
                 </div>
                 <div>
@@ -219,7 +219,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                <div className="step-number">
                   3
                 </div>
                 <div>
@@ -232,7 +232,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-semibold text-xl">
+                <div className="step-number">
                   4
                 </div>
                 <div>
@@ -272,7 +272,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="card-lg">
             <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">
               The Power of Observation
             </h3>
@@ -345,19 +345,19 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-4xl font-semibold text-green-600 mb-2">∞</div>
-              <p className="text-gray-600">Species to Discover</p>
+              <p className="text-muted">Species to Discover</p>
             </div>
             <div>
               <div className="text-4xl font-semibold text-green-600 mb-2">🌍</div>
-              <p className="text-gray-600">Global Coverage</p>
+              <p className="text-muted">Global Coverage</p>
             </div>
             <div>
               <div className="text-4xl font-semibold text-green-600 mb-2">📸</div>
-              <p className="text-gray-600">Photo Galleries</p>
+              <p className="text-muted">Photo Galleries</p>
             </div>
             <div>
               <div className="text-4xl font-semibold text-green-600 mb-2">💚</div>
-              <p className="text-gray-600">Conservation Focus</p>
+              <p className="text-muted">Conservation Focus</p>
             </div>
           </div>
         </div>

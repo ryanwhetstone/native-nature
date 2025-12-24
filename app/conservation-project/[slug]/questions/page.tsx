@@ -63,7 +63,7 @@ export default async function ManageProjectQuestionsPage({
             ← Back to Project
           </Link>
           <h1 className="text-3xl font-semibold text-gray-900 mb-2">Manage Questions</h1>
-          <p className="text-gray-600">{project.title}</p>
+          <p className="text-muted">{project.title}</p>
         </div>
 
         {/* Questions Management */}

@@ -110,7 +110,7 @@ export default function ProjectUpdateForm({ projectId, projectTitle, onClose }: 
           {/* Header */}
           <div className="flex justify-between items-start pb-4 border-b">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Post Project Update</h2>
+              <h2 className="heading-3">Post Project Update</h2>
               <p className="text-sm text-gray-600 mt-1">{projectTitle}</p>
             </div>
             <button

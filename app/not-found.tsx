@@ -90,7 +90,7 @@ export default function NotFound() {
 
         {/* Contact suggestion */}
         <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
+          <p className="text-small">
             If you believe this page should exist, please let us know.
           </p>
         </div>

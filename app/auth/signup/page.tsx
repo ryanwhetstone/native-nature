@@ -154,7 +154,7 @@ export default function SignUpPage() {
           </button>
 
           <div className="text-center text-sm">
-            <span className="text-gray-600">Already have an account? </span>
+            <span className="text-muted">Already have an account? </span>
             <Link href="/auth/signin" className="text-green-600 hover:text-green-500 font-medium">
               Sign in
             </Link>

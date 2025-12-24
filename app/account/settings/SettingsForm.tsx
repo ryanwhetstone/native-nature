@@ -118,7 +118,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
 
         <form onSubmit={handleProfileUpdate} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="form-label">
               Email
             </label>
             <input
@@ -132,7 +132,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
           </div>
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="name" className="form-label">
               Name
             </label>
             <input
@@ -146,7 +146,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
           </div>
 
           <div>
-            <label htmlFor="publicName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="publicName" className="form-label">
               Public Display Name
             </label>
             <input
@@ -160,7 +160,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
           </div>
 
           <div>
-            <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="bio" className="form-label">
               Bio
             </label>
             <textarea
@@ -189,7 +189,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
         
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <div>
-            <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="currentPassword" className="form-label">
               Current Password
             </label>
             <input
@@ -203,7 +203,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
           </div>
 
           <div>
-            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="newPassword" className="form-label">
               New Password
             </label>
             <input
@@ -218,7 +218,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="confirmPassword" className="form-label">
               Confirm New Password
             </label>
             <input

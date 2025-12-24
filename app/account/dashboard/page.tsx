@@ -102,7 +102,7 @@ export default async function DashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Species Viewed</p>
+                <p className="text-small">Species Viewed</p>
                 <p className="text-3xl font-semibold text-gray-900">0</p>
               </div>
               <div className="text-4xl">🔍</div>
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Favorites</p>
+                <p className="text-small">Favorites</p>
                 <p className="text-3xl font-semibold text-gray-900">{favoritesCount}</p>
               </div>
               <div className="text-4xl">⭐</div>
@@ -122,7 +122,7 @@ export default async function DashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Observations</p>
+                <p className="text-small">Observations</p>
                 <p className="text-3xl font-semibold text-gray-900">{observationsCount}</p>
               </div>
               <div className="text-4xl">📍</div>
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">States Explored</p>
+                <p className="text-small">States Explored</p>
                 <p className="text-3xl font-semibold text-gray-900">0</p>
               </div>
               <div className="text-4xl">🗺️</div>
@@ -142,7 +142,7 @@ export default async function DashboardPage() {
           <Link href="/account/projects" className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Projects</p>
+                <p className="text-small">Projects</p>
                 <p className="text-3xl font-semibold text-gray-900">{projectsCount}</p>
               </div>
               <div className="text-4xl">🌍</div>
@@ -153,7 +153,7 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>
+            <h2 className="heading-4">Quick Actions</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
             <Link
@@ -163,7 +163,7 @@ export default async function DashboardPage() {
               <div className="text-3xl">🗺️</div>
               <div>
                 <h3 className="font-semibold text-gray-900 group-hover:text-green-600">Explore States</h3>
-                <p className="text-sm text-gray-600">Browse species by state</p>
+                <p className="text-small">Browse species by state</p>
               </div>
             </Link>
 
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
               <div className="text-3xl">👤</div>
               <div>
                 <h3 className="font-semibold text-gray-900 group-hover:text-green-600">View Profile</h3>
-                <p className="text-sm text-gray-600">See your public profile</p>
+                <p className="text-small">See your public profile</p>
               </div>
             </Link>
 
@@ -185,7 +185,7 @@ export default async function DashboardPage() {
               <div className="text-3xl">🌍</div>
               <div>
                 <h3 className="font-semibold text-gray-900 group-hover:text-green-600">My Projects</h3>
-                <p className="text-sm text-gray-600">Conservation initiatives</p>
+                <p className="text-small">Conservation initiatives</p>
               </div>
             </Link>
 
@@ -196,7 +196,7 @@ export default async function DashboardPage() {
               <div className="text-3xl">⚙️</div>
               <div>
                 <h3 className="font-semibold text-gray-900 group-hover:text-green-600">Settings</h3>
-                <p className="text-sm text-gray-600">Manage your account</p>
+                <p className="text-small">Manage your account</p>
               </div>
             </Link>
           </div>
@@ -206,7 +206,7 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Favorite Species</h2>
+              <h2 className="heading-4">Favorite Species</h2>
               {favoritesCount > 0 && (
                 <Link href="/account/favorites" className="text-sm text-green-600 hover:text-green-700 font-medium">
                   View All
@@ -268,7 +268,7 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Recent Observations</h2>
+              <h2 className="heading-4">Recent Observations</h2>
               {observationsCount > 0 && (
                 <Link href="/account/observations" className="text-sm text-green-600 hover:text-green-700 font-medium">
                   View All
@@ -314,7 +314,7 @@ export default async function DashboardPage() {
                     <h3 className="text-sm font-medium text-gray-900 group-hover:text-green-600 line-clamp-2">
                       {observation.species.preferredCommonName || observation.species.name}
                     </h3>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-tiny">
                       {new Date(observation.observedAt).toLocaleDateString()}
                     </p>
                   </Link>
@@ -340,7 +340,7 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">Conservation Projects</h2>
+              <h2 className="heading-4">Conservation Projects</h2>
               {projectsCount > 0 && (
                 <Link href="/account/projects" className="text-sm text-green-600 hover:text-green-700 font-medium">
                   View All
@@ -424,7 +424,7 @@ export default async function DashboardPage() {
         {/* Recent Activity */}
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
+            <h2 className="heading-4">Recent Activity</h2>
           </div>
           <div className="p-6">
             <div className="text-center py-12 text-gray-500">
@@ -444,7 +444,7 @@ export default async function DashboardPage() {
         {/* Featured Categories */}
         <div className="bg-white rounded-lg shadow">
           <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Popular Categories</h2>
+            <h2 className="heading-4">Popular Categories</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
             {[

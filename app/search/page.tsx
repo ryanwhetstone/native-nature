@@ -121,7 +121,7 @@ export default function SearchPage() {
             </div>
           </form>
           
-          <p className="text-gray-600">
+          <p className="text-muted">
             Results for: <span className="font-medium text-gray-900">&quot;{query}&quot;</span>
           </p>
         </div>
@@ -160,7 +160,7 @@ export default function SearchPage() {
                   <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
                   <div className="absolute inset-0 border-4 border-green-600 rounded-full border-t-transparent animate-spin"></div>
                 </div>
-                <p className="text-gray-600">Searching...</p>
+                <p className="text-muted">Searching...</p>
               </div>
             ) : (
               <>
@@ -226,7 +226,7 @@ export default function SearchPage() {
                                 <h3 className="font-medium text-gray-900">
                                   {place.name}
                                 </h3>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-small">
                                   {place.country} • {place.type}
                                 </p>
                               </div>
@@ -271,7 +271,7 @@ export default function SearchPage() {
                             <h3 className="font-medium text-gray-900 group-hover:text-green-600 line-clamp-2">
                               {observation.species.preferredCommonName || observation.species.name}
                             </h3>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-small">
                               {new Date(observation.observedAt).toLocaleDateString()}
                             </p>
                           </Link>

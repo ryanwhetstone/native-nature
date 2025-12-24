@@ -192,7 +192,7 @@ export default function SpeciesGrid({ initialPlants, placeId, taxonId }: Species
       </div>
       
       <div ref={loadMoreRef} className="mt-8 text-center py-4">
-        {loading && <p className="text-gray-600">Loading more species...</p>}
+        {loading && <p className="text-muted">Loading more species...</p>}
         {!hasMore && <p className="text-gray-500">No more species to load</p>}
       </div>
     </>

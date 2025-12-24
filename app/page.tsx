@@ -229,7 +229,7 @@ export default async function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Interactive Maps</h3>
-              <p className="text-gray-600">
+              <p className="text-muted">
                 Explore species by country and region with interactive maps
               </p>
             </div>
@@ -241,7 +241,7 @@ export default async function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Share Observations</h3>
-              <p className="text-gray-600">
+              <p className="text-muted">
                 Document and share your wildlife sightings with the community
               </p>
             </div>
@@ -252,7 +252,7 @@ export default async function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Support Conservation</h3>
-              <p className="text-gray-600">
+              <p className="text-muted">
                 Fund projects that protect habitats and native species
               </p>
             </div>
@@ -263,7 +263,7 @@ export default async function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Learn & Discover</h3>
-              <p className="text-gray-600">
+              <p className="text-muted">
                 Access detailed species information and conservation status
               </p>
             </div>

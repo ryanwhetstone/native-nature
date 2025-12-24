@@ -69,7 +69,7 @@ export default async function UserProjectsPage({
           >
             ← Back to Profile
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="heading-2">
             {displayName}&apos;s Conservation Projects
           </h1>
           <p className="text-gray-600 mt-2">
@@ -138,7 +138,7 @@ export default async function UserProjectsPage({
                     {/* Funding Progress */}
                     <div className="mb-2">
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">Funding</span>
+                        <span className="text-muted">Funding</span>
                         <span className="font-semibold text-gray-900">
                           ${(project.currentFunding / 100).toLocaleString()} / ${(project.fundingGoal / 100).toLocaleString()}
                         </span>
@@ -161,9 +161,9 @@ export default async function UserProjectsPage({
             })}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+          <div className="empty-state">
             <div className="text-6xl mb-4">🌍</div>
-            <p className="text-gray-600">No conservation projects yet</p>
+            <p className="text-muted">No conservation projects yet</p>
           </div>
         )}
       </div>

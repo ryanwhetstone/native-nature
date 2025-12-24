@@ -157,9 +157,9 @@ export default async function UserProfilePage({
             {observationPhotos.length > 0 ? (
               <MasonryPhotoGallery photos={observationPhotos} />
             ) : (
-              <div className="bg-white rounded-lg shadow p-12 text-center">
+              <div className="empty-state">
                 <div className="text-6xl mb-4">📷</div>
-                <p className="text-gray-600">No observation photos yet</p>
+                <p className="text-muted">No observation photos yet</p>
               </div>
             )}
           </div>
@@ -209,7 +209,7 @@ export default async function UserProfilePage({
                     <p className="text-sm text-gray-500 italic mb-2">
                       {observation.species.name}
                     </p>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-small">
                       <p>📅 {new Date(observation.observedAt).toLocaleDateString()}</p>
                       <p className="line-clamp-1">
                         📍 {[observation.city, observation.region, observation.country].filter(Boolean).join(', ') || 'Location recorded'}
@@ -220,9 +220,9 @@ export default async function UserProfilePage({
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
+            <div className="empty-state">
               <div className="text-6xl mb-4">📍</div>
-              <p className="text-gray-600">No observations yet</p>
+              <p className="text-muted">No observations yet</p>
             </div>
           )}
         </div>
@@ -230,7 +230,7 @@ export default async function UserProfilePage({
         {/* Conservation Projects - Moved above Favorites */}
         <div className="mb-8 max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold text-gray-900">Conservation Projects</h2>
+            <h2 className="heading-3">Conservation Projects</h2>
             {userProjects.length > 6 && (
               <Link
                 href={`/user/${id}/projects`}
@@ -300,7 +300,7 @@ export default async function UserProfilePage({
                       {/* Funding Progress */}
                       <div className="mb-2">
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-gray-600">Funding</span>
+                          <span className="text-muted">Funding</span>
                           <span className="font-semibold text-gray-900">
                             ${(project.currentFunding / 100).toLocaleString()} / ${(project.fundingGoal / 100).toLocaleString()}
                           </span>
@@ -318,9 +318,9 @@ export default async function UserProfilePage({
               })}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
+            <div className="empty-state">
               <div className="text-6xl mb-4">🌍</div>
-              <p className="text-gray-600">No conservation projects yet</p>
+              <p className="text-muted">No conservation projects yet</p>
             </div>
           )}
         </div>
@@ -359,9 +359,9 @@ export default async function UserProfilePage({
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
+            <div className="empty-state">
               <div className="text-6xl mb-4">⭐</div>
-              <p className="text-gray-600">No favorite species yet</p>
+              <p className="text-muted">No favorite species yet</p>
             </div>
           )}
         </div>

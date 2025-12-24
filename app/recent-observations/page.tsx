@@ -68,7 +68,7 @@ export default async function RecentObservationsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Observations List Header */}
           <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">All Observations</h2>
+            <h2 className="heading-3">All Observations</h2>
           </div>
 
           {/* Observations Grid */}
@@ -138,10 +138,10 @@ export default async function RecentObservationsPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+          <div className="empty-state">
             <div className="text-6xl mb-4">📍</div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">No observations yet</h2>
-            <p className="text-gray-600">
+            <p className="text-muted">
               Be the first to record a wildlife observation!
             </p>
           </div>

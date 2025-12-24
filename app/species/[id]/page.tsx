@@ -40,7 +40,7 @@ export default async function SpeciesPage({
   if (!species) {
     return (
       <main className="min-h-screen bg-gray-50 p-8">
-        <p className="text-gray-600">Species not found.</p>
+        <p className="text-muted">Species not found.</p>
       </main>
     );
   }

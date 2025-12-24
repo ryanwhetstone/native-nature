@@ -328,10 +328,10 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
             <h2 className="text-xl font-semibold mb-4">Funding Progress</h2>
             <div className="mb-6">
               <div className="flex justify-between items-baseline mb-2">
-                <h3 className="text-3xl font-bold text-gray-900">
+                <h3 className="heading-2">
                   ${(project.currentFunding / 100).toLocaleString()}
                 </h3>
-                <span className="text-gray-600">
+                <span className="text-muted">
                   of ${(project.fundingGoal / 100).toLocaleString()} goal
                 </span>
               </div>
@@ -341,7 +341,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                   style={{ width: `${Math.min(fundingPercentage, 100)}%` }}
                 />
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-small">
                 {fundingPercentage >= 100 ? 'Fully funded' : `${fundingPercentage.toFixed(1)}% funded`}
               </p>
             </div>
@@ -360,13 +360,13 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
             <div className="flex items-baseline justify-between mb-4">
               <h2 className="text-xl font-semibold mr-8">Location</h2>
               {(project.city || project.region || project.country) && (
-                <p className="text-gray-600">
+                <p className="text-muted">
                   {[project.city, project.region, project.country].filter(Boolean).join(', ')}
                 </p>
               )}
               <p>
                 <span className="text-gray-600 w-32 flex-shrink-0">Coordinates:</span>
-                <span className="text-gray-600">
+                <span className="text-muted">
                   {parseFloat(project.latitude).toFixed(6)}, {parseFloat(project.longitude).toFixed(6)}
                 </span>
               </p>
@@ -493,7 +493,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
           {/* Display answered questions */}
           {questionsWithAnswers.length > 0 && (
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="card">
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">Questions & Answers</h2>
               <div className="space-y-6">
                 {questionsWithAnswers.map((qa) => {

@@ -27,7 +27,7 @@ export function Header({ session }: { session: any }) {
           {/* Logo/Brand */}
           <Link href="/" className="flex items-center space-x-2">
             <span className="text-2xl font-semibold text-green-600">🌿</span>
-            <span className="text-xl font-semibold text-gray-900">Native Nature</span>
+            <span className="heading-4">Native Nature</span>
           </Link>
 
           {/* Desktop Navigation */}

@@ -138,7 +138,7 @@ export default function DonateButton({
             {/* Header */}
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Support This Project</h2>
+                <h2 className="heading-3">Support This Project</h2>
                 <p className="text-sm text-gray-600 mt-1">{projectTitle}</p>
               </div>
               <button
@@ -155,10 +155,10 @@ export default function DonateButton({
             {/* Progress Bar */}
             {/* <div className="mb-6">
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-600">
+                <span className="text-muted">
                   ${(currentFunding / 100).toLocaleString()} raised
                 </span>
-                <span className="text-gray-600">
+                <span className="text-muted">
                   ${(fundingGoal / 100).toLocaleString()} goal
                 </span>
               </div>
@@ -234,7 +234,7 @@ export default function DonateButton({
 
             {/* Optional Message */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Add a message (Optional)
               </label>
               <textarea
@@ -274,7 +274,7 @@ export default function DonateButton({
 
             {/* Support the Site */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="form-label">
                 Support Native Nature (Optional)
               </label>
               <p className="text-xs text-gray-600 mb-3">
@@ -375,7 +375,7 @@ export default function DonateButton({
 
             {/* Error Message */}
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              <div className="error-box">
                 {error}
               </div>
             )}
