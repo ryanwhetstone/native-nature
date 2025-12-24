@@ -125,7 +125,7 @@ export default function LeafletWorldMap({ onCountryClick }: LeafletWorldMapProps
         mapRef.current = null;
       }
     };
-  }, [onCountryClick]);
+  }, [onCountryClick, availableCountries]);
 
   return (
     <div className="w-full max-w-6xl mx-auto mb-12 relative">

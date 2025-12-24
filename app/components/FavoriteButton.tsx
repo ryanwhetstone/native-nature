@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -16,13 +16,7 @@ export function FavoriteButton({ speciesId, className = "", showLabel = false }:
   const [isFavorited, setIsFavorited] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (session?.user) {
-      checkFavoriteStatus();
-    }
-  }, [session, speciesId]);
-
-  const checkFavoriteStatus = async () => {
+  const checkFavoriteStatus = useCallback(async () => {
     try {
       const response = await fetch(`/api/favorites/check?speciesId=${speciesId}`);
       if (response.ok) {
@@ -30,9 +24,15 @@ export function FavoriteButton({ speciesId, className = "", showLabel = false }:
         setIsFavorited(data.isFavorited);
       }
     } catch (error) {
-      console.error("Error checking favorite status:", error);
+      console.error('Error checking favorite status:', error);
     }
-  };
+  }, [speciesId]);
+
+  useEffect(() => {
+    if (session?.user) {
+      checkFavoriteStatus();
+    }
+  }, [session, checkFavoriteStatus]);
 
   const toggleFavorite = async () => {
     if (!session?.user) {

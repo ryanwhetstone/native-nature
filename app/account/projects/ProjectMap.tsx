@@ -138,7 +138,7 @@ export default function ProjectMap({ onLocationSelect, selectedLocation, initial
         map.current = null;
       }
     };
-  }, [onLocationSelect]);
+  }, [onLocationSelect, initialLocation, onWebGLError]);
 
   // Update marker when selected location changes externally
   useEffect(() => {
