@@ -1,0 +1,60 @@
+/* Base Card */
+.card {
+  @apply bg-white rounded-lg shadow-md p-6;
+}
+
+/* Card Variants */
+.card-sm {
+  @apply bg-white rounded-lg shadow-sm p-4;
+}
+
+.card-lg {
+  @apply bg-white rounded-lg shadow-lg p-8;
+}
+
+/* Interactive Cards */
+.card-hover {
+  @apply bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden;
+}
+
+.card-clickable {
+  @apply bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer;
+}
+
+/* Special Cards */
+.card-bordered {
+  @apply border border-gray-200 rounded-lg p-4;
+}
+
+.card-bordered-hover {
+  @apply border-2 border-gray-200 rounded-lg overflow-hidden hover:border-green-500 hover:shadow-lg transition-all;
+}
+
+.card-highlight {
+  @apply bg-green-50 rounded-lg p-3;
+}
+
+/* Observation Card */
+.observation-card {
+  @apply bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden;
+}
+
+/* Project Card */
+.project-card {
+  @apply bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow;
+}
+
+/* Empty State Card */
+.empty-state {
+  @apply bg-white rounded-lg shadow p-12 text-center;
+}
+
+/* Dropdown/Menu Card */
+.dropdown-card {
+  @apply bg-white rounded-lg shadow-lg border border-gray-200 py-1;
+}
+
+/* Icon Container in Card */
+.card-icon-container {
+  @apply absolute top-3 right-3 bg-white rounded-full p-2 shadow-md;
+}
