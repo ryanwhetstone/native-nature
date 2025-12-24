@@ -82,7 +82,7 @@ export default function CongratsModal({ isOpen, onClose, projectTitle }: Congrat
             🎉 Congratulations! 🎉
           </h2>
           <p className="text-lg mb-2">
-            You've successfully completed
+            You&apos;ve successfully completed
           </p>
           <p className="text-xl font-semibold text-gray-900 mb-4">
             {projectTitle}
