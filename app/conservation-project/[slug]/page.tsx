@@ -223,7 +223,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                     <span className={`px-3 py-1 text-sm rounded-full ${
                       project.status === 'active' ? 'bg-green-600 text-white' :
                       project.status === 'funded' ? 'bg-blue-600 text-white' :
-                      project.status === 'completed' ? 'bg-purple-600 text-white' :
+                      project.status === 'completed' ? 'bg-emerald-600 text-white' :
                       'bg-gray-600 text-white'
                     }`}>
                       {project.status.charAt(0).toUpperCase() + project.status.slice(1)} Conservation Project

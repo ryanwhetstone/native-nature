@@ -52,7 +52,7 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
 
   return (
     <>
-      <div className="flex-shrink-0 flex gap-2">
+      <div className="flex-shrink-0 flex gap-2 flex-wrap">
         {isFunded && !isCompleted && (
           <>
             <button
@@ -73,11 +73,17 @@ export default function ProjectActions({ projectId, projectTitle, projectStatus,
         {isCompleted && (
           <button
             onClick={() => setShowUpdateForm(true)}
-            className="btn-purple"
+            className="btn-teal"
           >
             Give an Update
           </button>
         )}
+        <Link
+          href={`/conservation-project/${projectId}-${projectTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/updates`}
+          className="btn-purple"
+        >
+          Manage Updates
+        </Link>
         <Link
           href={`/conservation-project/${projectId}-${projectTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/questions`}
           className="btn-indigo"

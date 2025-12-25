@@ -157,7 +157,7 @@ export default async function Home() {
           {/* Photo Gallery */}
           {allPhotos.length > 0 && (
             <div className="mb-8">
-              <MasonryPhotoGallery photos={allPhotos} />
+              <MasonryPhotoGallery photos={allPhotos} showTypeBadges={true} />
             </div>
           )}
         </div>

@@ -109,7 +109,7 @@ export default function DonateButton({
   };
 
   const fundingPercentage = Math.min(100, (currentFunding / fundingGoal) * 100);
-  const isCompleted = status === 'funded';
+  const isCompleted = status === 'funded' || status === 'completed';
 
   return (
     <>
@@ -122,7 +122,7 @@ export default function DonateButton({
             : 'bg-green-600 text-white hover:bg-green-700'
         }`}
       >
-        {isCompleted ? 'Funding Goal Reached' : 'Donate Now'}
+        {status === 'completed' ? 'Project Completed' : isCompleted ? 'Funding Goal Reached' : 'Donate Now'}
       </button>
 
       {/* Modal */}

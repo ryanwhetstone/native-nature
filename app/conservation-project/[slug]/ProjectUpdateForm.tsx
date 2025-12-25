@@ -1,24 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useToast } from '@/app/components/Toast';
 
+interface ExistingUpdate {
+  id: number;
+  title: string;
+  description: string;
+  pictures: {
+    id: number;
+    imageUrl: string;
+    caption: string | null;
+  }[];
+}
+
 interface ProjectUpdateFormProps {
   projectId: number;
   projectTitle: string;
-  onClose: () => void;
+  onClose?: () => void;
+  onSuccess?: () => void;
+  existingUpdate?: ExistingUpdate;
 }
 
-export default function ProjectUpdateForm({ projectId, projectTitle, onClose }: ProjectUpdateFormProps) {
+export default function ProjectUpdateForm({ 
+  projectId, 
+  projectTitle, 
+  onClose, 
+  onSuccess,
+  existingUpdate 
+}: ProjectUpdateFormProps) {
   const router = useRouter();
   const { showToast } = useToast();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [images, setImages] = useState<Array<{ url: string; file: File }>>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
+
+  // Initialize form with existing update data
+  useEffect(() => {
+    if (existingUpdate) {
+      setTitle(existingUpdate.title);
+      setDescription(existingUpdate.description);
+      setExistingImages(existingUpdate.pictures.map(p => p.imageUrl));
+    }
+  }, [existingUpdate]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -36,6 +65,10 @@ export default function ProjectUpdateForm({ projectId, projectTitle, onClose }: 
       imgs.splice(index, 1);
       return imgs;
     });
+  };
+
+  const handleRemoveExistingImage = (url: string) => {
+    setExistingImages(prev => prev.filter(img => img !== url));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,71 +108,63 @@ export default function ProjectUpdateForm({ projectId, projectTitle, onClose }: 
         setUploadingImages(false);
       }
 
-      // Create the update
-      const response = await fetch(`/api/projects/${projectId}/updates`, {
-        method: 'POST',
+      // Combine existing and newly uploaded images
+      const allImageUrls = [...existingImages, ...uploadedImageUrls];
+
+      // Create or update the update
+      const url = existingUpdate 
+        ? `/api/projects/${projectId}/updates/${existingUpdate.id}`
+        : `/api/projects/${projectId}/updates`;
+      const method = existingUpdate ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title,
           description,
-          imageUrls: uploadedImageUrls,
+          imageUrls: allImageUrls,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create update');
+        throw new Error(`Failed to ${existingUpdate ? 'update' : 'create'} update`);
       }
 
-      showToast('Update posted successfully!');
-      router.refresh();
-      onClose();
+      showToast(`Update ${existingUpdate ? 'updated' : 'posted'} successfully!`);
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.refresh();
+        if (onClose) onClose();
+      }
     } catch (error) {
-      console.error('Error creating update:', error);
-      showToast('Failed to post update. Please try again.', 'error');
+      console.error('Error saving update:', error);
+      showToast(`Failed to ${existingUpdate ? 'update' : 'post'} update. Please try again.`, 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Header */}
-          <div className="flex justify-between items-start pb-4 border-b">
-            <div>
-              <h2 className="heading-3">Post Project Update</h2>
-              <p className="text-sm text-gray-600 mt-1">{projectTitle}</p>
-            </div>
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Title */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-2">
-              Update Title *
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              placeholder="Progress Update: Trees Planted"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
+  const formContent = (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Title */}
+      <div>
+        <label htmlFor="title" className="block text-sm font-medium mb-2">
+          Update Title *
+        </label>
+        <input
+          type="text"
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          placeholder="Progress Update: Trees Planted"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+      </div>
 
           {/* Description */}
           <div>
@@ -163,13 +188,36 @@ export default function ProjectUpdateForm({ projectId, projectTitle, onClose }: 
               Photos (Optional)
             </label>
             
-            {images.length > 0 && (
+            {(existingImages.length > 0 || images.length > 0) && (
               <div className="mb-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {/* Existing images */}
+                {existingImages.map((imageUrl, index) => (
+                  <div key={`existing-${index}`} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                    <Image
+                      src={imageUrl}
+                      alt={`Existing photo ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveExistingImage(imageUrl)}
+                      disabled={isSubmitting}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+                
+                {/* New images */}
                 {images.map((image, index) => (
-                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                  <div key={`new-${index}`} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                     <Image
                       src={image.url}
-                      alt={`Update photo ${index + 1}`}
+                      alt={`New photo ${index + 1}`}
                       fill
                       className="object-cover"
                     />
@@ -200,24 +248,56 @@ export default function ProjectUpdateForm({ projectId, projectTitle, onClose }: 
 
           {/* Submit Button */}
           <div className="flex gap-3 pt-4 border-t">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-            >
-              Cancel
-            </button>
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isSubmitting}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            )}
             <button
               type="submit"
               disabled={isSubmitting || uploadingImages}
               className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 font-semibold"
             >
-              {uploadingImages ? 'Uploading...' : isSubmitting ? 'Posting...' : 'Post Update'}
+              {uploadingImages ? 'Uploading...' : isSubmitting ? (existingUpdate ? 'Updating...' : 'Posting...') : (existingUpdate ? 'Update' : 'Post Update')}
             </button>
           </div>
         </form>
-      </div>
-    </div>
   );
+
+  // If onClose is provided, wrap in modal
+  if (onClose) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="bg-white rounded-lg max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto">
+          <div className="p-6">
+            <div className="flex justify-between items-start pb-4 border-b mb-6">
+              <div>
+                <h2 className="heading-3">{existingUpdate ? 'Edit' : 'Post'} Project Update</h2>
+                <p className="text-sm text-gray-600 mt-1">{projectTitle}</p>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isSubmitting}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            {formContent}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Otherwise return inline form
+  return formContent;
 }
