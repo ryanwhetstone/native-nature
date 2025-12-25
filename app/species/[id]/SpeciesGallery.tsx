@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { ImageLightbox, LightboxGallery } from './ImageLightbox';
+import MasonryPhotoGallery from '@/app/components/MasonryPhotoGallery';
 import { FavoriteButton } from '@/app/components/FavoriteButton';
 import { AddObservationButton } from '@/app/components/AddObservationButton';
 import { BackButton } from './BackButton';
@@ -42,35 +40,42 @@ interface SpeciesGalleryProps {
 }
 
 export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  // Collect all images - convert to format expected by MasonryPhotoGallery
-  const allImages: Array<{ src: string; alt: string; attribution: string }> = [];
+  // Transform taxon photos into MasonryPhotoGallery format
+  const galleryPhotos: any[] = [];
   
+  // Add default photo first
   if (species.defaultPhotoUrl) {
-    allImages.push({
-      src: species.defaultPhotoUrl,
-      alt: species.preferredCommonName || species.name,
-      attribution: `${species.defaultPhotoAttribution || 'Unknown'} (${species.defaultPhotoLicense || 'Unknown'})`,
+    galleryPhotos.push({
+      id: `taxon-default`,
+      imageUrl: species.defaultPhotoUrl,
+      caption: `${species.defaultPhotoAttribution || 'Unknown'} (${species.defaultPhotoLicense || 'Unknown'})`,
+      createdAt: new Date(),
+      species: {
+        name: species.name,
+        preferredCommonName: species.preferredCommonName,
+        slug: slug,
+      },
+      // No observation or projectId - this marks it as a species photo
     });
   }
 
+  // Add additional taxon photos
   if (species.taxonPhotos && Array.isArray(species.taxonPhotos)) {
     // Skip first photo (it's the default) and take up to 11 more (total 12)
     species.taxonPhotos.slice(1, Math.min(12, species.taxonPhotos.length)).forEach((item: any, index: number) => {
-      allImages.push({
-        src: item.photo.medium_url,
-        alt: `${species.preferredCommonName || species.name} photo ${allImages.length + 1}`,
-        attribution: item.photo.attribution,
+      galleryPhotos.push({
+        id: `taxon-${index}`,
+        imageUrl: item.photo.medium_url,
+        caption: item.photo.attribution,
+        createdAt: new Date(),
+        species: {
+          name: species.name,
+          preferredCommonName: species.preferredCommonName,
+          slug: slug,
+        },
       });
     });
   }
-
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
-  };
 
   return (
     <>
@@ -110,34 +115,9 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
           </div>
 
           {/* Photo Gallery */}
-          {allImages.length > 0 && (
+          {galleryPhotos.length > 0 && (
             <div className="mb-8">
-              <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-                {allImages.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => openLightbox(index)}
-                    className="group relative w-full break-inside-avoid mb-4 rounded-lg overflow-hidden bg-gray-100 cursor-pointer block"
-                  >
-                    <div className="relative w-full aspect-video">
-                      <Image
-                        src={image.src}
-                        alt={image.alt}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <p className="text-white text-xs">
-                          {image.attribution}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <MasonryPhotoGallery photos={galleryPhotos} currentSpeciesSlug={slug} />
             </div>
           )}
         </div>
@@ -171,14 +151,6 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
           )}
         </div>
       </div>
-
-      <LightboxGallery
-        images={allImages}
-        isOpen={lightboxOpen}
-        currentIndex={currentImageIndex}
-        onClose={() => setLightboxOpen(false)}
-        onNavigate={setCurrentImageIndex}
-      />
     </>
   );
 }

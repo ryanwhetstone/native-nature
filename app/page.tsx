@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { WorldMap } from "./WorldMap";
 import { db } from "@/db";
-import { observations, conservationProjects } from "@/db/schema";
+import { observations, conservationProjects, favorites } from "@/db/schema";
 import { desc, and, lt, sql } from "drizzle-orm";
 import Image from "next/image";
 import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
@@ -41,7 +41,19 @@ export default async function Home() {
   // Filter projects that have pictures and select 5
   const projectsWithPictures = randomProjects.filter(proj => proj.pictures.length > 0).slice(0, 5);
 
-  // Combine photos from both observations and projects for the masonry gallery
+  // Fetch last 5 favorited species with photos
+  const recentFavorites = await db.query.favorites.findMany({
+    with: {
+      species: true,
+    },
+    orderBy: [desc(favorites.createdAt)],
+    limit: 50, // Get more to filter for those with photos
+  });
+
+  // Filter favorites that have default photos and select 5
+  const favoritesWithPhotos = recentFavorites.filter(fav => fav.species.defaultPhotoUrl).slice(0, 5);
+
+  // Combine photos from observations, projects, and favorited species for the masonry gallery
   const observationPhotos = observationsWithPictures.flatMap((obs) =>
     obs.pictures.map((pic) => ({
       ...pic,
@@ -81,8 +93,21 @@ export default async function Home() {
     }))
   );
 
+  const speciesPhotos = favoritesWithPhotos.map((fav) => ({
+    id: `species-fav-${fav.id}`,
+    imageUrl: fav.species.defaultPhotoUrl!,
+    caption: fav.species.defaultPhotoAttribution || null,
+    createdAt: fav.createdAt,
+    species: {
+      name: fav.species.name,
+      preferredCommonName: fav.species.preferredCommonName,
+      slug: fav.species.slug,
+    },
+    // No observation or projectId - this marks it as a species photo
+  }));
+
   // Combine and shuffle photos
-  const allPhotos = [...observationPhotos, ...projectPhotos].sort(() => Math.random() - 0.5);
+  const allPhotos = [...observationPhotos, ...projectPhotos, ...speciesPhotos].sort(() => Math.random() - 0.5);
 
   // Select 4 observations to display in cards
   const selectedObservations = observationsWithPictures.slice(0, 4);

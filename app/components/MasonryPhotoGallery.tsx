@@ -5,11 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getObservationUrl } from '@/lib/observation-url';
 import { getProjectUrl } from '@/lib/project-url';
+import { getSpeciesUrl } from '@/lib/species-url';
 
 interface Photo {
   id: number | string;
   imageUrl: string;
-  observation: {
+  observation?: {
     id: number;
     observedAt: Date;
     user: {
@@ -37,6 +38,7 @@ interface MasonryPhotoGalleryProps {
   isProjectGallery?: boolean;
   currentObservationId?: number;
   currentProjectId?: number;
+  currentSpeciesSlug?: string;
 }
 
 export default function MasonryPhotoGallery({ 
@@ -44,6 +46,7 @@ export default function MasonryPhotoGallery({
   columns = { default: 2, md: 3, lg: 4 },
   isProjectGallery = false,
   currentObservationId,
+  currentSpeciesSlug,
   currentProjectId,
 }: MasonryPhotoGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -133,9 +136,11 @@ export default function MasonryPhotoGallery({
                 <p className="text-white text-sm font-medium line-clamp-2">
                   {photo.species.preferredCommonName || photo.species.name}
                 </p>
-                <p className="text-gray-300 text-xs mt-1">
-                  {new Date(photo.observation.observedAt).toLocaleDateString()}
-                </p>
+                {photo.observation && (
+                  <p className="text-gray-300 text-xs mt-1">
+                    {new Date(photo.observation.observedAt).toLocaleDateString()}
+                  </p>
+                )}
               </div>
             </div>
           </button>
@@ -197,7 +202,52 @@ export default function MasonryPhotoGallery({
               
               {/* Image Info */}
               <div className="mt-4 text-center">
-                {photos[selectedIndex].projectId && photos[selectedIndex].projectTitle ? (
+                {!photos[selectedIndex].observation && !photos[selectedIndex].projectId ? (
+                  // Species Photo Info
+                  <>
+                    {currentSpeciesSlug === photos[selectedIndex].species.slug ? (
+                      // Already on this species page - no link
+                      <div className="inline-flex items-center gap-2">
+                        <h3 className="text-white text-xl font-semibold">
+                          {photos[selectedIndex].species.preferredCommonName || photos[selectedIndex].species.name}
+                        </h3>
+                      </div>
+                    ) : (
+                      // Link to species page
+                      <Link 
+                        href={getSpeciesUrl(
+                          photos[selectedIndex].species.slug || '',
+                          photos[selectedIndex].species.name,
+                          photos[selectedIndex].species.preferredCommonName
+                        )}
+                        className="hover:text-blue-400 transition-colors group inline-flex items-center gap-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          closeLightbox();
+                        }}
+                        scroll={true}
+                      >
+                        <h3 className="text-white text-xl font-semibold">
+                          {photos[selectedIndex].species.preferredCommonName || photos[selectedIndex].species.name}
+                        </h3>
+                        <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </Link>
+                    )}
+                    {photos[selectedIndex].species.preferredCommonName && (
+                      <p className="text-gray-400 text-sm italic mt-1">
+                        {photos[selectedIndex].species.name}
+                      </p>
+                    )}
+                    <p className="text-gray-400 text-sm mt-1">
+                      📷 Species Photo
+                    </p>
+                    <p className="text-gray-400 text-xs mt-2">
+                      {photos[selectedIndex].caption || 'Image source not specified. All rights reserved.'}
+                    </p>
+                  </>
+                ) : photos[selectedIndex].projectId && photos[selectedIndex].projectTitle ? (
                   // Project Photo Info
                   <>
                     {currentProjectId === photos[selectedIndex].projectId ? (
@@ -227,16 +277,16 @@ export default function MasonryPhotoGallery({
                       </Link>
                     )}
                     <p className="text-gray-400 text-sm mt-1">
-                      🌱 Conservation Project • Created on {new Date(photos[selectedIndex].observation.observedAt).toLocaleDateString()}
+                      🌱 Conservation Project • Created on {new Date(photos[selectedIndex].observation!.observedAt).toLocaleDateString()}
                     </p>
                     <p className="text-gray-400 text-xs mt-2">
-                      Image uploaded by {photos[selectedIndex].observation.user.publicName || photos[selectedIndex].observation.user.name || 'Anonymous'}. All rights reserved.
+                      Image uploaded by {photos[selectedIndex].observation!.user.publicName || photos[selectedIndex].observation!.user.name || 'Anonymous'}. All rights reserved.
                     </p>
                   </>
-                ) : (
+                ) : photos[selectedIndex].observation ? (
                   // Observation Photo Info
                   <>
-                    {currentObservationId === photos[selectedIndex].observation.id ? (
+                    {currentObservationId === photos[selectedIndex].observation?.id ? (
                       // Already on this observation page - no link
                       <div className="inline-flex items-center gap-2">
                         <h3 className="text-white text-xl font-semibold">
@@ -247,7 +297,7 @@ export default function MasonryPhotoGallery({
                       // Link to observation page
                       <Link 
                         href={getObservationUrl(
-                          photos[selectedIndex].observation.id,
+                          photos[selectedIndex].observation!.id,
                           photos[selectedIndex].species.name,
                           photos[selectedIndex].species.preferredCommonName
                         )}
@@ -272,13 +322,13 @@ export default function MasonryPhotoGallery({
                       </p>
                     )}
                     <p className="text-gray-400 text-sm mt-1">
-                      Observed on {new Date(photos[selectedIndex].observation.observedAt).toLocaleDateString()}
+                      Observed on {new Date(photos[selectedIndex].observation!.observedAt).toLocaleDateString()}
                     </p>
                     <p className="text-gray-400 text-xs mt-2">
-                      Image uploaded by {photos[selectedIndex].observation.user.publicName || photos[selectedIndex].observation.user.name || 'Anonymous'}. All rights reserved.
+                      Image uploaded by {photos[selectedIndex].observation?.user.publicName || photos[selectedIndex].observation?.user.name || 'Anonymous'}. All rights reserved.
                     </p>
                   </>
-                )}
+                ) : null}
                 <p className="text-gray-500 text-xs mt-2">
                   {selectedIndex + 1} of {photos.length}
                 </p>
