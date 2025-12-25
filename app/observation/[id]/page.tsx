@@ -156,7 +156,7 @@ export default async function ObservationDetailPage({
       <div className="py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Location */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="section-card">
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="text-xl font-semibold mr-8">Location</h2>
             {(observation.city || observation.region || observation.country) && (

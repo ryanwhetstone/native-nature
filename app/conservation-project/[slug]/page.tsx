@@ -289,7 +289,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
           {/* Project Updates Section */}
           {updates.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div className="section-card">
               <h2 className="text-xl font-semibold mb-6">Project Updates</h2>
               <div className="space-y-8">
                 {updates.map((update) => (
@@ -329,7 +329,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           )}
 
           {/* Funding Progress Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="section-card">
             <h2 className="text-xl font-semibold mb-4">Funding Progress</h2>
             <div className="mb-6">
               <div className="flex justify-between items-baseline mb-2">
@@ -361,7 +361,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
             />
           </div>
           {/* Location Map */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="section-card">
             <div className="flex items-baseline justify-between mb-4">
               <h2 className="text-xl font-semibold mr-8">Location</h2>
               {(project.city || project.region || project.country) && (
@@ -387,7 +387,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           </div>
 
           {/* Project Details Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="section-card">
             <h2 className="text-xl font-semibold mb-4">Project Details</h2>
             <div className="space-y-4">
               <div className="flex items-start">
@@ -415,7 +415,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
           {/* Donors Section */}
           {completedDonations.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div className="section-card">
               <h2 className="text-xl font-semibold mb-4">
                 Thank you to the following donors! 🌿
               </h2>

@@ -34,6 +34,11 @@
   @apply bg-green-50 rounded-lg p-3;
 }
 
+/* Section Card - for page sections with consistent spacing */
+.section-card {
+  @apply bg-white rounded-lg shadow-sm p-6 mb-6;
+}
+
 /* Observation Card */
 .observation-card {
   @apply bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden;

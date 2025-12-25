@@ -127,7 +127,7 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
       <div className="py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Taxonomy */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="section-card">
             <h2 className="text-xl font-semibold mb-3">Taxonomy</h2>
             <div className="text-sm text-gray-600 flex flex-wrap gap-1">
               {species.kingdom && <><span className="font-medium">Kingdom:</span> <span>{species.kingdom}</span> <span className="mx-1">›</span></>}
