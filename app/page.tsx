@@ -33,6 +33,13 @@ export default async function Home() {
         },
       },
       pictures: true,
+      updates: {
+        with: {
+          pictures: true,
+        },
+        orderBy: (updates, { desc }) => [desc(updates.createdAt)],
+        limit: 1, // Get most recent update with pictures
+      },
     },
     orderBy: sql`RANDOM()`,
     limit: 50, // Get more than needed to filter for pictures
@@ -54,23 +61,27 @@ export default async function Home() {
   const favoritesWithPhotos = recentFavorites.filter(fav => fav.species.defaultPhotoUrl).slice(0, 5);
 
   // Combine photos from observations, projects, and favorited species for the masonry gallery
-  const observationPhotos = observationsWithPictures.flatMap((obs) =>
-    obs.pictures.map((pic) => ({
-      ...pic,
-      observation: {
-        id: obs.id,
-        observedAt: obs.observedAt,
-        user: {
-          publicName: obs.user.publicName,
-          name: obs.user.name,
-        },
+  // Only show the first image from each observation
+  const observationPhotos = observationsWithPictures.map((obs) => ({
+    ...obs.pictures[0],
+    observation: {
+      id: obs.id,
+      observedAt: obs.observedAt,
+      user: {
+        publicName: obs.user.publicName,
+        name: obs.user.name,
       },
-      species: obs.species,
-    }))
-  );
+    },
+    species: obs.species,
+  }));
 
-  const projectPhotos = projectsWithPictures.flatMap((proj) =>
-    proj.pictures.map((pic) => ({
+  const projectPhotos = projectsWithPictures.map((proj) => {
+    // Try to get image from most recent update first
+    const updatePic = proj.updates?.[0]?.pictures?.[0];
+    // Fallback to first project picture
+    const pic = updatePic || proj.pictures[0];
+    
+    return {
       id: `project-${pic.id}`,
       imageUrl: pic.imageUrl,
       caption: pic.caption,
@@ -90,8 +101,8 @@ export default async function Home() {
       },
       projectId: proj.id,
       projectTitle: proj.title,
-    }))
-  );
+    };
+  });
 
   const speciesPhotos = favoritesWithPhotos.map((fav) => ({
     id: `species-fav-${fav.id}`,
