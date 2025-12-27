@@ -13,6 +13,7 @@ export const users = pgTable('users', {
   publicName: varchar('public_name', { length: 255 }),
   bio: text('bio'),
   preferences: jsonb('preferences'),
+  role: varchar('role', { length: 20 }).default('user').notNull(),
   isActive: boolean('is_active').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

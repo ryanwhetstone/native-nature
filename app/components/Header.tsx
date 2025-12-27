@@ -127,6 +127,17 @@ export function Header({ session }: { session: any }) {
                 Dashboard
               </Link>
             )}
+            
+            {/* Admin Link - only show for admin users */}
+            {session?.user?.role === 'admin' && (
+              <Link
+                href="/admin"
+                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+              >
+                Admin
+              </Link>
+            )}
+            
             {/* Auth Section */}
             {session?.user ? (
               <UserMenu user={session.user} />
@@ -200,6 +211,18 @@ export function Header({ session }: { session: any }) {
                 Dashboard
               </Link>
             )}
+            
+            {/* Admin Link - Mobile */}
+            {session?.user?.role === 'admin' && (
+              <Link
+                href="/admin"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-gray-600 hover:text-gray-900 font-medium transition-colors py-2"
+              >
+                Admin
+              </Link>
+            )}
+            
             {session?.user ? (
               <>
                 <Link

@@ -134,6 +134,13 @@
       "when": 1766461825161,
       "tag": "0018_panoramic_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1766842692967,
+      "tag": "0019_typical_longshot",
+      "breakpoints": true
     }
   ]
 }
