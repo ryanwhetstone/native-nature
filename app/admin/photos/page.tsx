@@ -20,7 +20,7 @@ const ITEMS_PER_PAGE = 50;
 export default async function AdminPhotosPage({
   searchParams,
 }: {
-  searchParams: { page?: string; search?: string };
+  searchParams: Promise<{ page?: string; search?: string }>;
 }) {
   const session = await auth();
   
@@ -28,8 +28,9 @@ export default async function AdminPhotosPage({
     redirect('/');
   }
 
-  const currentPage = Number(searchParams.page) || 1;
-  const searchTerm = searchParams.search?.toLowerCase() || '';
+  const params = await searchParams;
+  const currentPage = Number(params.page) || 1;
+  const searchTerm = params.search?.toLowerCase() || '';
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   const observationPhotos = await db.query.observationPictures.findMany({
