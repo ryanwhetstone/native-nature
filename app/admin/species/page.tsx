@@ -79,7 +79,7 @@ export default async function AdminSpeciesPage({
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scientific Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Native To</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observations</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -109,8 +109,8 @@ export default async function AdminSpeciesPage({
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {sp.nativeTo || 'Unknown'}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {sp.observationsCount || 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(sp.createdAt).toLocaleDateString()}
