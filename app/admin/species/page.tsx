@@ -7,6 +7,7 @@ import Link from "next/link";
 import { getSpeciesUrl } from "@/lib/species-url";
 import { Pagination } from "../components/Pagination";
 import { SearchBar } from "../components/SearchBar";
+import { AdminNav } from "../components/AdminNav";
 
 export const metadata = {
   title: 'Manage Species | Admin | Native Nature',
@@ -54,6 +55,7 @@ export default async function AdminSpeciesPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between">
           <div className="flex-gap-xs">

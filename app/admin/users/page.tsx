@@ -6,6 +6,7 @@ import { count, or, ilike, sql } from "drizzle-orm";
 import Link from "next/link";
 import { Pagination } from "../components/Pagination";
 import { SearchBar } from "../components/SearchBar";
+import { AdminNav } from "../components/AdminNav";
 
 export const metadata = {
   title: 'Manage Users | Admin | Native Nature',
@@ -64,6 +65,7 @@ export default async function AdminUsersPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between">
           <div className="flex-gap-xs">

@@ -5,6 +5,7 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import { AdminNav } from "../../components/AdminNav";
 
 export const metadata = {
   title: 'Edit User | Admin | Native Nature',
@@ -61,6 +62,7 @@ export default async function EditUserPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between mb-6">
           <h1>Edit User</h1>

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { getProjectUrl } from "@/lib/project-url";
 import { Pagination } from "../components/Pagination";
 import { SearchBar } from "../components/SearchBar";
+import { AdminNav } from "../components/AdminNav";
 
 export const metadata = {
   title: 'Manage Projects | Admin | Native Nature',
@@ -64,6 +65,7 @@ export default async function AdminProjectsPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between">
           <div className="flex-gap-xs">

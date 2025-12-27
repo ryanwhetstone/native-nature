@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { users, conservationProjects, observations, species, observationPictures, projectPictures, projectUpdatePictures } from "@/db/schema";
 import { count, sql } from "drizzle-orm";
 import Link from "next/link";
+import { AdminNav } from "./components/AdminNav";
 
 export const metadata = {
   title: 'Admin Dashboard | Native Nature',
@@ -61,6 +62,7 @@ export default async function AdminPage() {
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex-gap-xs">
           <h1>Admin Dashboard</h1>

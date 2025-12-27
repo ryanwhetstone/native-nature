@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { getProjectUrl } from "@/lib/project-url";
+import { AdminNav } from "../../components/AdminNav";
 
 export const metadata = {
   title: 'Edit Project | Admin | Native Nature',
@@ -74,6 +75,7 @@ export default async function EditProjectPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between mb-6">
           <h1>Edit Project</h1>

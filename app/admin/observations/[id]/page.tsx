@@ -7,6 +7,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { getObservationUrl } from "@/lib/observation-url";
 import { DeleteButton } from "../../components/DeleteButton";
+import { AdminNav } from "../../components/AdminNav";
 
 export const metadata = {
   title: 'Edit Observation | Admin | Native Nature',
@@ -68,6 +69,7 @@ export default async function EditObservationPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between mb-6">
           <h1>Observation Details</h1>
@@ -112,10 +114,10 @@ export default async function EditObservationPage({
               </dd>
             </div>
 
-            {observation.locationDescription && (
+            {observation.description && (
               <div>
-                <dt className="text-sm font-medium text-gray-600 mb-1">Location Description</dt>
-                <dd className="text-gray-900">{observation.locationDescription}</dd>
+                <dt className="text-sm font-medium text-gray-600 mb-1">Description</dt>
+                <dd className="text-gray-900">{observation.description}</dd>
               </div>
             )}
 

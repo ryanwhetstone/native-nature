@@ -7,6 +7,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { getSpeciesUrl } from "@/lib/species-url";
 import Image from "next/image";
+import { AdminNav } from "../../components/AdminNav";
 
 export const metadata = {
   title: 'Edit Species | Admin | Native Nature',
@@ -64,6 +65,7 @@ export default async function EditSpeciesPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between mb-6">
           <h1>Edit Species</h1>

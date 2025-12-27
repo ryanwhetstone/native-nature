@@ -7,6 +7,7 @@ import Link from "next/link";
 import { getObservationUrl } from "@/lib/observation-url";
 import { Pagination } from "../components/Pagination";
 import { SearchBar } from "../components/SearchBar";
+import { AdminNav } from "../components/AdminNav";
 
 export const metadata = {
   title: 'Manage Observations | Admin | Native Nature',
@@ -106,6 +107,7 @@ export default async function AdminObservationsPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between">
           <div className="flex-gap-xs">

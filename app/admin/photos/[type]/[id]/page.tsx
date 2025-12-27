@@ -7,6 +7,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
 import { DeleteButton } from "../../../components/DeleteButton";
+import { AdminNav } from "../../../components/AdminNav";
 
 export const metadata = {
   title: 'Edit Photo | Admin | Native Nature',
@@ -136,6 +137,7 @@ export default async function EditPhotoPage({
 
   return (
     <main className="min-h-screen bg-light">
+      <AdminNav />
       <div className="container-lg">
         <div className="flex items-center justify-between mb-6">
           <h1>Edit Photo</h1>
