@@ -162,6 +162,7 @@ export const observationPictures = pgTable('observation_pictures', {
   speciesId: integer('species_id').notNull().references(() => species.id, { onDelete: 'cascade' }),
   imageUrl: text('image_url').notNull(),
   caption: varchar('caption', { length: 500 }),
+  approved: boolean('approved'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -199,6 +200,7 @@ export const projectPictures = pgTable('project_pictures', {
   projectId: integer('project_id').notNull().references(() => conservationProjects.id, { onDelete: 'cascade' }),
   imageUrl: text('image_url').notNull(),
   caption: varchar('caption', { length: 500 }),
+  approved: boolean('approved'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -224,6 +226,7 @@ export const projectUpdatePictures = pgTable('project_update_pictures', {
   updateId: integer('update_id').notNull().references(() => projectUpdates.id, { onDelete: 'cascade' }),
   imageUrl: text('image_url').notNull(),
   caption: varchar('caption', { length: 500 }),
+  approved: boolean('approved'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

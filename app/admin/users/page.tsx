@@ -74,9 +74,6 @@ export default async function AdminUsersPage({
               {totalCount} total users
             </p>
           </div>
-          <Link href="/admin" className="btn-secondary">
-            ← Back to Dashboard
-          </Link>
         </div>
 
         <div className="section-card">

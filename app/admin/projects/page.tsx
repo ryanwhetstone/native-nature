@@ -74,9 +74,6 @@ export default async function AdminProjectsPage({
               {totalCount} total projects
             </p>
           </div>
-          <Link href="/admin" className="btn-secondary">
-            ← Back to Dashboard
-          </Link>
         </div>
 
         <div className="section-card">

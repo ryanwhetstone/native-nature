@@ -116,9 +116,6 @@ export default async function AdminObservationsPage({
               {totalCount} total observations
             </p>
           </div>
-          <Link href="/admin" className="btn-secondary">
-            ← Back to Dashboard
-          </Link>
         </div>
 
         <div className="section-card">

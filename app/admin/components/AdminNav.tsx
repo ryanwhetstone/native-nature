@@ -7,7 +7,7 @@ export function AdminNav() {
   const pathname = usePathname();
 
   const links = [
-    { href: '/admin', label: 'Dashboard' },
+    { href: '/admin', label: 'Admin Dashboard' },
     { href: '/admin/users', label: 'Users' },
     { href: '/admin/projects', label: 'Projects' },
     { href: '/admin/observations', label: 'Observations' },

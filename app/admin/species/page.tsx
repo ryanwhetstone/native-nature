@@ -64,9 +64,6 @@ export default async function AdminSpeciesPage({
               {totalCount} total species
             </p>
           </div>
-          <Link href="/admin" className="btn-secondary">
-            ← Back to Dashboard
-          </Link>
         </div>
 
         <div className="section-card">

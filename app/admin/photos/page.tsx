@@ -166,8 +166,8 @@ export default async function AdminPhotosPage({
               {totalCount} total photos
             </p>
           </div>
-          <Link href="/admin" className="btn-secondary">
-            ← Back to Dashboard
+          <Link href="/admin/photos/bulk" className="btn-primary">
+            Bulk Management
           </Link>
         </div>
 
