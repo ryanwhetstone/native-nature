@@ -117,7 +117,7 @@ export default async function AdminPhotosPage({
       uploader: photo.observation?.user.publicName || photo.observation?.user.name || 'N/A',
       title: photo.observation ? (photo.observation.species.preferredCommonName || photo.observation.species.name) : 'N/A',
       link: photo.observation ? getObservationUrl(photo.observation.id, photo.observation.species.name, photo.observation.species.preferredCommonName) : null,
-      attribution: photo.attribution,
+      caption: photo.caption,
     })),
     ...projectPhotos.map(photo => ({
       id: photo.id,
@@ -181,7 +181,7 @@ export default async function AdminPhotosPage({
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploader</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Caption/Attribution</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Caption</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -224,7 +224,7 @@ export default async function AdminPhotosPage({
                       {photo.uploader}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
-                      {photo.type === 'observation' ? photo.attribution : photo.caption || 'N/A'}
+                      {photo.caption || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(photo.createdAt).toLocaleDateString()}
