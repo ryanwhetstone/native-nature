@@ -8,6 +8,21 @@ import { users, accounts, sessions, verificationTokens } from "./db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
+declare module "next-auth" {
+  interface User {
+    role?: string;
+  }
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name?: string | null;
+      image?: string | null;
+      role?: string;
+    };
+  }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: DrizzleAdapter(db, {
     usersTable: users,
@@ -84,6 +99,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, user }) {
       if (user && session.user) {
         session.user.id = user.id;
+        // Fetch the role from the database
+        const dbUser = await db.query.users.findFirst({
+          where: eq(users.id, user.id),
+          columns: {
+            role: true,
+          },
+        });
+        session.user.role = dbUser?.role || 'user';
       }
       return session;
     },
