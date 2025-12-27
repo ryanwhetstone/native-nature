@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
-import { DeleteButton } from "../../components/DeleteButton";
+import { DeleteButton } from "../../../components/DeleteButton";
 
 export const metadata = {
   title: 'Edit Photo | Admin | Native Nature',
