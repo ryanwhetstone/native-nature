@@ -132,13 +132,6 @@ export default async function EditObservationPage({
               </div>
             </div>
 
-            {observation.notes && (
-              <div>
-                <dt className="text-sm font-medium text-gray-600 mb-1">Notes</dt>
-                <dd className="text-gray-900 whitespace-pre-wrap">{observation.notes}</dd>
-              </div>
-            )}
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <dt className="text-sm font-medium text-gray-600 mb-1">Observed At</dt>
