@@ -39,7 +39,7 @@ export default function AskQuestionForm({ projectId }: { projectId: number }) {
 
   if (!session?.user) {
     return (
-      <div className="card mb-6">
+      <div className="flex-gap-sm">
         <h2 className="heading-3 mb-4">Ask a Question</h2>
         <p className="text-muted mb-4">
           Have questions about this project? Sign in to ask the project creator!
@@ -55,9 +55,9 @@ export default function AskQuestionForm({ projectId }: { projectId: number }) {
   }
 
   return (
-    <div className="card mb-6">
-      <h2 className="heading-3 mb-4">Ask a Question</h2>
-      <p className="text-muted mb-4">
+    <div className="flex-gap-sm">
+      <h2 className="heading-3">Ask a Question</h2>
+      <p className="text-muted">
         Have questions about this project? Ask the project creator!
       </p>
 

@@ -1,16 +1,35 @@
+/* Padding */
+.padding-normal{
+  @apply px-4 sm:px-6 lg:px-8 py-4 sm:py-8 lg:py-14;
+}
+.flex-normal{
+  @apply flex flex-col gap-4 sm:gap-8;
+}
+.flex-gap-xs{
+  @apply flex flex-col gap-1 sm:gap-2;
+}
+.flex-gap-sm{
+  @apply flex flex-col gap-2 sm:gap-3;
+}
+.flex-gap-md{
+  @apply flex flex-col gap-3 sm:gap-4;
+}
 /* Container */
 .container {
-  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply w-full max-w-6xl mx-auto padding-normal flex-normal;
 }
 .container-lg {
-  @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+  @apply w-full mx-auto padding-normal flex-normal;
   max-width: 1400px;
 }
 .container-md {
-  @apply w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply w-full max-w-6xl mx-auto padding-normal flex-normal;
 }
 .container-sm {
-  @apply w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply w-full max-w-4xl mx-auto padding-normal flex-normal;
+}
+.container-full {
+  @apply w-full padding-normal flex-normal;
 }
 
 /* Section */

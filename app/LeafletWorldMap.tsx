@@ -26,7 +26,7 @@ export default function LeafletWorldMap({ onCountryClick }: LeafletWorldMapProps
       minZoom: 2,
       maxZoom: 5,
       zoomControl: true,
-      scrollWheelZoom: true,
+      scrollWheelZoom: false,
     });
 
     mapRef.current = map;
@@ -128,15 +128,10 @@ export default function LeafletWorldMap({ onCountryClick }: LeafletWorldMapProps
   }, [onCountryClick, availableCountries]);
 
   return (
-    <div className="w-full max-w-6xl mx-auto mb-12 relative">
-      <p className="text-center text-sm text-gray-600 mb-4">
-        Click on any country to explore its native species ({availableCountries.length} countries available)
-      </p>
       <div 
         ref={mapContainerRef} 
         className="w-full h-[500px] rounded-lg border-2 border-gray-300 shadow-lg"
         style={{ zIndex: 0 }}
       />
-    </div>
   );
 }

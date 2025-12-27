@@ -200,14 +200,13 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-light">
       <ThankYouModal />
       {/* Dark section for header and photos */}
-      <div className="bg-slate-900 py-8">
-        <div className="w-full px-4">
+      <div className="container-full bg-dark pt-3 sm:pt-4 px-4">
           {/* Header */}
-          <div className="max-w-7xl mx-auto mb-8">
-            <div className="flex justify-end mb-4">
+          <div className="max-w-7xl mx-auto flex-gap-md">
+            <div className="flex justify-end">
               {/* Owner Actions */}
               <ProjectActions
                 projectId={project.id}
@@ -257,10 +256,10 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
                 </div>
 
-                <h1 className="text-3xl font-semibold text-white mb-6">
-                  {project.title}
-                </h1>
-                <div className="mb-4">
+                <div className="flex-gap-xs">
+                  <h1 className="text-white">
+                    {project.title}
+                  </h1>
                   <p className="whitespace-pre-wrap text-white text-lg lg:pr-64">{project.description}</p>
                 </div>
 
@@ -270,7 +269,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
           {/* Photos Gallery */}
           {allPhotos.length > 0 && (
-            <div className="mb-8" id="photo-gallery">
+            <div id="photo-gallery">
               <MasonryPhotoGallery 
                 photos={allPhotos as any[]}
                 columns={{ default: 1, md: 2, lg: 3 }}
@@ -279,18 +278,16 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               />
             </div>
           )}
-        </div>
       </div>
 
       {/* Light section for additional details */}
-      <div className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-sm">
 
 
           {/* Project Updates Section */}
           {updates.length > 0 && (
             <div className="section-card">
-              <h2 className="text-xl font-semibold mb-6">Project Updates</h2>
+              <h2>Project Updates</h2>
               <div className="space-y-8">
                 {updates.map((update) => (
                   <div key={update.id} className="border-b border-gray-200 last:border-0 pb-8 last:pb-0">
@@ -330,8 +327,8 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
           {/* Funding Progress Card */}
           <div className="section-card">
-            <h2 className="text-xl font-semibold mb-4">Funding Progress</h2>
-            <div className="mb-6">
+            <h2>Funding Progress</h2>
+            <div>
               <div className="flex justify-between items-baseline mb-2">
                 <h3 className="heading-2">
                   ${(project.currentFunding / 100).toLocaleString()}
@@ -362,8 +359,8 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           </div>
           {/* Location Map */}
           <div className="section-card">
-            <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-xl font-semibold mr-8">Location</h2>
+            <div className="flex items-baseline justify-between">
+              <h2 className="mr-8">Location</h2>
               {(project.city || project.region || project.country) && (
                 <p className="text-muted">
                   {[project.city, project.region, project.country].filter(Boolean).join(', ')}
@@ -378,7 +375,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
             </div>
             
             {/* Map */}
-            <div className="mt-4">
+            <div>
               <ProjectDisplayMap 
                 longitude={parseFloat(project.longitude)}
                 latitude={parseFloat(project.latitude)}
@@ -388,7 +385,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
           {/* Project Details Card */}
           <div className="section-card">
-            <h2 className="text-xl font-semibold mb-4">Project Details</h2>
+            <h2>Project Details</h2>
             <div className="space-y-4">
               <div className="flex items-start">
                 <span className="text-gray-600 w-40 flex-shrink-0 font-medium">Title:</span>
@@ -416,7 +413,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           {/* Donors Section */}
           {completedDonations.length > 0 && (
             <div className="section-card">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2>
                 Thank you to the following donors! 🌿
               </h2>
               <div className="space-y-3">
@@ -490,15 +487,14 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               </div>
             </div>
           )}
-        </div>
 
         {/* Q&A Section */}
-        <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="section-card">
           <AskQuestionForm projectId={project.id} />
 
           {/* Display answered questions */}
           {questionsWithAnswers.length > 0 && (
-            <div className="card">
+            <div className="">
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">Questions & Answers</h2>
               <div className="space-y-6">
                 {questionsWithAnswers.map((qa) => {
@@ -560,8 +556,8 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               </div>
             </div>
           )}
-        </div>
       </div>
+        </div>
     </main>
   );
 }

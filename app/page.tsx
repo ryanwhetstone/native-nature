@@ -8,6 +8,7 @@ import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
 import ProjectCard from "@/app/components/ProjectCard";
 import { getObservationUrl } from "@/lib/observation-url";
 import { getProjectUrl } from "@/lib/project-url";
+import { countries } from "@/lib/countries";
 
 export default async function Home() {
   // Fetch 5 random observations with images
@@ -179,44 +180,39 @@ export default async function Home() {
   });
   
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-light">
       {/* Hero Section and Recent Observations - Dark */}
-      <div className="bg-slate-900 py-8">
-        <div className="w-full px-4">
+      <div className="container-full bg-dark px-4">
           {/* Hero/Header */}
-          <div className="max-w-7xl mx-auto mb-8 text-center">
-            <h1 className="text-5xl font-semibold mb-4 text-white">Native Nature</h1>
-            <p className="text-xl text-gray-300">
+          <div className="text-center flex-gap-xs">
+            <h1 className="text-white">Native Nature</h1>
+            <p className="text-xl text-white">
               Discover and explore native species and conservation projects from around the world
             </p>
           </div>
 
           {/* Photo Gallery */}
           {allPhotos.length > 0 && (
-            <div className="mb-8">
+            <div>
               <MasonryPhotoGallery photos={allPhotos} showTypeBadges={true} />
             </div>
           )}
-        </div>
       </div>
 
       {/* World Map Section */}
-      <div className="py-16 px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto mb-8">
-          <h2 className="text-3xl font-semibold text-gray-900 mb-4 text-center">Explore Species by Location</h2>
-          <p className="text-gray-600 text-center max-w-2xl mx-auto">
-            Click on any country to discover native species in that region
-          </p>
-        </div>
+      <div className="container-lg gap-2">
+        <h2 className="text-center">Explore Species by Location</h2>
+        <p className="text-center">
+          Click on any country to explore its native species ({Object.keys(countries).length} countries available)
+        </p>
         <WorldMap />
       </div>
 
       {/* Conservation Projects Section */}
+      <div className="container-lg">
       {unfundedProjects.length > 0 && (
-        <div className="py-16 px-8 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
             <div className="section-card">
-              <h2 className="text-3xl font-semibold text-gray-900 mb-8 text-center">Support Conservation Projects</h2>
+              <h2 className="text-center">Support Conservation Projects</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {unfundedProjects.map((project) => (
                   <ProjectCard key={project.id} project={project} showFundedBadge={false} />
@@ -231,16 +227,12 @@ export default async function Home() {
                 </Link>
               </div>
             </div>
-          </div>
-        </div>
       )}
 
       {/* Recent Observations Row */}
       {selectedObservations.length > 0 && (
-        <div className="py-16 px-8 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
             <div className="section-card">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6 text-center">Recent Observations</h2>
+              <h2 className="text-center">Recent Observations</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {selectedObservations.map((observation) => (
                   <Link
@@ -296,15 +288,36 @@ export default async function Home() {
                 </Link>
               </div>
             </div>
-          </div>
-        </div>
       )}
 
-      {/* Features Section */}
-      <div className="py-16 px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
+      {/* Completed Conservation Projects Section */}
+      {completedProjects.length > 0 && (
+            <div className="section-card">
+              <div className="flex-gap-xs">
+                <h2 className="text-center">Completed Conservation Projects</h2>
+                <p className="text-center">
+                  Celebrate the success of these conservation efforts that have reached their goals and made a real impact.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {completedProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} showFundedBadge={true} />
+                ))}
+              </div>
+              <div className="text-center mt-8">
+                <Link
+                  href="/completed-conservation-projects"
+                  className="inline-block px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium"
+                >
+                  View All Completed Projects →
+                </Link>
+              </div>
+            </div>
+      )}
+
+            {/* Features Section */}
           <div className="section-card">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-12 text-center">Features</h2>
+            <h2 className="text-center">Features</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -353,35 +366,8 @@ export default async function Home() {
             </div>
           </div>
           </div>
-        </div>
-      </div>
 
-      {/* Completed Conservation Projects Section */}
-      {completedProjects.length > 0 && (
-        <div className="py-16 px-8 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
-            <div className="section-card">
-              <h2 className="text-3xl font-semibold text-gray-900 mb-8 text-center">Completed Conservation Projects</h2>
-              <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-                Celebrate the success of these conservation efforts that have reached their goals and made a real impact.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {completedProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} showFundedBadge={true} />
-                ))}
-              </div>
-              <div className="text-center mt-8">
-                <Link
-                  href="/completed-conservation-projects"
-                  className="inline-block px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium"
-                >
-                  View All Completed Projects →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </main>
   );
 }

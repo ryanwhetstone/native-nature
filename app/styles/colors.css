@@ -1,0 +1,7 @@
+.bg-dark{
+    @apply bg-slate-900;
+}
+
+.bg-light{
+    @apply bg-gray-50;
+}  

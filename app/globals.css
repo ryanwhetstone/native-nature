@@ -1,15 +1,38 @@
 @tailwind base;
+
+/* Override Tailwind's base heading reset */
+@layer base {
+  h1 {
+    @apply text-4xl font-semibold text-gray-900;
+  }
+  
+  h2 {
+    @apply text-3xl font-semibold text-gray-900;
+  }
+  
+  h3 {
+    @apply text-2xl font-semibold text-gray-900;
+  }
+  
+  h4 {
+    @apply text-xl font-semibold text-gray-900;
+  }
+
+  p{
+    @apply text-gray-600;
+  }
+}
+
 @tailwind components;
 
 /* Component Styles - imported after @tailwind components */
+@import './styles/colors.css';
 @import './styles/buttons.css';
 @import './styles/cards.css';
 @import './styles/forms.css';
 @import './styles/badges.css';
 @import './styles/layout.css';
 @import './styles/typography.css';
-
-@tailwind utilities;
 
 /* Leaflet CSS */
 @import 'leaflet/dist/leaflet.css';
@@ -41,3 +64,5 @@
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-in;
 }
+
+@tailwind utilities;

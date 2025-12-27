@@ -10,7 +10,7 @@ const LeafletWorldMap = dynamic<{ onCountryClick: (countryCode: string) => void 
   {
     ssr: false,
     loading: () => (
-      <div className="w-full max-w-6xl mx-auto mb-12 relative">
+      <div className="w-full relative">
         <div className="w-full relative min-h-[500px] flex items-center justify-center bg-gray-100 rounded-lg">
           <p className="text-center text-gray-600 text-lg">Loading map...</p>
         </div>

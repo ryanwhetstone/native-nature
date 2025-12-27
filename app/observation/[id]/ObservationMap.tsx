@@ -32,6 +32,7 @@ export default function ObservationMap({ longitude, latitude }: ObservationMapPr
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [longitude, latitude],
         zoom: 13,
+        scrollZoom: false,
       });
     } catch (error) {
       console.error('Failed to initialize map:', error);

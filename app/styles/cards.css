@@ -36,7 +36,7 @@
 
 /* Section Card - for page sections with consistent spacing */
 .section-card {
-  @apply bg-white rounded-lg shadow-sm p-6 mb-6;
+  @apply bg-white rounded-lg shadow-sm px-4 sm:px-6 py-4 sm:py-8 flex flex-col gap-4 sm:gap-6;
 }
 
 /* Observation Card */
