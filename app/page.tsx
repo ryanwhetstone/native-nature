@@ -22,8 +22,10 @@ export default async function Home() {
     limit: 50, // Get more than needed to filter for pictures
   });
 
-  // Filter observations that have pictures and select 5
-  const observationsWithPictures = randomObservations.filter(obs => obs.pictures.length > 0).slice(0, 5);
+  // Filter observations that have approved pictures and select 5
+  const observationsWithPictures = randomObservations
+    .filter(obs => obs.pictures.some(pic => pic.approved === true))
+    .slice(0, 5);
 
   // Fetch 5 random conservation projects with images
   const randomProjects = await db.query.conservationProjects.findMany({
@@ -47,8 +49,11 @@ export default async function Home() {
     limit: 50, // Get more than needed to filter for pictures
   });
 
-  // Filter projects that have pictures and select 5
-  const projectsWithPictures = randomProjects.filter(proj => proj.pictures.length > 0).slice(0, 5);
+  // Filter projects that have approved pictures and select 5
+  const projectsWithPictures = randomProjects.filter(proj => 
+    proj.pictures.some(pic => pic.approved === true) || 
+    proj.updates?.[0]?.pictures?.some(pic => pic.approved === true)
+  ).slice(0, 5);
 
   // Fetch last 5 favorited species with photos
   const recentFavorites = await db.query.favorites.findMany({
@@ -63,48 +68,59 @@ export default async function Home() {
   const favoritesWithPhotos = recentFavorites.filter(fav => fav.species.defaultPhotoUrl).slice(0, 5);
 
   // Combine photos from observations, projects, and favorited species for the masonry gallery
-  // Only show the first image from each observation
-  const observationPhotos = observationsWithPictures.map((obs) => ({
-    ...obs.pictures[0],
-    observation: {
-      id: obs.id,
-      observedAt: obs.observedAt,
-      user: {
-        publicName: obs.user.publicName,
-        name: obs.user.name,
-      },
-    },
-    species: obs.species,
-  }));
-
-  const projectPhotos = projectsWithPictures.map((proj) => {
-    // Try to get image from most recent update first
-    const updatePic = proj.updates?.[0]?.pictures?.[0];
-    // Fallback to first project picture
-    const pic = updatePic || proj.pictures[0];
-    
-    return {
-      id: `project-${pic.id}`,
-      imageUrl: pic.imageUrl,
-      caption: pic.caption,
-      createdAt: pic.createdAt,
-      observation: {
-        id: proj.id,
-        observedAt: proj.createdAt,
-        user: {
-          publicName: proj.user.publicName,
-          name: proj.user.name,
+  // Only show the first approved image from each observation
+  const observationPhotos = observationsWithPictures
+    .map((obs) => {
+      const approvedPic = obs.pictures.find(pic => pic.approved === true);
+      if (!approvedPic) return null;
+      
+      return {
+        ...approvedPic,
+        observation: {
+          id: obs.id,
+          observedAt: obs.observedAt,
+          user: {
+            publicName: obs.user.publicName,
+            name: obs.user.name,
+          },
         },
-      },
-      species: {
-        name: proj.title,
-        preferredCommonName: null,
-        slug: '',
-      },
-      projectId: proj.id,
-      projectTitle: proj.title,
-    };
-  });
+        species: obs.species,
+      };
+    })
+    .filter(Boolean);
+
+  const projectPhotos = projectsWithPictures
+    .map((proj) => {
+      // Try to get approved image from most recent update first
+      const updatePic = proj.updates?.[0]?.pictures?.find(pic => pic.approved === true);
+      // Fallback to first approved project picture
+      const pic = updatePic || proj.pictures.find(pic => pic.approved === true);
+      
+      if (!pic) return null;
+      
+      return {
+        id: `project-${pic.id}`,
+        imageUrl: pic.imageUrl,
+        caption: pic.caption,
+        createdAt: pic.createdAt,
+        observation: {
+          id: proj.id,
+          observedAt: proj.createdAt,
+          user: {
+            publicName: proj.user.publicName,
+            name: proj.user.name,
+          },
+        },
+        species: {
+          name: proj.title,
+          preferredCommonName: null,
+          slug: '',
+        },
+        projectId: proj.id,
+        projectTitle: proj.title,
+      };
+    })
+    .filter(Boolean);
 
   const speciesPhotos = favoritesWithPhotos.map((fav) => ({
     id: `species-fav-${fav.id}`,
