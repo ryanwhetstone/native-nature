@@ -98,7 +98,7 @@ export default async function Home() {
         species: obs.species,
       };
     })
-    .filter(Boolean);
+    .filter((photo): photo is NonNullable<typeof photo> => photo !== null);
 
   const projectPhotos = projectsWithPictures
     .map((proj) => {
@@ -131,7 +131,7 @@ export default async function Home() {
         projectTitle: proj.title,
       };
     })
-    .filter(Boolean);
+    .filter((photo): photo is NonNullable<typeof photo> => photo !== null);
 
   const speciesPhotos = favoritesWithPhotos.map((fav) => ({
     id: `species-fav-${fav.id}`,
