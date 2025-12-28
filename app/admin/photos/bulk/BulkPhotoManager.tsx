@@ -13,7 +13,7 @@ type Photo = {
 
 type BulkPhotoManagerProps = {
   photos: Photo[];
-  bulkUpdateApproval: (photoIds: number[], type: 'observation' | 'project' | 'project-update', approved: boolean) => Promise<void>;
+  bulkUpdateApproval: (photoIds: number[], type: 'observation' | 'project' | 'project-update', approved: boolean | null) => Promise<void>;
 };
 
 export function BulkPhotoManager({ photos, bulkUpdateApproval }: BulkPhotoManagerProps) {
@@ -70,6 +70,26 @@ export function BulkPhotoManager({ photos, bulkUpdateApproval }: BulkPhotoManage
     });
   };
 
+  const handleBulkReset = () => {
+    if (selectedPhotos.size === 0) return;
+
+    const photosByType = Array.from(selectedPhotos).reduce((acc, key) => {
+      const [type, id] = key.split(':');
+      if (!acc[type as keyof typeof acc]) {
+        acc[type as keyof typeof acc] = [];
+      }
+      acc[type as keyof typeof acc].push(Number(id));
+      return acc;
+    }, {} as Record<string, number[]>);
+
+    startTransition(async () => {
+      for (const [type, ids] of Object.entries(photosByType)) {
+        await bulkUpdateApproval(ids, type as 'observation' | 'project' | 'project-update', null);
+      }
+      setSelectedPhotos(new Set());
+    });
+  };
+
   const selectAll = () => {
     setSelectedPhotos(new Set(photos.map(p => `${p.type}:${p.id}`)));
   };
@@ -115,6 +135,13 @@ export function BulkPhotoManager({ photos, bulkUpdateApproval }: BulkPhotoManage
               className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isPending ? 'Processing...' : 'Bulk Disapprove'}
+            </button>
+            <button
+              onClick={handleBulkReset}
+              disabled={selectedPhotos.size === 0 || isPending}
+              className="px-4 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isPending ? 'Processing...' : 'Reset to Pending'}
             </button>
           </div>
         </div>

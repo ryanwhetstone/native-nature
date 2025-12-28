@@ -16,7 +16,7 @@ export const metadata = {
 
 const ITEMS_PER_PAGE = 50;
 
-async function bulkUpdateApproval(photoIds: number[], type: 'observation' | 'project' | 'project-update', approved: boolean) {
+async function bulkUpdateApproval(photoIds: number[], type: 'observation' | 'project' | 'project-update', approved: boolean | null) {
   'use server';
 
   const session = await auth();
