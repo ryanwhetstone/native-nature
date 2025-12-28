@@ -12,8 +12,7 @@ export function AdminNav() {
     { href: '/admin/projects', label: 'Projects' },
     { href: '/admin/observations', label: 'Observations' },
     { href: '/admin/species', label: 'Species' },
-    { href: '/admin/photos', label: 'Photos' },
-  ];
+    { href: '/admin/photos', label: 'Photos' },    { href: '/admin/generate-data', label: 'Generate Data' },  ];
 
   const isActive = (href: string) => {
     if (href === '/admin') {
