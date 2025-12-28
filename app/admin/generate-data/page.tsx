@@ -338,10 +338,7 @@ export default async function GenerateDataPage() {
                   defaultValue="10"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-              </Images are fetched from Unsplash API (requires UNSPLASH_ACCESS_KEY environment variable)</li>
-            <li>Observation images search by species name on Unsplash</li>
-            <li>Project images search by habitat/conservation keywords on Unsplash</li>
-            <li>Falls back to Lorem Picsum if Unsplash API fails
+              </div>
               <button type="submit" className="btn-primary w-full">
                 Generate Observations
               </button>
