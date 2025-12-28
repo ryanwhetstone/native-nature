@@ -11,7 +11,7 @@ export const metadata = {
 
 export default async function CompletedConservationProjectsPage() {
   // Fetch all completed projects
-  const projects = await db.query.conservationProjects.findMany({
+  const allProjects = await db.query.conservationProjects.findMany({
     where: eq(conservationProjects.status, 'completed'),
     with: {
       user: {
@@ -20,20 +20,26 @@ export default async function CompletedConservationProjectsPage() {
           name: true,
         },
       },
-      pictures: {
-        limit: 1,
-      },
+      pictures: true,
       updates: {
         with: {
-          pictures: {
-            limit: 1,
-          },
+          pictures: true,
         },
         orderBy: (updates, { desc }) => [desc(updates.createdAt)],
         limit: 1,
       },
     },
     orderBy: [desc(conservationProjects.createdAt)],
+  });
+
+  // Filter to only projects where ALL images are approved
+  const projects = allProjects.filter(proj => {
+    const allProjectPicsApproved = proj.pictures.length === 0 || proj.pictures.every(pic => pic.approved === true);
+    const allUpdatePicsApproved = !proj.updates?.[0]?.pictures || 
+      proj.updates[0].pictures.length === 0 || 
+      proj.updates[0].pictures.every(pic => pic.approved === true);
+    
+    return allProjectPicsApproved && allUpdatePicsApproved;
   });
 
   return (

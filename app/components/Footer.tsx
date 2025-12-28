@@ -7,17 +7,39 @@ import { getObservationUrl } from "@/lib/observation-url";
 import { getProjectUrl } from "@/lib/project-url";
 
 export async function Footer() {
-  // Get 8 most recent conservation projects
-  const recentProjects = await db
-    .select({
-      id: conservationProjects.id,
-      title: conservationProjects.title,
-      status: conservationProjects.status,
-      createdAt: conservationProjects.createdAt,
+  // Get 8 most recent conservation projects with all pictures
+  const recentProjectsRaw = await db.query.conservationProjects.findMany({
+    with: {
+      pictures: true,
+      updates: {
+        with: {
+          pictures: true,
+        },
+        orderBy: (updates, { desc }) => [desc(updates.createdAt)],
+        limit: 1,
+      },
+    },
+    orderBy: [desc(conservationProjects.createdAt)],
+    limit: 20, // Get more to filter for approved
+  });
+
+  // Filter to only projects where ALL images are approved
+  const recentProjects = recentProjectsRaw
+    .filter(proj => {
+      const allProjectPicsApproved = proj.pictures.length === 0 || proj.pictures.every(pic => pic.approved === true);
+      const allUpdatePicsApproved = !proj.updates?.[0]?.pictures || 
+        proj.updates[0].pictures.length === 0 || 
+        proj.updates[0].pictures.every(pic => pic.approved === true);
+      
+      return allProjectPicsApproved && allUpdatePicsApproved;
     })
-    .from(conservationProjects)
-    .orderBy(desc(conservationProjects.createdAt))
-    .limit(8);
+    .slice(0, 8)
+    .map(proj => ({
+      id: proj.id,
+      title: proj.title,
+      status: proj.status,
+      createdAt: proj.createdAt,
+    }));
 
   // Get top 8 most favorited species
   const topFavorites = await db
@@ -37,23 +59,34 @@ export async function Footer() {
     .orderBy(desc(count(favorites.id)))
     .limit(8);
 
-  // Get last 8 observed species (most recent unique species)
-  const recentObservations = await db
-    .selectDistinctOn([species.id], {
-      observationId: observations.id,
+  // Get last 8 observed species (most recent unique species with approved images)
+  const recentObservationsRaw = await db.query.observations.findMany({
+    with: {
+      species: true,
+      pictures: true,
+    },
+    orderBy: [desc(observations.observedAt)],
+    limit: 50, // Get more to filter for approved
+  });
+
+  // Filter to only observations where ALL pictures are approved
+  const recentObservations = recentObservationsRaw
+    .filter(obs => 
+      obs.pictures.length > 0 && 
+      obs.pictures.every(pic => pic.approved === true)
+    )
+    .slice(0, 8)
+    .map(obs => ({
+      observationId: obs.id,
       species: {
-        id: species.id,
-        taxonId: species.taxonId,
-        name: species.name,
-        preferredCommonName: species.preferredCommonName,
-        slug: species.slug,
+        id: obs.species.id,
+        taxonId: obs.species.taxonId,
+        name: obs.species.name,
+        preferredCommonName: obs.species.preferredCommonName,
+        slug: obs.species.slug,
       },
-      observedAt: observations.observedAt,
-    })
-    .from(observations)
-    .innerJoin(species, sql`${observations.speciesId} = ${species.id}`)
-    .orderBy(species.id, desc(observations.observedAt))
-    .limit(8);
+      observedAt: obs.observedAt,
+    }));
 
   return (
     <footer className="bg-gray-900 text-gray-300 mt-auto">

@@ -153,7 +153,7 @@ export default async function Home() {
   const selectedObservations = observationsWithPictures.slice(0, 4);
 
   // Fetch unfunded conservation projects (not funded or completed)
-  const unfundedProjects = await db.query.conservationProjects.findMany({
+  const unfundedProjectsRaw = await db.query.conservationProjects.findMany({
     where: lt(conservationProjects.currentFunding, conservationProjects.fundingGoal),
     with: {
       user: {
@@ -162,25 +162,31 @@ export default async function Home() {
           name: true,
         },
       },
-      pictures: {
-        limit: 1,
-      },
+      pictures: true,
       updates: {
         with: {
-          pictures: {
-            limit: 1,
-          },
+          pictures: true,
         },
         orderBy: (updates, { desc }) => [desc(updates.createdAt)],
         limit: 1,
       },
     },
     orderBy: [desc(conservationProjects.createdAt)],
-    limit: 6,
+    limit: 20, // Get more to filter for approved images
   });
 
+  // Filter to only projects where ALL images are approved
+  const unfundedProjects = unfundedProjectsRaw.filter(proj => {
+    const allProjectPicsApproved = proj.pictures.length === 0 || proj.pictures.every(pic => pic.approved === true);
+    const allUpdatePicsApproved = !proj.updates?.[0]?.pictures || 
+      proj.updates[0].pictures.length === 0 || 
+      proj.updates[0].pictures.every(pic => pic.approved === true);
+    
+    return allProjectPicsApproved && allUpdatePicsApproved;
+  }).slice(0, 6);
+
   // Fetch completed conservation projects
-  const completedProjects = await db.query.conservationProjects.findMany({
+  const completedProjectsRaw = await db.query.conservationProjects.findMany({
     where: eq(conservationProjects.status, 'completed'),
     with: {
       user: {
@@ -189,22 +195,28 @@ export default async function Home() {
           name: true,
         },
       },
-      pictures: {
-        limit: 1,
-      },
+      pictures: true,
       updates: {
         with: {
-          pictures: {
-            limit: 1,
-          },
+          pictures: true,
         },
         orderBy: (updates, { desc }) => [desc(updates.createdAt)],
         limit: 1,
       },
     },
     orderBy: [desc(conservationProjects.createdAt)],
-    limit: 6,
+    limit: 20, // Get more to filter for approved images
   });
+
+  // Filter to only projects where ALL images are approved
+  const completedProjects = completedProjectsRaw.filter(proj => {
+    const allProjectPicsApproved = proj.pictures.length === 0 || proj.pictures.every(pic => pic.approved === true);
+    const allUpdatePicsApproved = !proj.updates?.[0]?.pictures || 
+      proj.updates[0].pictures.length === 0 || 
+      proj.updates[0].pictures.every(pic => pic.approved === true);
+    
+    return allProjectPicsApproved && allUpdatePicsApproved;
+  }).slice(0, 6);
   
   return (
     <main className="min-h-screen bg-light">

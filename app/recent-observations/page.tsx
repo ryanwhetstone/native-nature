@@ -14,15 +14,21 @@ export const metadata: Metadata = {
 
 export default async function RecentObservationsPage() {
   // Fetch recent observations with species and pictures
-  const recentObservations = await db.query.observations.findMany({
+  const allObservations = await db.query.observations.findMany({
     with: {
       species: true,
       pictures: true,
       user: true,
     },
     orderBy: [desc(observations.createdAt)],
-    limit: 50,
+    limit: 100, // Get more to filter for approved
   });
+
+  // Filter to only observations where ALL pictures are approved
+  const recentObservations = allObservations.filter(obs => 
+    obs.pictures.length > 0 && 
+    obs.pictures.every(pic => pic.approved === true)
+  ).slice(0, 50);
 
   // Get all observation photos for the masonry gallery
   const allPhotos = recentObservations.flatMap((obs) =>
