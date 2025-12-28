@@ -78,6 +78,11 @@ async function generateFakeObservations(formData: FormData) {
   const states = ['Washington', 'Oregon', 'California', 'California', 'Colorado', 'Texas', 'Illinois', 'Massachusetts', 'New York', 'Florida'];
   const countries = ['United States', 'United States', 'United States', 'Canada', 'Mexico'];
 
+  const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY;
+  if (!unsplashAccessKey) {
+    throw new Error('UNSPLASH_ACCESS_KEY environment variable is not set');
+  }
+
   for (let i = 0; i < count; i++) {
     const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
     const selectedSpecies = allSpecies[Math.floor(Math.random() * allSpecies.length)];
@@ -98,16 +103,53 @@ async function generateFakeObservations(formData: FormData) {
       observedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date within last 30 days
     }).returning();
 
-    // Add 1-3 images from Unsplash
-    const numImages = Math.floor(Math.random() * 3) + 1;
-    for (let j = 0; j < numImages; j++) {
+    // Fetch images from Unsplash based on species name
+    const searchQuery = (selectedSpecies.preferredCommonName || selectedSpecies.name).toLowerCase();
+    try {
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(searchQuery)}&per_page=10&orientation=landscape`,
+        {
+          headers: {
+            Authorization: `Client-ID ${unsplashAccessKey}`,
+          },
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        const numImages = Math.min(Math.floor(Math.random() * 3) + 1, data.results.length);
+        
+        for (let j = 0; j < numImages; j++) {
+          const photo = data.results[j];
+          await db.insert(observationPictures).values({
+            observationId: observation.id,
+            speciesId: selectedSpecies.id,
+            imageUrl: photo.urls.regular,
+            caption: `${selectedSpecies.preferredCommonName || selectedSpecies.name} - Photo by ${photo.user.name} on Unsplash`,
+            approved: null, // Start as pending
+          });
+        }
+      } else {
+        // Fallback to placeholder if Unsplash fails
+        const imageId = Math.floor(Math.random() * 1000);
+        await db.insert(observationPictures).values({
+          observationId: observation.id,
+          speciesId: selectedSpecies.id,
+          imageUrl: `https://picsum.photos/seed/${imageId}/800/600`,
+          caption: `Photo of ${selectedSpecies.preferredCommonName || selectedSpecies.name}`,
+          approved: null,
+        });
+      }
+    } catch (error) {
+      console.error('Unsplash API error:', error);
+      // Fallback to placeholder
       const imageId = Math.floor(Math.random() * 1000);
       await db.insert(observationPictures).values({
         observationId: observation.id,
         speciesId: selectedSpecies.id,
         imageUrl: `https://picsum.photos/seed/${imageId}/800/600`,
-        caption: `Photo ${j + 1} of ${selectedSpecies.preferredCommonName || selectedSpecies.name}`,
-        approved: null, // Start as pending
+        caption: `Photo of ${selectedSpecies.preferredCommonName || selectedSpecies.name}`,
+        approved: null,
       });
     }
   }
@@ -135,23 +177,28 @@ async function generateFakeProjects(formData: FormData) {
     throw new Error('No fake users found. Generate fake users first.');
   }
 
-  const projectTitles = [
-    'Restore Wetland Habitat',
-    'Protect Endangered Bird Species',
-    'Coastal Marine Sanctuary',
-    'Urban Pollinator Garden',
-    'Forest Restoration Initiative',
-    'River Cleanup and Conservation',
-    'Wildlife Corridor Development',
-    'Native Plant Nursery',
+  const projectTypes = [
+    { title: 'Restore Wetland Habitat', keywords: 'wetland marsh restoration' },
+    { title: 'Protect Endangered Bird Species', keywords: 'bird wildlife sanctuary' },
+    { title: 'Coastal Marine Sanctuary', keywords: 'ocean coral reef marine' },
+    { title: 'Urban Pollinator Garden', keywords: 'butterfly bee pollinator garden' },
+    { title: 'Forest Restoration Initiative', keywords: 'forest trees reforestation' },
+    { title: 'River Cleanup and Conservation', keywords: 'river stream water conservation' },
+    { title: 'Wildlife Corridor Development', keywords: 'wildlife habitat corridor' },
+    { title: 'Native Plant Nursery', keywords: 'native plants nursery restoration' },
   ];
 
   const cities = ['Seattle', 'Portland', 'San Francisco', 'Los Angeles', 'Denver', 'Austin', 'Chicago', 'Boston'];
   const states = ['Washington', 'Oregon', 'California', 'California', 'Colorado', 'Texas', 'Illinois', 'Massachusetts'];
 
+  const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY;
+  if (!unsplashAccessKey) {
+    throw new Error('UNSPLASH_ACCESS_KEY environment variable is not set');
+  }
+
   for (let i = 0; i < count; i++) {
     const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
-    const title = projectTitles[Math.floor(Math.random() * projectTitles.length)];
+    const projectType = projectTypes[Math.floor(Math.random() * projectTypes.length)];
     const cityIndex = Math.floor(Math.random() * cities.length);
     
     const latitude = (Math.random() * 60 + 20).toFixed(6);
@@ -162,7 +209,7 @@ async function generateFakeProjects(formData: FormData) {
     
     const [project] = await db.insert(conservationProjects).values({
       userId: user.id,
-      title: `${title} - ${cities[cityIndex]}`,
+      title: `${projectType.title} - ${cities[cityIndex]}`,
       description: `This project aims to protect and restore critical habitat for native wildlife in the ${cities[cityIndex]} area. Through community engagement and scientific restoration practices, we will create a sustainable ecosystem that benefits both wildlife and local communities.`,
       latitude,
       longitude,
@@ -174,15 +221,49 @@ async function generateFakeProjects(formData: FormData) {
       status: currentFunding >= fundingGoal ? 'completed' : 'active',
     }).returning();
 
-    // Add 1-2 project images
-    const numImages = Math.floor(Math.random() * 2) + 1;
-    for (let j = 0; j < numImages; j++) {
+    // Fetch images from Unsplash based on project keywords
+    try {
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(projectType.keywords)}&per_page=10&orientation=landscape`,
+        {
+          headers: {
+            Authorization: `Client-ID ${unsplashAccessKey}`,
+          },
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        const numImages = Math.min(Math.floor(Math.random() * 2) + 1, data.results.length);
+        
+        for (let j = 0; j < numImages; j++) {
+          const photo = data.results[j];
+          await db.insert(projectPictures).values({
+            projectId: project.id,
+            imageUrl: photo.urls.regular,
+            caption: `${projectType.title} - Photo by ${photo.user.name} on Unsplash`,
+            approved: null, // Start as pending
+          });
+        }
+      } else {
+        // Fallback to placeholder if Unsplash fails
+        const imageId = Math.floor(Math.random() * 1000) + 1000;
+        await db.insert(projectPictures).values({
+          projectId: project.id,
+          imageUrl: `https://picsum.photos/seed/${imageId}/800/600`,
+          caption: `${projectType.title} project site`,
+          approved: null,
+        });
+      }
+    } catch (error) {
+      console.error('Unsplash API error:', error);
+      // Fallback to placeholder
       const imageId = Math.floor(Math.random() * 1000) + 1000;
       await db.insert(projectPictures).values({
         projectId: project.id,
         imageUrl: `https://picsum.photos/seed/${imageId}/800/600`,
-        caption: `${title} project site`,
-        approved: null, // Start as pending
+        caption: `${projectType.title} project site`,
+        approved: null,
       });
     }
   }
@@ -257,7 +338,10 @@ export default async function GenerateDataPage() {
                   defaultValue="10"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 />
-              </div>
+              </Images are fetched from Unsplash API (requires UNSPLASH_ACCESS_KEY environment variable)</li>
+            <li>Observation images search by species name on Unsplash</li>
+            <li>Project images search by habitat/conservation keywords on Unsplash</li>
+            <li>Falls back to Lorem Picsum if Unsplash API fails
               <button type="submit" className="btn-primary w-full">
                 Generate Observations
               </button>
