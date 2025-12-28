@@ -23,8 +23,12 @@ export default async function Home() {
   });
 
   // Filter observations that have approved pictures and select 5
+  // Only include observations where ALL pictures are approved
   const observationsWithPictures = randomObservations
-    .filter(obs => obs.pictures.some(pic => pic.approved === true))
+    .filter(obs => 
+      obs.pictures.length > 0 && 
+      obs.pictures.every(pic => pic.approved === true)
+    )
     .slice(0, 5);
 
   // Fetch 5 random conservation projects with images
@@ -50,10 +54,17 @@ export default async function Home() {
   });
 
   // Filter projects that have approved pictures and select 5
-  const projectsWithPictures = randomProjects.filter(proj => 
-    proj.pictures.some(pic => pic.approved === true) || 
-    proj.updates?.[0]?.pictures?.some(pic => pic.approved === true)
-  ).slice(0, 5);
+  // Only include projects where ALL pictures are approved
+  const projectsWithPictures = randomProjects.filter(proj => {
+    const allProjectPicsApproved = proj.pictures.length === 0 || proj.pictures.every(pic => pic.approved === true);
+    const allUpdatePicsApproved = !proj.updates?.[0]?.pictures || 
+      proj.updates[0].pictures.length === 0 || 
+      proj.updates[0].pictures.every(pic => pic.approved === true);
+    
+    const hasAnyPictures = proj.pictures.length > 0 || (proj.updates?.[0]?.pictures?.length || 0) > 0;
+    
+    return hasAnyPictures && allProjectPicsApproved && allUpdatePicsApproved;
+  }).slice(0, 5);
 
   // Fetch last 5 favorited species with photos
   const recentFavorites = await db.query.favorites.findMany({
