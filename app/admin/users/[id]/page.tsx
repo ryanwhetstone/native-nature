@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { users, inaturalistPlaces } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
@@ -54,6 +54,9 @@ export default async function EditUserPage({
 
   const user = await db.query.users.findFirst({
     where: eq(users.id, id),
+    with: {
+      homePlace: true,
+    },
   });
 
   if (!user) {
@@ -160,6 +163,14 @@ export default async function EditUserPage({
               <dt className="text-gray-600">User ID:</dt>
               <dd className="font-mono text-gray-900">{user.id}</dd>
             </div>
+            {user.homePlace && (
+              <div className="flex justify-between">
+                <dt className="text-gray-600">Home Place:</dt>
+                <dd className="text-gray-900">
+                  {user.homePlace.displayName || user.homePlace.placeName} ({user.homePlace.countryCode})
+                </dd>
+              </div>
+            )}
             <div className="flex justify-between">
               <dt className="text-gray-600">Created:</dt>
               <dd className="text-gray-900">{new Date(user.createdAt).toLocaleString()}</dd>

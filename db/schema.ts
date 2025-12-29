@@ -308,11 +308,15 @@ export type ProjectQuestion = typeof projectQuestions.$inferSelect;
 export type NewProjectQuestion = typeof projectQuestions.$inferInsert;
 
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   favorites: many(favorites),
   observations: many(observations),
   conservationProjects: many(conservationProjects),
   donations: many(donations),
+  homePlace: one(inaturalistPlaces, {
+    fields: [users.homePlaceId],
+    references: [inaturalistPlaces.id],
+  }),
 }));
 
 export const speciesRelations = relations(species, ({ many }) => ({
