@@ -11,6 +11,71 @@ export const metadata = {
   description: 'Generate fake users, observations, and conservation projects for testing',
 };
 
+// Database of major cities with coordinates
+const CITIES_DATABASE = [
+  // United States
+  { name: 'Seattle', state: 'Washington', country: 'United States', lat: 47.6062, lng: -122.3321, countryCode: 'USA' },
+  { name: 'Portland', state: 'Oregon', country: 'United States', lat: 45.5152, lng: -122.6784, countryCode: 'USA' },
+  { name: 'San Francisco', state: 'California', country: 'United States', lat: 37.7749, lng: -122.4194, countryCode: 'USA' },
+  { name: 'Los Angeles', state: 'California', country: 'United States', lat: 34.0522, lng: -118.2437, countryCode: 'USA' },
+  { name: 'San Diego', state: 'California', country: 'United States', lat: 32.7157, lng: -117.1611, countryCode: 'USA' },
+  { name: 'Sacramento', state: 'California', country: 'United States', lat: 38.5816, lng: -121.4944, countryCode: 'USA' },
+  { name: 'Phoenix', state: 'Arizona', country: 'United States', lat: 33.4484, lng: -112.0740, countryCode: 'USA' },
+  { name: 'Denver', state: 'Colorado', country: 'United States', lat: 39.7392, lng: -104.9903, countryCode: 'USA' },
+  { name: 'Austin', state: 'Texas', country: 'United States', lat: 30.2672, lng: -97.7431, countryCode: 'USA' },
+  { name: 'Houston', state: 'Texas', country: 'United States', lat: 29.7604, lng: -95.3698, countryCode: 'USA' },
+  { name: 'Dallas', state: 'Texas', country: 'United States', lat: 32.7767, lng: -96.7970, countryCode: 'USA' },
+  { name: 'Chicago', state: 'Illinois', country: 'United States', lat: 41.8781, lng: -87.6298, countryCode: 'USA' },
+  { name: 'Boston', state: 'Massachusetts', country: 'United States', lat: 42.3601, lng: -71.0589, countryCode: 'USA' },
+  { name: 'New York', state: 'New York', country: 'United States', lat: 40.7128, lng: -74.0060, countryCode: 'USA' },
+  { name: 'Miami', state: 'Florida', country: 'United States', lat: 25.7617, lng: -80.1918, countryCode: 'USA' },
+  { name: 'Atlanta', state: 'Georgia', country: 'United States', lat: 33.7490, lng: -84.3880, countryCode: 'USA' },
+  // Canada
+  { name: 'Vancouver', state: 'British Columbia', country: 'Canada', lat: 49.2827, lng: -123.1207, countryCode: 'CAN' },
+  { name: 'Toronto', state: 'Ontario', country: 'Canada', lat: 43.6532, lng: -79.3832, countryCode: 'CAN' },
+  { name: 'Montreal', state: 'Quebec', country: 'Canada', lat: 45.5017, lng: -73.5673, countryCode: 'CAN' },
+  { name: 'Calgary', state: 'Alberta', country: 'Canada', lat: 51.0447, lng: -114.0719, countryCode: 'CAN' },
+];
+
+// Calculate distance between two lat/lng points in miles
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+// Get real cities within a radius
+function getCitiesWithinRadius(baseLat: number, baseLng: number, radiusMiles: number, countryCode: string) {
+  const cities: Array<{ name: string; state: string; lat: number; lng: number; country: string }> = [];
+  
+  for (const city of CITIES_DATABASE) {
+    // Filter by country if specified
+    if (countryCode && city.countryCode.toUpperCase() !== countryCode.toUpperCase()) {
+      continue;
+    }
+    
+    const distance = calculateDistance(baseLat, baseLng, city.lat, city.lng);
+    
+    if (distance <= radiusMiles) {
+      cities.push({
+        name: city.name,
+        state: city.state,
+        lat: city.lat,
+        lng: city.lng,
+        country: city.country,
+      });
+    }
+  }
+  
+  return cities;
+}
+
 async function generateFakeUsers(formData: FormData) {
   'use server';
   
@@ -169,19 +234,35 @@ async function generateFakeObservations(formData: FormData) {
     if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
       const place = placesMap.get(user.homePlaceId)!;
       const coords = getCoordinatesForPlace(place);
-      latitude = coords.lat;
-      longitude = coords.lng;
-      region = coords.placeName;
-      // Rough country name mapping
-      const countryMap: Record<string, string> = {
-        'USA': 'United States',
-        'CAN': 'Canada',
-        'MEX': 'Mexico',
-        'GBR': 'United Kingdom',
-        'AUS': 'Australia',
-        'NZL': 'New Zealand',
-      };
-      country = countryMap[coords.country.toUpperCase()] || coords.country;
+      const baseLat = parseFloat(coords.lat);
+      const baseLng = parseFloat(coords.lng);
+      
+      // Try to find real cities within 50 miles
+      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 50, coords.country);
+      
+      if (nearbyCities.length > 0) {
+        // Use a random nearby city
+        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
+        latitude = selectedCity.lat.toFixed(6);
+        longitude = selectedCity.lng.toFixed(6);
+        city = selectedCity.name;
+        region = selectedCity.state;
+        country = selectedCity.country;
+      } else {
+        // Fallback to base coordinates with slight variance
+        latitude = (baseLat + (Math.random() - 0.5) * 0.5).toFixed(6);
+        longitude = (baseLng + (Math.random() - 0.5) * 0.5).toFixed(6);
+        region = coords.placeName;
+        const countryMap: Record<string, string> = {
+          'USA': 'United States',
+          'CAN': 'Canada',
+          'MEX': 'Mexico',
+          'GBR': 'United Kingdom',
+          'AUS': 'Australia',
+          'NZL': 'New Zealand',
+        };
+        country = countryMap[coords.country.toUpperCase()] || coords.country;
+      }
     }
     
     const [observation] = await db.insert(observations).values({
@@ -263,12 +344,79 @@ async function generateFakeProjects(formData: FormData) {
 
   const count = Number(formData.get('count')) || 3;
   
-  // Get random fake users
-  const fakeUsers = await db.select().from(users).where(sql`${users.email} LIKE '%@fakeuser.com'`).limit(20);
+  // Get random fake users with their home places
+  const fakeUsers = await db.select({
+    id: users.id,
+    email: users.email,
+    homePlaceId: users.homePlaceId,
+  }).from(users).where(sql`${users.email} LIKE '%@fakeuser.com'`).limit(20);
   
   if (fakeUsers.length === 0) {
     throw new Error('No fake users found. Generate fake users first.');
   }
+
+  // Get all places for coordinate mapping
+  const places = await db.select().from(inaturalistPlaces);
+  const placesMap = new Map(places.map(p => [p.id, p]));
+
+  // Approximate coordinate ranges for different regions (center lat/lng with variance)
+  const getCoordinatesForPlace = (place: typeof places[0]) => {
+    // Default coordinates (central USA)
+    let baseLat = 39.8283;
+    let baseLng = -98.5795;
+    let latVariance = 5;
+    let lngVariance = 10;
+
+    // Use country code and place name to estimate coordinates
+    const country = place.countryCode.toLowerCase();
+    const placeName = place.placeName.toLowerCase();
+
+    // North American coordinates
+    if (country === 'usa') {
+      if (placeName.includes('california')) {
+        baseLat = 36.7783; baseLng = -119.4179;
+      } else if (placeName.includes('texas')) {
+        baseLat = 31.9686; baseLng = -99.9018;
+      } else if (placeName.includes('florida')) {
+        baseLat = 27.9944; baseLng = -81.7603;
+      } else if (placeName.includes('new york')) {
+        baseLat = 43.2994; baseLng = -74.2179;
+      } else if (placeName.includes('washington')) {
+        baseLat = 47.7511; baseLng = -120.7401;
+      } else if (placeName.includes('oregon')) {
+        baseLat = 43.8041; baseLng = -120.5542;
+      } else if (placeName.includes('colorado')) {
+        baseLat = 39.5501; baseLng = -105.7821;
+      } else if (placeName.includes('arizona')) {
+        baseLat = 34.0489; baseLng = -111.0937;
+      }
+    } else if (country === 'can') {
+      baseLat = 56.1304; baseLng = -106.3468;
+      if (placeName.includes('ontario')) {
+        baseLat = 51.2538; baseLng = -85.3232;
+      } else if (placeName.includes('british columbia')) {
+        baseLat = 53.7267; baseLng = -127.6476;
+      } else if (placeName.includes('quebec')) {
+        baseLat = 52.9399; baseLng = -73.5491;
+      } else if (placeName.includes('alberta')) {
+        baseLat = 53.9333; baseLng = -116.5765;
+      }
+    } else if (country === 'mex') {
+      baseLat = 23.6345; baseLng = -102.5528;
+    } else if (country === 'gbr') {
+      baseLat = 55.3781; baseLng = -3.4360;
+    } else if (country === 'aus') {
+      baseLat = -25.2744; baseLng = 133.7751;
+    } else if (country === 'nzl') {
+      baseLat = -40.9006; baseLng = 174.8860;
+    }
+
+    // Add some randomness around the base coordinates
+    const lat = (baseLat + (Math.random() - 0.5) * latVariance).toFixed(6);
+    const lng = (baseLng + (Math.random() - 0.5) * lngVariance).toFixed(6);
+    
+    return { lat, lng, placeName: place.placeName, country: place.countryCode };
+  };
 
   const projectTypes = [
     { title: 'Restore Wetland Habitat', keywords: 'wetland marsh restoration' },
@@ -281,9 +429,6 @@ async function generateFakeProjects(formData: FormData) {
     { title: 'Native Plant Nursery', keywords: 'native plants nursery restoration' },
   ];
 
-  const cities = ['Seattle', 'Portland', 'San Francisco', 'Los Angeles', 'Denver', 'Austin', 'Chicago', 'Boston'];
-  const states = ['Washington', 'Oregon', 'California', 'California', 'Colorado', 'Texas', 'Illinois', 'Massachusetts'];
-
   const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY;
   if (!unsplashAccessKey) {
     throw new Error('UNSPLASH_ACCESS_KEY environment variable is not set');
@@ -292,23 +437,59 @@ async function generateFakeProjects(formData: FormData) {
   for (let i = 0; i < count; i++) {
     const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
     const projectType = projectTypes[Math.floor(Math.random() * projectTypes.length)];
-    const cityIndex = Math.floor(Math.random() * cities.length);
     
-    const latitude = (Math.random() * 60 + 20).toFixed(6);
-    const longitude = (Math.random() * -120 - 60).toFixed(6);
+    let latitude = (Math.random() * 60 + 20).toFixed(6);
+    let longitude = (Math.random() * -120 - 60).toFixed(6);
+    let city = 'Unknown';
+    let region = '';
+    let country = 'United States';
     
-    const fundingGoal = Math.floor(Math.random() * 100000) + 10000; // $100 to $1000
+    if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
+      const place = placesMap.get(user.homePlaceId)!;
+      const coords = getCoordinatesForPlace(place);
+      const baseLat = parseFloat(coords.lat);
+      const baseLng = parseFloat(coords.lng);
+      
+      // Try to find real cities within 20 miles
+      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 20, coords.country);
+      
+      if (nearbyCities.length > 0) {
+        // Use a random nearby city
+        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
+        latitude = selectedCity.lat.toFixed(6);
+        longitude = selectedCity.lng.toFixed(6);
+        city = selectedCity.name;
+        region = selectedCity.state;
+        country = selectedCity.country;
+      } else {
+        // Fallback to base coordinates with slight variance
+        latitude = (baseLat + (Math.random() - 0.5) * 0.2).toFixed(6);
+        longitude = (baseLng + (Math.random() - 0.5) * 0.2).toFixed(6);
+        region = coords.placeName;
+        const countryMap: Record<string, string> = {
+          'USA': 'United States',
+          'CAN': 'Canada',
+          'MEX': 'Mexico',
+          'GBR': 'United Kingdom',
+          'AUS': 'Australia',
+          'NZL': 'New Zealand',
+        };
+        country = countryMap[coords.country.toUpperCase()] || coords.country;
+      }
+    }
+    
+    const fundingGoal = Math.floor(Math.random() * 100000) + 10000; // $10k to $110k
     const currentFunding = Math.floor(Math.random() * fundingGoal * 0.7); // 0-70% funded
     
     const [project] = await db.insert(conservationProjects).values({
       userId: user.id,
-      title: `${projectType.title} - ${cities[cityIndex]}`,
-      description: `This project aims to protect and restore critical habitat for native wildlife in the ${cities[cityIndex]} area. Through community engagement and scientific restoration practices, we will create a sustainable ecosystem that benefits both wildlife and local communities.`,
+      title: `${projectType.title} - ${city}`,
+      description: `This project aims to protect and restore critical habitat for native wildlife in the ${city} area. Through community engagement and scientific restoration practices, we will create a sustainable ecosystem that benefits both wildlife and local communities.`,
       latitude,
       longitude,
-      city: cities[cityIndex],
-      region: states[cityIndex],
-      country: 'United States',
+      city,
+      region,
+      country,
       fundingGoal,
       currentFunding,
       status: currentFunding >= fundingGoal ? 'completed' : 'active',
