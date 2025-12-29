@@ -51,6 +51,43 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 }
 
+// Offset a lat/lng by a distance and bearing
+function offsetLatLng(lat: number, lng: number, distanceMiles = 10, bearingDegrees = 0) {
+  const earthRadiusMiles = 3958.8; // Mean Earth radius in miles
+
+  const toRadians = (degrees: number) => degrees * Math.PI / 180;
+  const toDegrees = (radians: number) => radians * 180 / Math.PI;
+
+  const φ1 = toRadians(lat); // latitude in radians
+  const λ1 = toRadians(lng); // longitude in radians
+  const δ = distanceMiles / earthRadiusMiles; // angular distance in radians
+  const θ = toRadians(bearingDegrees); // bearing in radians
+
+  const sinφ1 = Math.sin(φ1);
+  const cosφ1 = Math.cos(φ1);
+  const sinδ = Math.sin(δ);
+  const cosδ = Math.cos(δ);
+  const sinθ = Math.sin(θ);
+  const cosθ = Math.cos(θ);
+
+  const sinφ2 = sinφ1 * cosδ + cosφ1 * sinδ * cosθ;
+  const φ2 = Math.asin(sinφ2);
+
+  const y = sinθ * sinδ * cosφ1;
+  const x = cosδ - sinφ1 * sinφ2;
+  const Δλ = Math.atan2(y, x);
+
+  let newLng = toDegrees(λ1 + Δλ);
+
+  // Normalize longitude to -180 to +180
+  newLng = ((newLng + 180) % 360) - 180;
+
+  return {
+    lat: toDegrees(φ2),
+    lng: newLng,
+  };
+}
+
 // Get real cities within a radius
 function getCitiesWithinRadius(baseLat: number, baseLng: number, radiusMiles: number, countryCode: string) {
   const cities: Array<{ name: string; state: string; lat: number; lng: number; country: string }> = [];
@@ -292,21 +329,23 @@ async function generateFakeObservations(formData: FormData) {
       const baseLat = parseFloat(user.homeLat);
       const baseLng = parseFloat(user.homeLng);
       
-      // Try to find real cities within 50 miles
-      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 50, 'USA'); // Default to USA, will be improved
+      // Generate random observation within 50 miles of home
+      const randomDistance = Math.random() * 50; // 0-50 miles
+      const randomBearing = Math.random() * 360; // 0-360 degrees
+      const offset = offsetLatLng(baseLat, baseLng, randomDistance, randomBearing);
+      
+      latitude = offset.lat.toFixed(6);
+      longitude = offset.lng.toFixed(6);
+      
+      // Try to find real cities within 50 miles for city name
+      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 50, 'USA');
       
       if (nearbyCities.length > 0) {
-        // Use a random nearby city
+        // Use a random nearby city name
         const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        latitude = selectedCity.lat.toFixed(6);
-        longitude = selectedCity.lng.toFixed(6);
         city = selectedCity.name;
         region = selectedCity.state;
         country = selectedCity.country;
-      } else {
-        // No cities in database within radius, add random offset to home coordinates
-        latitude = (baseLat + (Math.random() - 0.5) * 0.5).toFixed(6); // ~28 miles max
-        longitude = (baseLng + (Math.random() - 0.5) * 0.5).toFixed(6);
       }
     } else if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
       // Fallback to old method if no home coordinates
@@ -315,21 +354,25 @@ async function generateFakeObservations(formData: FormData) {
       const baseLat = parseFloat(coords.lat);
       const baseLng = parseFloat(coords.lng);
       
+      // Generate random observation within 50 miles
+      const randomDistance = Math.random() * 50;
+      const randomBearing = Math.random() * 360;
+      const offset = offsetLatLng(baseLat, baseLng, randomDistance, randomBearing);
+      
+      latitude = offset.lat.toFixed(6);
+      longitude = offset.lng.toFixed(6);
+      
       // Try to find real cities within 50 miles
       const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 50, coords.country);
       
       if (nearbyCities.length > 0) {
-        // Use a random nearby city
+        // Use a random nearby city name
         const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        latitude = selectedCity.lat.toFixed(6);
-        longitude = selectedCity.lng.toFixed(6);
         city = selectedCity.name;
         region = selectedCity.state;
         country = selectedCity.country;
       } else {
-        // Fallback to base coordinates with slight variance
-        latitude = (baseLat + (Math.random() - 0.5) * 0.5).toFixed(6);
-        longitude = (baseLng + (Math.random() - 0.5) * 0.5).toFixed(6);
+        // No cities in database, use region from place
         region = coords.placeName;
         const countryMap: Record<string, string> = {
           'USA': 'United States',
@@ -529,21 +572,23 @@ async function generateFakeProjects(formData: FormData) {
       const baseLat = parseFloat(user.homeLat);
       const baseLng = parseFloat(user.homeLng);
       
-      // Try to find real cities within 20 miles
-      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 20, 'USA'); // Default to USA
+      // Generate random project within 20 miles of home
+      const randomDistance = Math.random() * 20; // 0-20 miles
+      const randomBearing = Math.random() * 360; // 0-360 degrees
+      const offset = offsetLatLng(baseLat, baseLng, randomDistance, randomBearing);
+      
+      latitude = offset.lat.toFixed(6);
+      longitude = offset.lng.toFixed(6);
+      
+      // Try to find real cities within 20 miles for city name
+      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 20, 'USA');
       
       if (nearbyCities.length > 0) {
-        // Use a random nearby city
+        // Use a random nearby city name
         const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        latitude = selectedCity.lat.toFixed(6);
-        longitude = selectedCity.lng.toFixed(6);
         city = selectedCity.name;
         region = selectedCity.state;
         country = selectedCity.country;
-      } else {
-        // No cities in database within radius, add small random offset to home coordinates
-        latitude = (baseLat + (Math.random() - 0.5) * 0.2).toFixed(6); // ~11 miles max
-        longitude = (baseLng + (Math.random() - 0.5) * 0.2).toFixed(6);
       }
     } else if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
       // Fallback to old method if no home coordinates
@@ -552,21 +597,25 @@ async function generateFakeProjects(formData: FormData) {
       const baseLat = parseFloat(coords.lat);
       const baseLng = parseFloat(coords.lng);
       
+      // Generate random project within 20 miles
+      const randomDistance = Math.random() * 20;
+      const randomBearing = Math.random() * 360;
+      const offset = offsetLatLng(baseLat, baseLng, randomDistance, randomBearing);
+      
+      latitude = offset.lat.toFixed(6);
+      longitude = offset.lng.toFixed(6);
+      
       // Try to find real cities within 20 miles
       const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 20, coords.country);
       
       if (nearbyCities.length > 0) {
-        // Use a random nearby city
+        // Use a random nearby city name
         const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        latitude = selectedCity.lat.toFixed(6);
-        longitude = selectedCity.lng.toFixed(6);
         city = selectedCity.name;
         region = selectedCity.state;
         country = selectedCity.country;
       } else {
-        // Fallback to base coordinates with slight variance
-        latitude = (baseLat + (Math.random() - 0.5) * 0.2).toFixed(6);
-        longitude = (baseLng + (Math.random() - 0.5) * 0.2).toFixed(6);
+        // No cities in database, use region from place
         region = coords.placeName;
         const countryMap: Record<string, string> = {
           'USA': 'United States',
