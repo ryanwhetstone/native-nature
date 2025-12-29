@@ -212,7 +212,6 @@ async function generateFakeUsers(formData: FormData) {
 
   revalidatePath('/admin/generate-data');
   revalidatePath('/admin/users');
-  return { success: true, message: `Generated ${count} fake users` };
 }
 
 async function generateFakeObservations(formData: FormData) {
@@ -452,7 +451,6 @@ async function generateFakeObservations(formData: FormData) {
   revalidatePath('/admin/generate-data');
   revalidatePath('/admin/observations');
   revalidatePath('/recent-observations');
-  return { success: true, message: `Generated ${count} fake observations` };
 }
 
 async function generateFakeProjects(formData: FormData) {
@@ -696,7 +694,6 @@ async function generateFakeProjects(formData: FormData) {
   revalidatePath('/admin/generate-data');
   revalidatePath('/admin/projects');
   revalidatePath('/conservation-projects');
-  return { success: true, message: `Generated ${count} fake conservation projects` };
 }
 
 export default async function GenerateDataPage() {
