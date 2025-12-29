@@ -1,12 +1,14 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { users } from "@/db/schema";
-import { count, or, ilike, sql } from "drizzle-orm";
+import { users, observations, conservationProjects, observationPictures, projectPictures, projectUpdatePictures, projectUpdates } from "@/db/schema";
+import { count, or, ilike, sql, eq } from "drizzle-orm";
 import Link from "next/link";
 import { Pagination } from "../components/Pagination";
 import { SearchBar } from "../components/SearchBar";
 import { AdminNav } from "../components/AdminNav";
+import { DeleteUserButton } from "./DeleteUserButton";
+import { revalidatePath } from "next/cache";
 
 export const metadata = {
   title: 'Manage Users | Admin | Native Nature',
@@ -63,6 +65,46 @@ export default async function AdminUsersPage({
     },
   });
 
+  // Get counts for each user
+  const userCounts = await Promise.all(
+    allUsers.map(async (user) => {
+      const [obsCount] = await db.select({ count: count() }).from(observations).where(eq(observations.userId, user.id));
+      const [projCount] = await db.select({ count: count() }).from(conservationProjects).where(eq(conservationProjects.userId, user.id));
+      
+      // Count photos: observation photos + project photos + project update photos
+      const [obsPicCount] = await db.select({ count: count() })
+        .from(observationPictures)
+        .innerJoin(observations, eq(observationPictures.observationId, observations.id))
+        .where(eq(observations.userId, user.id));
+      
+      const [projPicCount] = await db.select({ count: count() })
+        .from(projectPictures)
+        .innerJoin(conservationProjects, eq(projectPictures.projectId, conservationProjects.id))
+        .where(eq(conservationProjects.userId, user.id));
+
+      const [updatePicCount] = await db.select({ count: count() })
+        .from(projectUpdatePictures)
+        .innerJoin(projectUpdates, eq(projectUpdatePictures.updateId, projectUpdates.id))
+        .innerJoin(conservationProjects, eq(projectUpdates.projectId, conservationProjects.id))
+        .where(eq(conservationProjects.userId, user.id));
+
+      return {
+        userId: user.id,
+        observationsCount: obsCount?.count || 0,
+        projectsCount: projCount?.count || 0,
+        photosCount: (obsPicCount?.count || 0) + (projPicCount?.count || 0) + (updatePicCount?.count || 0),
+      };
+    })
+  );
+
+  const userCountsMap = new Map(userCounts.map(c => [c.userId, c]));
+
+  async function deleteUser(userId: string) {
+    'use server';
+    await db.delete(users).where(eq(users.id, userId));
+    revalidatePath('/admin/users');
+  }
+
   return (
     <main className="min-h-screen bg-light">
       <AdminNav />
@@ -94,7 +136,9 @@ export default async function AdminUsersPage({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {allUsers.map((user) => (
+                {allUsers.map((user) => {
+                  const counts = userCountsMap.get(user.id) || { observationsCount: 0, projectsCount: 0, photosCount: 0 };
+                  return (
                   <tr key={user.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link href={`/user/${user.id}/profile`} className="text-blue-600 hover:underline">
@@ -126,9 +170,18 @@ export default async function AdminUsersPage({
                       <Link href={`/admin/users/${user.id}`} className="text-blue-600 hover:text-blue-900">
                         Edit
                       </Link>
+                      <DeleteUserButton
+                        userId={user.id}
+                        userName={user.publicName || user.name || 'Anonymous'}
+                        email={user.email || ''}
+                        observationsCount={counts.observationsCount}
+                        projectsCount={counts.projectsCount}
+                        photosCount={counts.photosCount}
+                        deleteUser={deleteUser}
+                      />
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>

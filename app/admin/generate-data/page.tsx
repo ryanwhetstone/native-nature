@@ -2,9 +2,9 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { users, observations, observationPictures, conservationProjects, projectPictures, species } from "@/db/schema";
+import { users, observations, observationPictures, conservationProjects, projectPictures, species, inaturalistPlaces } from "@/db/schema";
 import { AdminNav } from "../components/AdminNav";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 
 export const metadata = {
   title: 'Generate Test Data | Admin | Native Nature',
@@ -31,10 +31,18 @@ async function generateFakeUsers(formData: FormData) {
     'Environmental educator and outdoor adventurer',
   ];
 
+  // Get available places for home assignment
+  const availablePlaces = await db.select().from(inaturalistPlaces).limit(100);
+  
+  if (availablePlaces.length === 0) {
+    throw new Error('No places found in database. Cannot assign home places to users.');
+  }
+
   for (let i = 0; i < count; i++) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${Date.now()}.${i}@fakeuser.com`;
+    const homePlace = availablePlaces[Math.floor(Math.random() * availablePlaces.length)];
     
     await db.insert(users).values({
       email,
@@ -42,6 +50,7 @@ async function generateFakeUsers(formData: FormData) {
       publicName: `${firstName} ${lastName}`,
       bio: bios[Math.floor(Math.random() * bios.length)],
       role: 'user',
+      homePlaceId: homePlace.id,
     });
   }
 
@@ -60,8 +69,12 @@ async function generateFakeObservations(formData: FormData) {
 
   const count = Number(formData.get('count')) || 5;
   
-  // Get random fake users
-  const fakeUsers = await db.select().from(users).where(sql`${users.email} LIKE '%@fakeuser.com'`).limit(20);
+  // Get random fake users with their home places
+  const fakeUsers = await db.select({
+    id: users.id,
+    email: users.email,
+    homePlaceId: users.homePlaceId,
+  }).from(users).where(sql`${users.email} LIKE '%@fakeuser.com'`).limit(20);
   
   if (fakeUsers.length === 0) {
     throw new Error('No fake users found. Generate fake users first.');
@@ -74,9 +87,68 @@ async function generateFakeObservations(formData: FormData) {
     throw new Error('No species found in database.');
   }
 
-  const cities = ['Seattle', 'Portland', 'San Francisco', 'Los Angeles', 'Denver', 'Austin', 'Chicago', 'Boston', 'New York', 'Miami'];
-  const states = ['Washington', 'Oregon', 'California', 'California', 'Colorado', 'Texas', 'Illinois', 'Massachusetts', 'New York', 'Florida'];
-  const countries = ['United States', 'United States', 'United States', 'Canada', 'Mexico'];
+  // Get all places for coordinate mapping
+  const places = await db.select().from(inaturalistPlaces);
+  const placesMap = new Map(places.map(p => [p.id, p]));
+
+  // Approximate coordinate ranges for different regions (center lat/lng with variance)
+  const getCoordinatesForPlace = (place: typeof places[0]) => {
+    // Default coordinates (central USA)
+    let baseLat = 39.8283;
+    let baseLng = -98.5795;
+    let latVariance = 5;
+    let lngVariance = 10;
+
+    // Use country code and place name to estimate coordinates
+    const country = place.countryCode.toLowerCase();
+    const placeName = place.placeName.toLowerCase();
+
+    // North American coordinates
+    if (country === 'usa') {
+      if (placeName.includes('california')) {
+        baseLat = 36.7783; baseLng = -119.4179;
+      } else if (placeName.includes('texas')) {
+        baseLat = 31.9686; baseLng = -99.9018;
+      } else if (placeName.includes('florida')) {
+        baseLat = 27.9944; baseLng = -81.7603;
+      } else if (placeName.includes('new york')) {
+        baseLat = 43.2994; baseLng = -74.2179;
+      } else if (placeName.includes('washington')) {
+        baseLat = 47.7511; baseLng = -120.7401;
+      } else if (placeName.includes('oregon')) {
+        baseLat = 43.8041; baseLng = -120.5542;
+      } else if (placeName.includes('colorado')) {
+        baseLat = 39.5501; baseLng = -105.7821;
+      } else if (placeName.includes('arizona')) {
+        baseLat = 34.0489; baseLng = -111.0937;
+      }
+    } else if (country === 'can') {
+      baseLat = 56.1304; baseLng = -106.3468;
+      if (placeName.includes('ontario')) {
+        baseLat = 51.2538; baseLng = -85.3232;
+      } else if (placeName.includes('british columbia')) {
+        baseLat = 53.7267; baseLng = -127.6476;
+      } else if (placeName.includes('quebec')) {
+        baseLat = 52.9399; baseLng = -73.5491;
+      } else if (placeName.includes('alberta')) {
+        baseLat = 53.9333; baseLng = -116.5765;
+      }
+    } else if (country === 'mex') {
+      baseLat = 23.6345; baseLng = -102.5528;
+    } else if (country === 'gbr') {
+      baseLat = 55.3781; baseLng = -3.4360;
+    } else if (country === 'aus') {
+      baseLat = -25.2744; baseLng = 133.7751;
+    } else if (country === 'nzl') {
+      baseLat = -40.9006; baseLng = 174.8860;
+    }
+
+    // Add some randomness around the base coordinates
+    const lat = (baseLat + (Math.random() - 0.5) * latVariance).toFixed(6);
+    const lng = (baseLng + (Math.random() - 0.5) * lngVariance).toFixed(6);
+    
+    return { lat, lng, placeName: place.placeName, country: place.countryCode };
+  };
 
   const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY;
   if (!unsplashAccessKey) {
@@ -86,19 +158,40 @@ async function generateFakeObservations(formData: FormData) {
   for (let i = 0; i < count; i++) {
     const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
     const selectedSpecies = allSpecies[Math.floor(Math.random() * allSpecies.length)];
-    const cityIndex = Math.floor(Math.random() * cities.length);
     
-    const latitude = (Math.random() * 60 + 20).toFixed(6); // 20-80 degrees
-    const longitude = (Math.random() * -120 - 60).toFixed(6); // -60 to -180 degrees
+    // Get coordinates based on user's home place
+    let latitude = (Math.random() * 60 + 20).toFixed(6);
+    let longitude = (Math.random() * -120 - 60).toFixed(6);
+    let city = 'Unknown';
+    let region = '';
+    let country = 'United States';
+    
+    if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
+      const place = placesMap.get(user.homePlaceId)!;
+      const coords = getCoordinatesForPlace(place);
+      latitude = coords.lat;
+      longitude = coords.lng;
+      region = coords.placeName;
+      // Rough country name mapping
+      const countryMap: Record<string, string> = {
+        'USA': 'United States',
+        'CAN': 'Canada',
+        'MEX': 'Mexico',
+        'GBR': 'United Kingdom',
+        'AUS': 'Australia',
+        'NZL': 'New Zealand',
+      };
+      country = countryMap[coords.country.toUpperCase()] || coords.country;
+    }
     
     const [observation] = await db.insert(observations).values({
       userId: user.id,
       speciesId: selectedSpecies.id,
       latitude,
       longitude,
-      city: cities[cityIndex],
-      region: states[cityIndex],
-      country: countries[Math.floor(Math.random() * countries.length)],
+      city,
+      region,
+      country,
       description: `Observed this ${selectedSpecies.preferredCommonName || selectedSpecies.name} during a nature walk. Great sighting!`,
       observedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date within last 30 days
     }).returning();
