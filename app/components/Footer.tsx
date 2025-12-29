@@ -150,7 +150,7 @@ export async function Footer() {
             </h3>
             <ul className="space-y-2">
               {recentObservations.map((item) => (
-                <li key={item.species.id}>
+                <li key={item.observationId}>
                   <Link
                     href={getObservationUrl(item.observationId, item.species.name, item.species.preferredCommonName)}
                     className="text-sm hover:text-green-400 transition-colors line-clamp-1"

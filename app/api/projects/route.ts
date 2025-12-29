@@ -4,36 +4,57 @@ import { db } from '@/db';
 import { conservationProjects, projectPictures } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 
-// Reverse geocoding function using Nominatim (OpenStreetMap)
+// Reverse geocoding function using Mapbox
 async function reverseGeocode(lat: number, lng: number) {
   try {
+    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    if (!mapboxToken) {
+      console.error('Mapbox token not found');
+      return null;
+    }
+
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
-      {
-        headers: {
-          'User-Agent': 'NativeNature/1.0',
-        },
-      }
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxToken}&types=postcode,place,region,country`
     );
 
     if (!response.ok) {
-      console.error('Geocoding failed:', response.status);
+      console.error('Mapbox geocoding failed:', response.status);
       return null;
     }
 
     const data = await response.json();
     
+    if (!data.features || data.features.length === 0) {
+      console.error('No geocoding results found');
+      return null;
+    }
+
+    // Extract location data from Mapbox response
+    let country = null;
+    let city = null;
+    let region = null;
+    let zipcode = null;
+
+    // Mapbox returns features in order of specificity
+    for (const feature of data.features) {
+      const placeType = feature.place_type?.[0];
+      
+      if (placeType === 'country' && !country) {
+        country = feature.text;
+      } else if (placeType === 'region' && !region) {
+        region = feature.text;
+      } else if (placeType === 'place' && !city) {
+        city = feature.text;
+      } else if (placeType === 'postcode' && !zipcode) {
+        zipcode = feature.text;
+      }
+    }
+    
     return {
-      country: data.address?.country || null,
-      city: data.address?.city || 
-            data.address?.town || 
-            data.address?.village || 
-            data.address?.municipality || 
-            null,
-      region: data.address?.state || 
-              data.address?.province || 
-              data.address?.region || 
-              null,
+      country,
+      city,
+      region,
+      zipcode,
     };
   } catch (error) {
     console.error('Error reverse geocoding:', error);
@@ -77,6 +98,7 @@ export async function POST(request: NextRequest) {
       country: locationData?.country || null,
       city: locationData?.city || null,
       region: locationData?.region || null,
+      zipcode: locationData?.zipcode || null,
       fundingGoal: fundingGoalInCents,
       currentFunding: 0,
       status: 'active',

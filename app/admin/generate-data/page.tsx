@@ -1,10 +1,10 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { users, observations, observationPictures, conservationProjects, projectPictures, species, inaturalistPlaces } from "@/db/schema";
 import { AdminNav } from "../components/AdminNav";
 import { sql, eq } from "drizzle-orm";
+import GenerateDataClient from "./GenerateDataClient";
 const ccs = require('countrycitystatejson');
 
 export const metadata = {
@@ -88,6 +88,64 @@ function offsetLatLng(lat: number, lng: number, distanceMiles = 10, bearingDegre
   };
 }
 
+// Reverse geocoding function using Mapbox
+async function reverseGeocode(lat: number, lng: number) {
+  try {
+    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    if (!mapboxToken) {
+      console.error('Mapbox token not found');
+      return null;
+    }
+
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxToken}&types=postcode,place,region,country`
+    );
+
+    if (!response.ok) {
+      console.error('Mapbox geocoding failed:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    
+    if (!data.features || data.features.length === 0) {
+      console.error('No geocoding results found');
+      return null;
+    }
+
+    // Extract location data from Mapbox response
+    let country = null;
+    let city = null;
+    let region = null;
+    let zipcode = null;
+
+    // Mapbox returns features in order of specificity
+    for (const feature of data.features) {
+      const placeType = feature.place_type?.[0];
+      
+      if (placeType === 'country' && !country) {
+        country = feature.text;
+      } else if (placeType === 'region' && !region) {
+        region = feature.text;
+      } else if (placeType === 'place' && !city) {
+        city = feature.text;
+      } else if (placeType === 'postcode' && !zipcode) {
+        zipcode = feature.text;
+      }
+    }
+    
+    return {
+      country,
+      city,
+      region,
+      zipcode,
+    };
+  } catch (error) {
+    console.error('Error reverse geocoding:', error);
+    return null;
+  }
+}
+
 // Get real cities within a radius
 function getCitiesWithinRadius(baseLat: number, baseLng: number, radiusMiles: number, countryCode: string) {
   const cities: Array<{ name: string; state: string; lat: number; lng: number; country: string }> = [];
@@ -114,7 +172,7 @@ function getCitiesWithinRadius(baseLat: number, baseLng: number, radiusMiles: nu
   return cities;
 }
 
-async function generateFakeUsers(formData: FormData) {
+export async function generateFakeUsers(formData: FormData) {
   'use server';
   
   const session = await auth();
@@ -123,16 +181,6 @@ async function generateFakeUsers(formData: FormData) {
   }
 
   const count = Number(formData.get('count')) || 5;
-  
-  const firstNames = ['Alex', 'Jordan', 'Morgan', 'Taylor', 'Casey', 'Riley', 'Avery', 'Quinn', 'Reese', 'Sage'];
-  const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
-  const bios = [
-    'Wildlife photographer and nature enthusiast',
-    'Conservation advocate and birdwatcher',
-    'Marine biologist and ocean lover',
-    'Backyard naturalist and citizen scientist',
-    'Environmental educator and outdoor adventurer',
-  ];
 
   // Get available places for home assignment
   const availablePlaces = await db.select().from(inaturalistPlaces).limit(100);
@@ -157,8 +205,54 @@ async function generateFakeUsers(formData: FormData) {
   }
 
   for (let i = 0; i < count; i++) {
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    // Generate name and bio using OpenAI
+    let firstName = 'User';
+    let lastName = `Test${i}`;
+    let bio = 'Nature enthusiast and wildlife observer';
+    
+    try {
+      const openaiApiKey = process.env.OPENAI_API_KEY;
+      if (openaiApiKey) {
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openaiApiKey}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              {
+                role: 'system',
+                content: 'You generate realistic user profiles for nature enthusiasts. Return ONLY a JSON object with "firstName", "lastName", and "bio" fields. The bio should be a short, authentic description (5-10 words) of their nature interests.'
+              },
+              {
+                role: 'user',
+                content: 'Generate a realistic name and bio for a nature enthusiast user profile. Return as JSON: {"firstName": "...", "lastName": "...", "bio": "..."}'
+              }
+            ],
+            temperature: 0.9,
+            max_tokens: 50,
+            response_format: { type: "json_object" }
+          }),
+        });
+        
+        if (openaiResponse.ok) {
+          const openaiData = await openaiResponse.json();
+          const content = openaiData.choices[0]?.message?.content;
+          if (content) {
+            const parsed = JSON.parse(content);
+            firstName = parsed.firstName || firstName;
+            lastName = parsed.lastName || lastName;
+            bio = parsed.bio || bio;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('OpenAI API error for user generation:', error);
+      // Fallback to default values if OpenAI fails
+    }
+    
     const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${Date.now()}.${i}@fakeuser.com`;
     const homePlace = availablePlaces[Math.floor(Math.random() * availablePlaces.length)];
     
@@ -202,19 +296,16 @@ async function generateFakeUsers(formData: FormData) {
       email,
       name: `${firstName} ${lastName}`,
       publicName: `${firstName} ${lastName}`,
-      bio: bios[Math.floor(Math.random() * bios.length)],
+      bio,
       role: 'user',
       homePlaceId: homePlace.id,
       homeLat,
       homeLng,
     });
   }
-
-  revalidatePath('/admin/generate-data');
-  revalidatePath('/admin/users');
 }
 
-async function generateFakeObservations(formData: FormData) {
+export async function generateFakeObservations(formData: FormData) {
   'use server';
   
   const session = await auth();
@@ -319,9 +410,10 @@ async function generateFakeObservations(formData: FormData) {
     // Get coordinates based on user's home coordinates or home place
     let latitude = (Math.random() * 60 + 20).toFixed(6);
     let longitude = (Math.random() * -120 - 60).toFixed(6);
-    let city = 'Unknown';
-    let region = '';
-    let country = 'United States';
+    let city = null;
+    let region = null;
+    let country = null;
+    let zipcode = null;
     
     // Use user's home coordinates if available
     if (user.homeLat && user.homeLng) {
@@ -336,15 +428,13 @@ async function generateFakeObservations(formData: FormData) {
       latitude = offset.lat.toFixed(6);
       longitude = offset.lng.toFixed(6);
       
-      // Try to find real cities within 50 miles for city name
-      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 50, 'USA');
-      
-      if (nearbyCities.length > 0) {
-        // Use a random nearby city name
-        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        city = selectedCity.name;
-        region = selectedCity.state;
-        country = selectedCity.country;
+      // Use Mapbox to reverse geocode the exact coordinates
+      const locationData = await reverseGeocode(parseFloat(latitude), parseFloat(longitude));
+      if (locationData) {
+        city = locationData.city;
+        region = locationData.region;
+        country = locationData.country;
+        zipcode = locationData.zipcode;
       }
     } else if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
       // Fallback to old method if no home coordinates
@@ -361,28 +451,56 @@ async function generateFakeObservations(formData: FormData) {
       latitude = offset.lat.toFixed(6);
       longitude = offset.lng.toFixed(6);
       
-      // Try to find real cities within 50 miles
-      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 50, coords.country);
-      
-      if (nearbyCities.length > 0) {
-        // Use a random nearby city name
-        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        city = selectedCity.name;
-        region = selectedCity.state;
-        country = selectedCity.country;
-      } else {
-        // No cities in database, use region from place
-        region = coords.placeName;
-        const countryMap: Record<string, string> = {
-          'USA': 'United States',
-          'CAN': 'Canada',
-          'MEX': 'Mexico',
-          'GBR': 'United Kingdom',
-          'AUS': 'Australia',
-          'NZL': 'New Zealand',
-        };
-        country = countryMap[coords.country.toUpperCase()] || coords.country;
+      // Use Mapbox to reverse geocode the exact coordinates
+      const locationData = await reverseGeocode(parseFloat(latitude), parseFloat(longitude));
+      if (locationData) {
+        city = locationData.city;
+        region = locationData.region;
+        country = locationData.country;
+        zipcode = locationData.zipcode;
       }
+    }
+    
+    // Generate observation description using OpenAI
+    let observationDescription = `Observed this ${selectedSpecies.preferredCommonName || selectedSpecies.name} during a nature walk. Great sighting!`;
+    
+    try {
+      const openaiApiKey = process.env.OPENAI_API_KEY;
+      if (openaiApiKey) {
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openaiApiKey}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are a nature enthusiast writing casual observation notes. Generate short, enthusiastic descriptions (1-2 sentences) about wildlife sightings. Sound authentic and personal, like a real naturalist\'s field notes.'
+              },
+              {
+                role: 'user',
+                content: `Write a brief observation note about spotting a ${selectedSpecies.preferredCommonName || selectedSpecies.name}. Keep it under 100 characters and make it sound natural and excited.`
+              }
+            ],
+            temperature: 0.8,
+            max_tokens: 50,
+          }),
+        });
+        
+        if (openaiResponse.ok) {
+          const openaiData = await openaiResponse.json();
+          const content = openaiData.choices[0]?.message?.content?.trim();
+          if (content) {
+            observationDescription = content;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('OpenAI API error for observation description:', error);
+      // Fallback to default description if OpenAI fails
     }
     
     const [observation] = await db.insert(observations).values({
@@ -393,8 +511,9 @@ async function generateFakeObservations(formData: FormData) {
       city,
       region,
       country,
-      description: `Observed this ${selectedSpecies.preferredCommonName || selectedSpecies.name} during a nature walk. Great sighting!`,
-      observedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date within last 30 days
+      zipcode,
+      description: observationDescription,
+      observedAt: new Date(Date.now() - Math.random() * 730 * 24 * 60 * 60 * 1000), // Random date within last 2 years
     }).returning();
 
     // Fetch images from Unsplash based on species name
@@ -447,13 +566,9 @@ async function generateFakeObservations(formData: FormData) {
       });
     }
   }
-
-  revalidatePath('/admin/generate-data');
-  revalidatePath('/admin/observations');
-  revalidatePath('/recent-observations');
 }
 
-async function generateFakeProjects(formData: FormData) {
+export async function generateFakeProjects(formData: FormData) {
   'use server';
   
   const session = await auth();
@@ -561,9 +676,10 @@ async function generateFakeProjects(formData: FormData) {
     
     let latitude = (Math.random() * 60 + 20).toFixed(6);
     let longitude = (Math.random() * -120 - 60).toFixed(6);
-    let city = 'Unknown';
-    let region = '';
-    let country = 'United States';
+    let city = null;
+    let region = null;
+    let country = null;
+    let zipcode = null;
     
     // Use user's home coordinates if available
     if (user.homeLat && user.homeLng) {
@@ -578,15 +694,13 @@ async function generateFakeProjects(formData: FormData) {
       latitude = offset.lat.toFixed(6);
       longitude = offset.lng.toFixed(6);
       
-      // Try to find real cities within 20 miles for city name
-      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 20, 'USA');
-      
-      if (nearbyCities.length > 0) {
-        // Use a random nearby city name
-        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        city = selectedCity.name;
-        region = selectedCity.state;
-        country = selectedCity.country;
+      // Use Mapbox to reverse geocode the exact coordinates
+      const locationData = await reverseGeocode(parseFloat(latitude), parseFloat(longitude));
+      if (locationData) {
+        city = locationData.city;
+        region = locationData.region;
+        country = locationData.country;
+        zipcode = locationData.zipcode;
       }
     } else if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
       // Fallback to old method if no home coordinates
@@ -603,45 +717,86 @@ async function generateFakeProjects(formData: FormData) {
       latitude = offset.lat.toFixed(6);
       longitude = offset.lng.toFixed(6);
       
-      // Try to find real cities within 20 miles
-      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 20, coords.country);
-      
-      if (nearbyCities.length > 0) {
-        // Use a random nearby city name
-        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
-        city = selectedCity.name;
-        region = selectedCity.state;
-        country = selectedCity.country;
-      } else {
-        // No cities in database, use region from place
-        region = coords.placeName;
-        const countryMap: Record<string, string> = {
-          'USA': 'United States',
-          'CAN': 'Canada',
-          'MEX': 'Mexico',
-          'GBR': 'United Kingdom',
-          'AUS': 'Australia',
-          'NZL': 'New Zealand',
-        };
-        country = countryMap[coords.country.toUpperCase()] || coords.country;
+      // Use Mapbox to reverse geocode the exact coordinates
+      const locationData = await reverseGeocode(parseFloat(latitude), parseFloat(longitude));
+      if (locationData) {
+        city = locationData.city;
+        region = locationData.region;
+        country = locationData.country;
+        zipcode = locationData.zipcode;
       }
     }
     
-    const fundingGoal = Math.floor(Math.random() * 100000) + 10000; // $10k to $110k
-    const currentFunding = Math.floor(Math.random() * fundingGoal * 0.7); // 0-70% funded
+    // Generate funding goal rounded to nearest $10 (in cents, so nearest 1000 cents)
+    const rawGoal = Math.floor(Math.random() * 100000) + 10000; // $10k to $110k in cents
+    const fundingGoal = Math.round(rawGoal / 1000) * 1000; // Round to nearest $10
+    
+    // 30% chance of being completed (fully funded)
+    const isCompleted = Math.random() < 0.3;
+    const currentFunding = isCompleted 
+      ? fundingGoal 
+      : Math.floor(Math.random() * fundingGoal * 0.8); // 0-80% funded if not completed
+    
+    // Generate project name and description using OpenAI
+    let projectTitle = `${projectType.title} - ${city || 'Community'}`;
+    let projectDescription = `This project aims to protect and restore critical habitat for native wildlife in the ${city || 'local'} area. Through community engagement and scientific restoration practices, we will create a sustainable ecosystem that benefits both wildlife and local communities.`;
+    
+    try {
+      const openaiApiKey = process.env.OPENAI_API_KEY;
+      if (openaiApiKey) {
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openaiApiKey}`,
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are a conservation expert who creates compelling project proposals. Generate realistic conservation project names and descriptions that sound professional and inspiring. Return ONLY a JSON object with "title" and "description" fields.'
+              },
+              {
+                role: 'user',
+                content: `Generate a conservation project for a "${projectType.title}" initiative in ${city || region || country || 'a local community'}. The title should be 4-8 words. The description should be 2-3 sentences explaining the project goals and impact. Return as JSON: {"title": "...", "description": "..."}`
+              }
+            ],
+            temperature: 0.8,
+            max_tokens: 200,
+            response_format: { type: "json_object" }
+          }),
+        });
+        
+        if (openaiResponse.ok) {
+          const openaiData = await openaiResponse.json();
+          const content = openaiData.choices[0]?.message?.content;
+          if (content) {
+            const parsed = JSON.parse(content);
+            projectTitle = parsed.title || projectTitle;
+            projectDescription = parsed.description || projectDescription;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('OpenAI API error:', error);
+      // Fallback to default name and description if OpenAI fails
+    }
     
     const [project] = await db.insert(conservationProjects).values({
       userId: user.id,
-      title: `${projectType.title} - ${city}`,
-      description: `This project aims to protect and restore critical habitat for native wildlife in the ${city} area. Through community engagement and scientific restoration practices, we will create a sustainable ecosystem that benefits both wildlife and local communities.`,
+      title: projectTitle,
+      description: projectDescription,
       latitude,
       longitude,
       city,
       region,
       country,
+      zipcode,
       fundingGoal,
       currentFunding,
-      status: currentFunding >= fundingGoal ? 'completed' : 'active',
+      status: isCompleted ? 'completed' : 'active',
+      createdAt: new Date(Date.now() - Math.random() * 730 * 24 * 60 * 60 * 1000), // Random date within last 2 years
     }).returning();
 
     // Fetch images from Unsplash based on project keywords
@@ -690,10 +845,6 @@ async function generateFakeProjects(formData: FormData) {
       });
     }
   }
-
-  revalidatePath('/admin/generate-data');
-  revalidatePath('/admin/projects');
-  revalidatePath('/conservation-projects');
 }
 
 export default async function GenerateDataPage() {
@@ -712,94 +863,18 @@ export default async function GenerateDataPage() {
           Create fake users, observations, and conservation projects for testing purposes.
         </p>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* Generate Fake Users */}
-          <div className="section-card">
-            <h2 className="text-xl font-semibold mb-2">Fake Users</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Generate fake user accounts with random names and bios.
-            </p>
-            <form action={generateFakeUsers}>
-              <div className="mb-4">
-                <label htmlFor="user-count" className="block text-sm font-medium text-gray-700 mb-1">
-                  Number of Users
-                </label>
-                <input
-                  type="number"
-                  id="user-count"
-                  name="count"
-                  min="1"
-                  max="50"
-                  defaultValue="5"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <button type="submit" className="btn-primary w-full">
-                Generate Users
-              </button>
-            </form>
-          </div>
-
-          {/* Generate Fake Observations */}
-          <div className="section-card">
-            <h2 className="text-xl font-semibold mb-2">Fake Observations</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Generate fake observations with images from Lorem Picsum. Requires fake users.
-            </p>
-            <form action={generateFakeObservations}>
-              <div className="mb-4">
-                <label htmlFor="observation-count" className="block text-sm font-medium text-gray-700 mb-1">
-                  Number of Observations
-                </label>
-                <input
-                  type="number"
-                  id="observation-count"
-                  name="count"
-                  min="1"
-                  max="50"
-                  defaultValue="10"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <button type="submit" className="btn-primary w-full">
-                Generate Observations
-              </button>
-            </form>
-          </div>
-
-          {/* Generate Fake Projects */}
-          <div className="section-card">
-            <h2 className="text-xl font-semibold mb-2">Fake Conservation Projects</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Generate fake conservation projects with images. Requires fake users.
-            </p>
-            <form action={generateFakeProjects}>
-              <div className="mb-4">
-                <label htmlFor="project-count" className="block text-sm font-medium text-gray-700 mb-1">
-                  Number of Projects
-                </label>
-                <input
-                  type="number"
-                  id="project-count"
-                  name="count"
-                  min="1"
-                  max="20"
-                  defaultValue="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-              <button type="submit" className="btn-primary w-full">
-                Generate Projects
-              </button>
-            </form>
-          </div>
-        </div>
+        <GenerateDataClient
+          generateFakeUsers={generateFakeUsers}
+          generateFakeObservations={generateFakeObservations}
+          generateFakeProjects={generateFakeProjects}
+        />
 
         <div className="mt-8 section-card bg-yellow-50 border-yellow-200">
           <h3 className="text-lg font-semibold mb-2">⚠️ Important Notes</h3>
           <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
             <li>Fake users have emails ending in <code>@fakeuser.com</code></li>
-            <li>All generated images are from Lorem Picsum (placeholder images)</li>
+            <li>Observations use Unsplash images and Mapbox reverse geocoding</li>
+            <li>Projects use OpenAI to generate compelling titles and descriptions</li>
             <li>All generated photos start with <code>approved: null</code> (pending review)</li>
             <li>You can approve them in the Bulk Photo Management page</li>
             <li>Generate users first before creating observations or projects</li>

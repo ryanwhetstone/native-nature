@@ -49,10 +49,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             className={`
               min-w-[300px] max-w-md px-6 py-4 rounded-lg shadow-lg
               transform transition-all duration-300 ease-in-out
-              animate-slide-in-right
-              ${toast.type === 'success' ? 'bg-green-600 text-white' : ''}
-              ${toast.type === 'error' ? 'bg-red-600 text-white' : ''}
-              ${toast.type === 'info' ? 'bg-blue-600 text-white' : ''}
+              animate-slide-in-right !text-white
+              ${toast.type === 'success' ? 'bg-green-600' : ''}
+              ${toast.type === 'error' ? 'bg-red-600' : ''}
+              ${toast.type === 'info' ? 'bg-blue-600' : ''}
             `}
           >
             <div className="flex items-start justify-between gap-3">
@@ -62,11 +62,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                   {toast.type === 'error' && '✕'}
                   {toast.type === 'info' && 'ℹ'}
                 </span>
-                <p className="font-medium">{toast.message}</p>
+                <p className="!text-white font-medium">{toast.message}</p>
               </div>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="text-white/80 hover:text-white flex-shrink-0"
+                className="!text-white/80 hover:!text-white flex-shrink-0"
               >
                 ✕
               </button>
