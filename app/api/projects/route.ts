@@ -98,7 +98,6 @@ export async function POST(request: NextRequest) {
       country: locationData?.country || null,
       city: locationData?.city || null,
       region: locationData?.region || null,
-      zipcode: locationData?.zipcode || null,
       fundingGoal: fundingGoalInCents,
       currentFunding: 0,
       status: 'active',

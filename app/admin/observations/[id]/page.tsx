@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { observations } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import Image from "next/image";
 import { revalidatePath } from "next/cache";
 import { getObservationUrl } from "@/lib/observation-url";
 import { DeleteButton } from "../../components/DeleteButton";
@@ -161,10 +162,11 @@ export default async function EditObservationPage({
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {observation.pictures.map((picture) => (
                 <div key={picture.id} className="relative aspect-square">
-                  <img
+                  <Image
                     src={picture.imageUrl}
                     alt={picture.caption || 'Observation photo'}
-                    className="w-full h-full object-cover rounded-lg"
+                    fill
+                    className="object-cover rounded-lg"
                   />
                   {picture.caption && (
                     <p className="mt-1 text-sm text-gray-600">{picture.caption}</p>
