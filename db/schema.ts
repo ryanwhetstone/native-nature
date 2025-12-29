@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, text, integer, timestamp, boolean, jsonb, primaryKey, unique } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, text, integer, timestamp, boolean, jsonb, primaryKey, unique, numeric } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // NextAuth required tables
@@ -14,6 +14,8 @@ export const users = pgTable('users', {
   bio: text('bio'),
   preferences: jsonb('preferences'),
   homePlaceId: integer('home_place_id').references(() => inaturalistPlaces.id, { onDelete: 'set null' }),
+  homeLat: numeric('home_lat', { precision: 10, scale: 6 }),
+  homeLng: numeric('home_lng', { precision: 10, scale: 6 }),
   role: varchar('role', { length: 20 }).default('user').notNull(),
   isActive: boolean('is_active').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),

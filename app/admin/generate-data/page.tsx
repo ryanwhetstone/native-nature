@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { users, observations, observationPictures, conservationProjects, projectPictures, species, inaturalistPlaces } from "@/db/schema";
 import { AdminNav } from "../components/AdminNav";
 import { sql, eq } from "drizzle-orm";
+const ccs = require('countrycitystatejson');
 
 export const metadata = {
   title: 'Generate Test Data | Admin | Native Nature',
@@ -103,11 +104,62 @@ async function generateFakeUsers(formData: FormData) {
     throw new Error('No places found in database. Cannot assign home places to users.');
   }
 
+  // Map country codes to country names for countrycitystatejson
+  const countryCodeMap: Record<string, { name: string; shortCode: string }> = {
+    'USA': { name: 'United States', shortCode: 'US' },
+    'CAN': { name: 'Canada', shortCode: 'CA' },
+    'MEX': { name: 'Mexico', shortCode: 'MX' },
+    'GBR': { name: 'United Kingdom', shortCode: 'GB' },
+    'AUS': { name: 'Australia', shortCode: 'AU' },
+    'NZL': { name: 'New Zealand', shortCode: 'NZ' },
+  };
+
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  if (!mapboxToken) {
+    throw new Error('NEXT_PUBLIC_MAPBOX_TOKEN environment variable is not set');
+  }
+
   for (let i = 0; i < count; i++) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${Date.now()}.${i}@fakeuser.com`;
     const homePlace = availablePlaces[Math.floor(Math.random() * availablePlaces.length)];
+    
+    let homeLat: string | null = null;
+    let homeLng: string | null = null;
+
+    // Try to get a city in the state/region and geocode it
+    try {
+      const countryInfo = countryCodeMap[homePlace.countryCode.toUpperCase()];
+      
+      if (countryInfo) {
+        // Get cities in the state/province
+        const cities = ccs.getCities(countryInfo.shortCode, homePlace.placeName);
+        
+        if (cities && cities.length > 0) {
+          // Pick a random city
+          const randomCity = cities[Math.floor(Math.random() * Math.min(cities.length, 10))];
+          
+          // Geocode the city using Mapbox
+          const query = `${randomCity}, ${homePlace.placeName}, ${countryInfo.name}`;
+          const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxToken}&limit=1&types=place`;
+          
+          const response = await fetch(geocodeUrl);
+          
+          if (response.ok) {
+            const data = await response.json();
+            
+            if (data.features && data.features.length > 0) {
+              const [lng, lat] = data.features[0].center;
+              homeLat = lat.toFixed(6);
+              homeLng = lng.toFixed(6);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error getting city coordinates:', error);
+    }
     
     await db.insert(users).values({
       email,
@@ -116,6 +168,8 @@ async function generateFakeUsers(formData: FormData) {
       bio: bios[Math.floor(Math.random() * bios.length)],
       role: 'user',
       homePlaceId: homePlace.id,
+      homeLat,
+      homeLng,
     });
   }
 
@@ -134,11 +188,13 @@ async function generateFakeObservations(formData: FormData) {
 
   const count = Number(formData.get('count')) || 5;
   
-  // Get random fake users with their home places
+  // Get random fake users with their home places and coordinates
   const fakeUsers = await db.select({
     id: users.id,
     email: users.email,
     homePlaceId: users.homePlaceId,
+    homeLat: users.homeLat,
+    homeLng: users.homeLng,
   }).from(users).where(sql`${users.email} LIKE '%@fakeuser.com'`).limit(20);
   
   if (fakeUsers.length === 0) {
@@ -224,14 +280,36 @@ async function generateFakeObservations(formData: FormData) {
     const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
     const selectedSpecies = allSpecies[Math.floor(Math.random() * allSpecies.length)];
     
-    // Get coordinates based on user's home place
+    // Get coordinates based on user's home coordinates or home place
     let latitude = (Math.random() * 60 + 20).toFixed(6);
     let longitude = (Math.random() * -120 - 60).toFixed(6);
     let city = 'Unknown';
     let region = '';
     let country = 'United States';
     
-    if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
+    // Use user's home coordinates if available
+    if (user.homeLat && user.homeLng) {
+      const baseLat = parseFloat(user.homeLat);
+      const baseLng = parseFloat(user.homeLng);
+      
+      // Try to find real cities within 50 miles
+      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 50, 'USA'); // Default to USA, will be improved
+      
+      if (nearbyCities.length > 0) {
+        // Use a random nearby city
+        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
+        latitude = selectedCity.lat.toFixed(6);
+        longitude = selectedCity.lng.toFixed(6);
+        city = selectedCity.name;
+        region = selectedCity.state;
+        country = selectedCity.country;
+      } else {
+        // No cities in database within radius, add random offset to home coordinates
+        latitude = (baseLat + (Math.random() - 0.5) * 0.5).toFixed(6); // ~28 miles max
+        longitude = (baseLng + (Math.random() - 0.5) * 0.5).toFixed(6);
+      }
+    } else if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
+      // Fallback to old method if no home coordinates
       const place = placesMap.get(user.homePlaceId)!;
       const coords = getCoordinatesForPlace(place);
       const baseLat = parseFloat(coords.lat);
@@ -344,11 +422,13 @@ async function generateFakeProjects(formData: FormData) {
 
   const count = Number(formData.get('count')) || 3;
   
-  // Get random fake users with their home places
+  // Get random fake users with their home places and coordinates
   const fakeUsers = await db.select({
     id: users.id,
     email: users.email,
     homePlaceId: users.homePlaceId,
+    homeLat: users.homeLat,
+    homeLng: users.homeLng,
   }).from(users).where(sql`${users.email} LIKE '%@fakeuser.com'`).limit(20);
   
   if (fakeUsers.length === 0) {
@@ -444,7 +524,29 @@ async function generateFakeProjects(formData: FormData) {
     let region = '';
     let country = 'United States';
     
-    if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
+    // Use user's home coordinates if available
+    if (user.homeLat && user.homeLng) {
+      const baseLat = parseFloat(user.homeLat);
+      const baseLng = parseFloat(user.homeLng);
+      
+      // Try to find real cities within 20 miles
+      const nearbyCities = getCitiesWithinRadius(baseLat, baseLng, 20, 'USA'); // Default to USA
+      
+      if (nearbyCities.length > 0) {
+        // Use a random nearby city
+        const selectedCity = nearbyCities[Math.floor(Math.random() * nearbyCities.length)];
+        latitude = selectedCity.lat.toFixed(6);
+        longitude = selectedCity.lng.toFixed(6);
+        city = selectedCity.name;
+        region = selectedCity.state;
+        country = selectedCity.country;
+      } else {
+        // No cities in database within radius, add small random offset to home coordinates
+        latitude = (baseLat + (Math.random() - 0.5) * 0.2).toFixed(6); // ~11 miles max
+        longitude = (baseLng + (Math.random() - 0.5) * 0.2).toFixed(6);
+      }
+    } else if (user.homePlaceId && placesMap.has(user.homePlaceId)) {
+      // Fallback to old method if no home coordinates
       const place = placesMap.get(user.homePlaceId)!;
       const coords = getCoordinatesForPlace(place);
       const baseLat = parseFloat(coords.lat);
