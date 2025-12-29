@@ -715,7 +715,6 @@ export async function generateFakeProjects(formData: FormData) {
       city,
       region,
       country,
-      zipcode,
       fundingGoal,
       currentFunding,
       status: isCompleted ? 'completed' : 'active',
