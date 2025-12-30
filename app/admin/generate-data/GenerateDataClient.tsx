@@ -7,17 +7,20 @@ interface GenerateDataClientProps {
   generateFakeUsers: (formData: FormData) => Promise<void>;
   generateFakeObservations: (formData: FormData) => Promise<void>;
   generateFakeProjects: (formData: FormData) => Promise<void>;
+  generateFakeFavorites: (formData: FormData) => Promise<void>;
 }
 
 export default function GenerateDataClient({
   generateFakeUsers,
   generateFakeObservations,
   generateFakeProjects,
+  generateFakeFavorites,
 }: GenerateDataClientProps) {
   const { showToast } = useToast();
   const [isPendingUsers, startTransitionUsers] = useTransition();
   const [isPendingObservations, startTransitionObservations] = useTransition();
   const [isPendingProjects, startTransitionProjects] = useTransition();
+  const [isPendingFavorites, startTransitionFavorites] = useTransition();
 
   const handleGenerateUsers = async (formData: FormData) => {
     startTransitionUsers(async () => {
@@ -51,6 +54,18 @@ export default function GenerateDataClient({
       } catch (error) {
         console.error('Error generating projects:', error);
         showToast('Failed to generate fake projects', 'error');
+      }
+    });
+  };
+
+  const handleGenerateFavorites = async (formData: FormData) => {
+    startTransitionFavorites(async () => {
+      try {
+        await generateFakeFavorites(formData);
+        showToast('Fake favorites generated successfully!');
+      } catch (error) {
+        console.error('Error generating favorites:', error);
+        showToast('Failed to generate fake favorites', 'error');
       }
     });
   };
@@ -149,6 +164,38 @@ export default function GenerateDataClient({
             disabled={isPendingProjects}
           >
             {isPendingProjects ? 'Generating...' : 'Generate Projects'}
+          </button>
+        </form>
+      </div>
+
+      {/* Generate Fake Favorites */}
+      <div className="section-card">
+        <h2 className="text-xl font-semibold mb-2">Fake Favorites</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Generate fake species favorites for users. Requires fake users.
+        </p>
+        <form action={handleGenerateFavorites}>
+          <div className="mb-4">
+            <label htmlFor="favorite-count" className="block text-sm font-medium text-gray-700 mb-1">
+              Number of Favorites
+            </label>
+            <input
+              type="number"
+              id="favorite-count"
+              name="count"
+              min="1"
+              max="100"
+              defaultValue="20"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              disabled={isPendingFavorites}
+            />
+          </div>
+          <button 
+            type="submit" 
+            className="btn-primary w-full"
+            disabled={isPendingFavorites}
+          >
+            {isPendingFavorites ? 'Generating...' : 'Generate Favorites'}
           </button>
         </form>
       </div>

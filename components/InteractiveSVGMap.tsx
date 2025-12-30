@@ -129,7 +129,7 @@ export default function InteractiveSVGMap({
       {hoveredRegion && (
         <div className="absolute top-0 left-0 right-0 flex justify-center pointer-events-none z-10">
           <div className="bg-green-800 text-white px-3 py-2 rounded shadow-lg">
-            <p className="text-sm font-medium">
+            <p className="text-sm font-medium text-white">
               {getSvgRegionInfoForCountry(countrySlug, hoveredRegion)?.name || hoveredRegion}
             </p>
           </div>

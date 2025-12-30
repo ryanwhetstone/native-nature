@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { AdminNav } from "../components/AdminNav";
 import GenerateDataClient from "./GenerateDataClient";
-import { generateFakeUsers, generateFakeObservations, generateFakeProjects } from "./actions";
+import { generateFakeUsers, generateFakeObservations, generateFakeProjects, generateFakeFavorites } from "./actions";
 
 export const metadata = {
   title: 'Generate Test Data | Admin | Native Nature',
@@ -29,6 +29,7 @@ export default async function GenerateDataPage() {
           generateFakeUsers={generateFakeUsers}
           generateFakeObservations={generateFakeObservations}
           generateFakeProjects={generateFakeProjects}
+          generateFakeFavorites={generateFakeFavorites}
         />
 
         <div className="mt-8 section-card bg-yellow-50 border-yellow-200">

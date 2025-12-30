@@ -109,8 +109,8 @@ export default async function ObservationDetailPage({
                   </Link>
                 </div>
                 {observation.description && (
-                  <div className="mt-6 text-gray-300">
-                    <p className="whitespace-pre-wrap">{observation.description}</p>
+                  <div className="mt-6 text-white">
+                    <p className="whitespace-pre-wrap text-white">{observation.description}</p>
                   </div>
                 )}
               </div>

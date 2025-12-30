@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { users, observations, observationPictures, conservationProjects, projectPictures, species, inaturalistPlaces } from "@/db/schema";
+import { users, observations, observationPictures, conservationProjects, projectPictures, species, inaturalistPlaces, favorites } from "@/db/schema";
 import { sql } from "drizzle-orm";
 const ccs = require('countrycitystatejson');
 
@@ -492,7 +492,58 @@ export async function generateFakeObservations(formData: FormData) {
     }
   }
 }
+export async function generateFakeFavorites(formData: FormData) {
+  const session = await auth();
+  if (!session?.user || session.user.role !== 'admin') {
+    throw new Error('Unauthorized');
+  }
 
+  const count = Number(formData.get('count')) || 10;
+  
+  // Get random fake users
+  const fakeUsers = await db.select({
+    id: users.id,
+  }).from(users).where(sql`${users.email} LIKE '%@fakeuser.com'`).limit(50);
+  
+  if (fakeUsers.length === 0) {
+    throw new Error('No fake users found. Generate fake users first.');
+  }
+
+  // Get random species
+  const allSpecies = await db.select({
+    id: species.id,
+  }).from(species).limit(200);
+  
+  if (allSpecies.length === 0) {
+    throw new Error('No species found in database.');
+  }
+
+  let favoritesCreated = 0;
+  let attempts = 0;
+  const maxAttempts = count * 3; // Allow some failed attempts due to duplicates
+
+  while (favoritesCreated < count && attempts < maxAttempts) {
+    attempts++;
+    
+    const randomUser = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+    const randomSpecies = allSpecies[Math.floor(Math.random() * allSpecies.length)];
+    
+    try {
+      await db.insert(favorites).values({
+        userId: randomUser.id,
+        speciesId: randomSpecies.id,
+      });
+      favoritesCreated++;
+    } catch (error) {
+      // Skip duplicate favorites (unique constraint violation)
+      console.log('Skipping duplicate favorite');
+    }
+  }
+
+  if (favoritesCreated < count) {
+    console.log(`Created ${favoritesCreated} favorites out of requested ${count} (some duplicates skipped)`);
+  }
+}
 export async function generateFakeProjects(formData: FormData) {
   const session = await auth();
   if (!session?.user || session.user.role !== 'admin') {
