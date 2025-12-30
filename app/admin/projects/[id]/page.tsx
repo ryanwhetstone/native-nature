@@ -7,6 +7,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { getProjectUrl } from "@/lib/project-url";
 import { AdminNav } from "../../components/AdminNav";
+import DeleteProjectButton from "./DeleteProjectButton";
 
 export const metadata = {
   title: 'Edit Project | Admin | Native Nature',
@@ -217,20 +218,7 @@ export default async function EditProjectPage({
           <p className="text-sm text-red-700 mb-4">
             Deleting this project will permanently remove it and all associated data. This action cannot be undone.
           </p>
-          <form action={deleteProject}>
-            <input type="hidden" name="id" value={project.id} />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              onClick={(e) => {
-                if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-                  e.preventDefault();
-                }
-              }}
-            >
-              Delete Project
-            </button>
-          </form>
+          <DeleteProjectButton projectId={project.id} deleteProject={deleteProject} />
         </div>
 
         <div className="mt-6 section-card bg-gray-50">
