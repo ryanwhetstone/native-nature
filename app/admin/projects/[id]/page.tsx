@@ -24,6 +24,7 @@ async function updateProject(formData: FormData) {
   const id = Number(formData.get('id'));
   const status = formData.get('status') as string;
   const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
   const fundingGoal = Number(formData.get('fundingGoal')) * 100; // Convert to cents
 
   await db
@@ -31,6 +32,7 @@ async function updateProject(formData: FormData) {
     .set({
       status,
       title,
+      description,
       fundingGoal,
       updatedAt: new Date(),
     })
@@ -38,6 +40,22 @@ async function updateProject(formData: FormData) {
 
   revalidatePath('/admin/projects');
   revalidatePath(`/conservation-project/${id}`);
+  redirect('/admin/projects');
+}
+
+async function deleteProject(formData: FormData) {
+  'use server';
+  
+  const session = await auth();
+  if (!session?.user || session.user.role !== 'admin') {
+    redirect('/');
+  }
+
+  const id = Number(formData.get('id'));
+
+  await db.delete(conservationProjects).where(eq(conservationProjects.id, id));
+
+  revalidatePath('/admin/projects');
   redirect('/admin/projects');
 }
 
@@ -109,6 +127,20 @@ export default async function EditProjectPage({
               </div>
 
               <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  defaultValue={project.description}
+                  required
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
                 <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
                   Status
                 </label>
@@ -166,15 +198,38 @@ export default async function EditProjectPage({
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <button type="submit" className="btn-primary">
-                  Save Changes
-                </button>
-                <Link href="/admin/projects" className="btn-secondary">
-                  Cancel
-                </Link>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <button type="submit" className="btn-primary">
+                    Save Changes
+                  </button>
+                  <Link href="/admin/projects" className="btn-secondary">
+                    Cancel
+                  </Link>
+                </div>
               </div>
             </div>
+          </form>
+        </div>
+
+        <div className="mt-6 section-card bg-red-50 border-red-200">
+          <h2 className="text-lg font-semibold mb-2 text-red-900">⚠️ Danger Zone</h2>
+          <p className="text-sm text-red-700 mb-4">
+            Deleting this project will permanently remove it and all associated data. This action cannot be undone.
+          </p>
+          <form action={deleteProject}>
+            <input type="hidden" name="id" value={project.id} />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              onClick={(e) => {
+                if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+                  e.preventDefault();
+                }
+              }}
+            >
+              Delete Project
+            </button>
           </form>
         </div>
 
