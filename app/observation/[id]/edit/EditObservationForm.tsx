@@ -18,6 +18,7 @@ interface EditObservationFormProps {
     latitude: string;
     longitude: string;
     observedAt: Date;
+    description: string | null;
     species: {
       id: number;
       taxonId: number;
@@ -41,6 +42,7 @@ export default function EditObservationForm({ observation }: EditObservationForm
   const [observedAt, setObservedAt] = useState(
     new Date(observation.observedAt).toISOString().split('T')[0]
   );
+  const [description, setDescription] = useState(observation.description || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [existingImages, setExistingImages] = useState<Picture[]>(observation.pictures);
   const [newImages, setNewImages] = useState<Array<{ url: string; file: File }>>([]);
@@ -115,6 +117,7 @@ export default function EditObservationForm({ observation }: EditObservationForm
           latitude: selectedLocation.lat.toString(),
           longitude: selectedLocation.lng.toString(),
           observedAt: observedAt + 'T12:00:00.000Z',
+          description: description || null,
           newImageUrls: uploadedImageUrls,
           deletedImageIds: deletedImageIds,
         }),
@@ -158,6 +161,20 @@ export default function EditObservationForm({ observation }: EditObservationForm
           onChange={(e) => setObservedAt(e.target.value)}
           required
           max={new Date().toISOString().split('T')[0]}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="description" className="block text-sm font-medium mb-2">
+          Description
+        </label>
+        <textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={4}
+          placeholder="Add notes about your observation (optional)"
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>

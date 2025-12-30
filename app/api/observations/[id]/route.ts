@@ -170,7 +170,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { latitude, longitude, observedAt, newImageUrls, deletedImageIds } = body;
+    const { latitude, longitude, observedAt, description, newImageUrls, deletedImageIds } = body;
 
     // Verify ownership
     const observation = await db.query.observations.findFirst({
@@ -206,6 +206,7 @@ export async function PATCH(
     if (latitude) updateData.latitude = latitude.toString();
     if (longitude) updateData.longitude = longitude.toString();
     if (observedAt) updateData.observedAt = new Date(observedAt);
+    if (description !== undefined) updateData.description = description;
     if (locationData) {
       updateData.country = locationData.country;
       updateData.city = locationData.city;
