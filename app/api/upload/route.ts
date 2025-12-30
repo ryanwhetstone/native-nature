@@ -6,6 +6,19 @@ import sharp from 'sharp';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if AWS credentials are configured
+    if (!S3_BUCKET || !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+      console.error('AWS S3 not configured. Missing environment variables:', {
+        hasBucket: !!S3_BUCKET,
+        hasAccessKey: !!process.env.AWS_ACCESS_KEY_ID,
+        hasSecretKey: !!process.env.AWS_SECRET_ACCESS_KEY,
+      });
+      return NextResponse.json(
+        { error: 'File upload is not configured. Please contact the administrator.' },
+        { status: 500 }
+      );
+    }
+
     const session = await auth();
     
     if (!session?.user?.id) {

@@ -207,7 +207,7 @@ export default function SearchPage() {
                                 </div>
                               )}
                             </div>
-                            <h3 className="font-medium text-gray-900 group-hover:text-green-600 line-clamp-2">
+                            <h3 className="heading-4 group-hover:text-green-600 line-clamp-2">
                               {species.preferredCommonName || species.name}
                             </h3>
                             <p className="text-sm text-gray-500 italic line-clamp-1">
