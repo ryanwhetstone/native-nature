@@ -42,7 +42,7 @@ interface SpeciesGalleryProps {
 export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
   // Transform taxon photos into MasonryPhotoGallery format
   const galleryPhotos: any[] = [];
-  
+
   // Add default photo first
   if (species.defaultPhotoUrl) {
     galleryPhotos.push({
@@ -80,13 +80,13 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
   return (
     <>
       {/* Dark section for header and photo gallery */}
-      <div className="bg-slate-900 py-8">
-        <div className="w-full px-4">
+      <div className="section bg-dark px-4 py-4">
+        <div className="container-full">
           {/* Header with Back Button and Actions */}
           <div className="flex justify-between items-center mb-8">
             <BackButton />
             <div className="flex items-center gap-3">
-              <AddObservationButton 
+              <AddObservationButton
                 speciesId={species.id}
                 speciesName={species.preferredCommonName || species.name}
                 speciesSlug={slug}
@@ -94,15 +94,19 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
               <FavoriteButton speciesId={species.taxonId} showLabel={true} />
             </div>
           </div>
+        </div>
+      </div>
+      <div className="section bg-dark px-4 pt-0">
+        <div className="container-md">
 
           {/* Species Info */}
-          <div className="max-w-7xl mx-auto mb-8">
-            <h1 className="text-4xl font-semibold text-white mb-2">
+          <div className="flex-gap-xs">
+            <h1 className="text-white">
               {species.preferredCommonName || species.name}
             </h1>
-            <p className="text-2xl text-gray-400 italic mb-4">{species.name}</p>
-            
-            <div className="flex gap-4 mb-4 text-sm">
+            <p className="text-2xl text-gray-400 italic">{species.name}</p>
+
+            <div className="flex gap-4 text-sm">
               <span className="bg-green-600 text-white px-3 py-1 rounded-full">
                 {(species.observationsCount || 0).toLocaleString()} observations
               </span>
@@ -113,22 +117,22 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
               )}
             </div>
           </div>
-
-          {/* Photo Gallery */}
-          {galleryPhotos.length > 0 && (
-            <div className="mb-8">
-              <MasonryPhotoGallery photos={galleryPhotos} currentSpeciesSlug={slug} />
-            </div>
-          )}
         </div>
       </div>
 
+      {/* Photo Gallery */}
+      {galleryPhotos.length > 0 && (
+        <div className="section bg-dark px-4 pt-0">
+          <MasonryPhotoGallery photos={galleryPhotos} currentSpeciesSlug={slug} />
+        </div>
+      )}
+
       {/* Light section for content */}
-      <div className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="section bg-light">
+        <div className="container-sm">
           {/* Taxonomy */}
           <div className="section-card">
-            <h2 className="text-xl font-semibold mb-3">Taxonomy</h2>
+            <h2 className="">Taxonomy</h2>
             <div className="text-sm text-gray-600 flex flex-wrap gap-1">
               {species.kingdom && <><span className="font-medium">Kingdom:</span> <span>{species.kingdom}</span> <span className="mx-1">›</span></>}
               {species.phylum && <><span className="font-medium">Phylum:</span> <span>{species.phylum}</span> <span className="mx-1">›</span></>}
@@ -141,16 +145,16 @@ export function SpeciesGallery({ species, slug }: SpeciesGalleryProps) {
 
           {/* About Section */}
           {species.wikipediaSummary && (
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-3">About</h2>
-              <div 
+            <div className="section-card">
+              <h2 className="">About</h2>
+              <div
                 className="text-gray-700 leading-relaxed prose prose-sm max-w-none"
                 dangerouslySetInnerHTML={{ __html: species.wikipediaSummary }}
               />
             </div>
           )}
-        </div>
       </div>
+        </div>
     </>
   );
 }

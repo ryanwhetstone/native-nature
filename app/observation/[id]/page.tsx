@@ -17,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  
+
   const observation = await db.query.observations.findFirst({
     where: eq(observations.id, parseInt(id)),
     with: {
@@ -34,7 +34,7 @@ export async function generateMetadata({
 
   const speciesName = observation.species.preferredCommonName || observation.species.name;
   const userName = observation.user.publicName || observation.user.name || 'Anonymous';
-  
+
   return {
     title: `${speciesName} Observation | Native Nature`,
     description: `${speciesName} observed by ${userName} on ${new Date(observation.observedAt).toLocaleDateString()}`,
@@ -66,54 +66,50 @@ export default async function ObservationDetailPage({
   const isOwner = session?.user && observation.userId === session.user.id;
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       {/* Dark section for header and photos */}
-      <div className="bg-slate-900 py-8">
-        <div className="w-full px-4">
+      <div className="section bg-dark px-4">
+        <div className="container-md">
           {/* Header */}
-          <div className="max-w-7xl mx-auto mb-8">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-3xl font-semibold text-white">
-                  {observation.species.preferredCommonName || observation.species.name}
-                </h1>
-                {observation.species.preferredCommonName && (
-                  <p className="text-gray-400 italic mt-2 text-lg">
-                    {observation.species.name}
-                  </p>
-                )}
-                <div className="flex items-center gap-6 mt-6 text-sm text-gray-300">
-                  <div className="flex items-center">
-                    <span className="mr-2">👤</span>
-                    <span>Observed by{" "}
-                      <Link 
-                        href={`/user/${observation.user.id}/profile`}
-                        className="text-blue-400 hover:text-blue-300 transition-colors"
-                      >
-                        {observation.user.publicName || observation.user.name || 'Anonymous'}
-                      </Link>
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="mr-2">📅</span>
-                    <span>{new Date(observation.observedAt).toLocaleDateString()}</span>
-                  </div>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-gap-xs">
+              <h1 className="text-white">
+                {observation.species.preferredCommonName || observation.species.name}
+              </h1>
+              {observation.species.preferredCommonName && (
+                <p className="text-gray-400 italic text-lg">
+                  {observation.species.name}
+                </p>
+              )}
+              <div className="flex items-center gap-6 text-sm text-gray-300">
+                <div className="flex items-center">
+                  <span className="mr-2">👤</span>
+                  <span>Observed by{" "}
+                    <Link
+                      href={`/user/${observation.user.id}/profile`}
+                      className="text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                      {observation.user.publicName || observation.user.name || 'Anonymous'}
+                    </Link>
+                  </span>
                 </div>
-                <div className="mt-4">
-                  <Link
-                    href={getSpeciesUrl(observation.species.slug, observation.species.name, observation.species.preferredCommonName)}
-                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
-                  >
-                    <span className="mr-2">🔍</span>
-                    View Species Details
-                  </Link>
+                <div className="flex items-center">
+                  <span className="mr-2">📅</span>
+                  <span>{new Date(observation.observedAt).toLocaleDateString()}</span>
                 </div>
-                {observation.description && (
-                  <div className="mt-6 text-white">
-                    <p className="whitespace-pre-wrap text-white">{observation.description}</p>
-                  </div>
-                )}
               </div>
+              {observation.description && (
+                  <p className="mt-3 sm:mt-4 text-white">{observation.description}</p>
+              )}
+            </div>
+            <div className="flex-shrink-0 flex gap-2">
+              <Link
+                href={getSpeciesUrl(observation.species.slug, observation.species.name, observation.species.preferredCommonName)}
+                className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
+              >
+                <span className="mr-2">🔍</span>
+                View Species Details
+              </Link>
               {isOwner && (
                 <div className="flex-shrink-0 flex gap-2">
                   <Link
@@ -127,60 +123,60 @@ export default async function ObservationDetailPage({
               )}
             </div>
           </div>
-
-          {/* Photos */}
-          {observation.pictures.length > 0 && (
-            <div className="mb-8">
-              <MasonryPhotoGallery 
-                photos={observation.pictures.map(pic => ({
-                  ...pic,
-                  observation: {
-                    id: observation.id,
-                    observedAt: observation.observedAt,
-                    user: {
-                      publicName: observation.user.publicName,
-                      name: observation.user.name,
-                    },
-                  },
-                  species: observation.species,
-                }))}
-                columns={{ default: 1, md: 2, lg: 3 }}
-                currentObservationId={observation.id}
-              />
-            </div>
-          )}
         </div>
-      </div>
+        </div>
+        {/* Photos */}
+        {observation.pictures.length > 0 && (
+          <div className="section bg-dark px-4 pt-0">
+
+            <MasonryPhotoGallery
+              photos={observation.pictures.map(pic => ({
+                ...pic,
+                observation: {
+                  id: observation.id,
+                  observedAt: observation.observedAt,
+                  user: {
+                    publicName: observation.user.publicName,
+                    name: observation.user.name,
+                  },
+                },
+                species: observation.species,
+              }))}
+              columns={{ default: 1, md: 2, lg: 3 }}
+              currentObservationId={observation.id}
+            />
+            </div>
+        )}
 
       {/* Light section for location */}
-      <div className="py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="section bg-light">
+        <div className="container-sm">
           {/* Location */}
           <div className="section-card">
-          <div className="flex items-baseline justify-between mb-4">
-            <h2 className="text-xl font-semibold mr-8">Location</h2>
-            {(observation.city || observation.region || observation.country) && (
-              <p className="text-muted">
-                {[observation.city, observation.region, observation.country].filter(Boolean).join(', ')}
-              </p>
-            )}
+            <div className="flex items-baseline justify-between mb-4">
+              <h2 className="text-xl font-semibold mr-8">Location</h2>
+              {(observation.city || observation.region || observation.country) && (
+                <p className="text-muted">
+                  {[observation.city, observation.region, observation.country].filter(Boolean).join(', ')}
+                </p>
+              )}
               <p>
                 <span className="text-gray-600 w-32 flex-shrink-0">Coordinates:</span>
-              <span className="text-muted">
-                {parseFloat(observation.latitude).toFixed(6)}, {parseFloat(observation.longitude).toFixed(6)}
-              </span>
+                <span className="text-muted">
+                  {parseFloat(observation.latitude).toFixed(6)}, {parseFloat(observation.longitude).toFixed(6)}
+                </span>
               </p>
 
+            </div>
+
+            {/* Map */}
+            <div className="">
+              <ObservationMap
+                longitude={parseFloat(observation.longitude)}
+                latitude={parseFloat(observation.latitude)}
+              />
+            </div>
           </div>
-          
-          {/* Map */}
-          <div className="mt-4">
-            <ObservationMap 
-              longitude={parseFloat(observation.longitude)}
-              latitude={parseFloat(observation.latitude)}
-            />
-          </div>
-        </div>
         </div>
       </div>
     </main>

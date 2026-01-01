@@ -7,6 +7,7 @@ import { db } from "./db";
 import { users, accounts, sessions, verificationTokens } from "./db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 
 declare module "next-auth" {
   interface User {
@@ -19,6 +20,8 @@ declare module "next-auth" {
       name?: string | null;
       image?: string | null;
       role?: string;
+      isImpersonating?: boolean;
+      realAdminId?: string;
     };
   }
 }
@@ -99,6 +102,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, user }) {
       if (user && session.user) {
         session.user.id = user.id;
+        
+        // Check for impersonation cookie
+        const cookieStore = await cookies();
+        const impersonatingUserId = cookieStore.get('impersonating')?.value;
+        
         // Fetch the role from the database
         const dbUser = await db.query.users.findFirst({
           where: eq(users.id, user.id),
@@ -106,7 +114,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: true,
           },
         });
-        session.user.role = dbUser?.role || 'user';
+        
+        // If admin is impersonating another user
+        if (impersonatingUserId && dbUser?.role === 'admin') {
+          const impersonatedUser = await db.query.users.findFirst({
+            where: eq(users.id, impersonatingUserId),
+          });
+          
+          if (impersonatedUser) {
+            session.user.id = impersonatedUser.id;
+            session.user.email = impersonatedUser.email;
+            session.user.name = impersonatedUser.name;
+            session.user.image = impersonatedUser.image;
+            session.user.role = impersonatedUser.role || 'user';
+            session.user.isImpersonating = true;
+            session.user.realAdminId = user.id;
+          }
+        } else {
+          session.user.role = dbUser?.role || 'user';
+        }
       }
       return session;
     },

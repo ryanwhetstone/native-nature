@@ -35,10 +35,23 @@ export default async function ObservationsPage() {
           >
             ← Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-semibold text-gray-900">My Observations</h1>
-          <p className="mt-2 text-gray-600">
-            {userObservations.length} {userObservations.length === 1 ? 'observation' : 'observations'} recorded
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-semibold text-gray-900">My Observations</h1>
+              <p className="mt-2 text-gray-600">
+                {userObservations.length} {userObservations.length === 1 ? 'observation' : 'observations'} recorded
+              </p>
+            </div>
+            <Link
+              href="/account/observations/list"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              List View
+            </Link>
+          </div>
         </div>
 
         {/* Observations Grid */}

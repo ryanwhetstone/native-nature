@@ -3,5 +3,9 @@
 }
 
 .bg-light{
-    @apply bg-gray-50;
+    @apply bg-slate-50;
 }  
+
+.bg-gray-md{
+    @apply bg-slate-200;
+}

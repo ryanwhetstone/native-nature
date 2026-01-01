@@ -89,8 +89,8 @@ export async function Footer() {
     }));
 
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="section bg-dark text-gray-300">
+      <div className="container-md">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Column 1: About */}
           <div>
@@ -164,8 +164,8 @@ export async function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Native Nature. All rights reserved.</p>
+        <div className="mt-12 pt-8 border-t border-gray-800 text-center">
+          <p className="text-gray-300 text-sm">&copy; {new Date().getFullYear()} Native Nature. All rights reserved.</p>
         </div>
       </div>
     </footer>

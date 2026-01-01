@@ -9,6 +9,7 @@ import { getSpeciesUrl } from "@/lib/species-url";
 import { getObservationUrl } from "@/lib/observation-url";
 import { getProjectUrl } from "@/lib/project-url";
 import { Metadata } from "next";
+import { UserProfileHeader } from "../components/UserProfileHeader";
 
 export async function generateMetadata({
   params,
@@ -74,6 +75,11 @@ export default async function UserProfilePage({
     where: eq(conservationProjects.userId, id),
     with: {
       pictures: true,
+      updates: {
+        with: {
+          pictures: true,
+        },
+      },
     },
     orderBy: [desc(conservationProjects.createdAt)],
   });
@@ -94,92 +100,152 @@ export default async function UserProfilePage({
     }))
   );
 
+  // Get project photos (main project photos + update photos)
+  const projectPhotos = userProjects.flatMap((proj) => {
+    // Get main project photos
+    const mainPhotos = proj.pictures.map((pic) => ({
+      id: `project-${pic.id}`,
+      imageUrl: pic.imageUrl,
+      caption: pic.caption,
+      createdAt: pic.createdAt,
+      observation: {
+        id: proj.id,
+        observedAt: proj.createdAt,
+        user: {
+          publicName: user.publicName,
+          name: user.name,
+        },
+      },
+      species: {
+        name: proj.title,
+        preferredCommonName: null,
+        slug: '',
+      },
+      projectId: proj.id,
+      projectTitle: proj.title,
+    }));
+
+    // Get update photos
+    const updatePhotos = proj.updates?.flatMap((update) =>
+      update.pictures.map((pic) => ({
+        id: `project-update-${pic.id}`,
+        imageUrl: pic.imageUrl,
+        caption: pic.caption,
+        createdAt: pic.createdAt,
+        observation: {
+          id: proj.id,
+          observedAt: update.createdAt,
+          user: {
+            publicName: user.publicName,
+            name: user.name,
+          },
+        },
+        species: {
+          name: proj.title,
+          preferredCommonName: null,
+          slug: '',
+        },
+        projectId: proj.id,
+        projectTitle: proj.title,
+      }))
+    ) || [];
+
+    return [...mainPhotos, ...updatePhotos];
+  });
+
+  // Get species photos (favorited species with default photos)
+  const speciesPhotos = userFavorites
+    .filter((fav) => fav.species.defaultPhotoUrl)
+    .map((fav) => ({
+      id: `species-fav-${fav.id}`,
+      imageUrl: fav.species.defaultPhotoUrl!,
+      caption: fav.species.defaultPhotoAttribution || null,
+      createdAt: fav.createdAt,
+      species: {
+        name: fav.species.name,
+        preferredCommonName: fav.species.preferredCommonName,
+        slug: fav.species.slug,
+      },
+    }));
+
+  // Combine all photos, sort by date, and take first 12
+  const allPhotosForGallery = [...observationPhotos, ...projectPhotos, ...speciesPhotos]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 12);
+
+  // Calculate total photo count (observation + project + project update photos)
+  const projectPhotosCount = userProjects.reduce((count, proj) => {
+    const mainPhotosCount = proj.pictures.length;
+    const updatePhotosCount = proj.updates?.reduce((uCount, update) => uCount + update.pictures.length, 0) || 0;
+    return count + mainPhotosCount + updatePhotosCount;
+  }, 0);
+  const totalPhotosCount = observationPhotos.length + projectPhotosCount;
+
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Dark section for profile and photos */}
-      <div className="bg-slate-900 py-8">
-        <div className="w-full px-4">
-          {/* Profile Header */}
-          <div className="max-w-7xl mx-auto p-8">
-            <div className="flex items-center justify-start gap-6">
-              {user.image && (
-                <div className="relative w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
-                  <Image
-                    src={user.image}
-                    alt={displayName}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div className="">
-                <h1 className="text-3xl font-semibold text-white mb-2">
-                  {displayName}
-                </h1>
-                {user.bio && (
-                  <p className="text-white mb-4">{user.bio}</p>
-                )}
-                <div className="flex gap-6 text-sm text-white">
-                  <div>
-                    <span className="font-semibold text-white">
-                      {userObservations.length}
-                    </span>{" "}
-                    Observations
-                  </div>
-                  <div>
-                    <span className="font-semibold text-white">
-                      {observationPhotos.length}
-                      </span>{" "}
-                    Photos
-                  </div>
-                  <div>
-                    <span className="font-semibold text-white">
-                      {userProjects.length}
-                    </span>{" "}
-                    Projects
-                  </div>
-                  <div>
-                    <span className="font-semibold text-white">
-                      {userFavorites.length}
-                    </span>{" "}
-                    Favorites
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <main className="min-h-screen">
+      <UserProfileHeader
+        userId={id}
+        displayName={displayName}
+        userImage={user.image}
+        userBio={user.bio}
+        observationsCount={userObservations.length}
+        photosCount={totalPhotosCount}
+        projectsCount={userProjects.length}
+        favoritesCount={userFavorites.length}
+      />
+      <div className="container-full bg-dark px-4 pt-0">
 
-          {/* Photo Gallery */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-white mb-4">Observation Photos</h2>
-            {observationPhotos.length > 0 ? (
-              <MasonryPhotoGallery photos={observationPhotos} />
-            ) : (
-              <div className="empty-state">
-                <div className="text-6xl mb-4">📷</div>
-                <p className="text-muted">No observation photos yet</p>
-              </div>
+        {/* Photo Gallery */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="heading-3 text-white">Recent Photos</h2>
+            {totalPhotosCount > 12 && (
+              <Link
+                href={`/user/${id}/photos`}
+                className="text-white hover:text-gray-300 text-sm font-medium"
+              >
+                View All ({totalPhotosCount})
+              </Link>
             )}
           </div>
+          {allPhotosForGallery.length > 0 ? (
+            <MasonryPhotoGallery photos={allPhotosForGallery} showTypeBadges={true} />
+          ) : (
+            <div className="empty-state">
+              <div className="text-6xl mb-4">📷</div>
+              <p className="text-muted">No photos yet</p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Light section for observations and favorites */}
-      <div className="py-8">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
+      <div className="section bg-light">
+        <div className="container-lg">
 
-        {/* Observations List */}
-        <div className="mb-8 max-w-7xl mx-auto">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Recent Observations</h2>
+          {/* Observations List */}
+          <div className="flex items-center justify-between">
+            <h2 className="heading-3">Recent Observations</h2>
+            <div className="flex items-center gap-3">
+              {userObservations.length > 4 && (
+                <Link
+                  href={`/user/${id}/observations`}
+                  className="text-green-600 hover:text-green-700 text-sm font-medium"
+                >
+                  View All ({userObservations.length})
+                </Link>
+              )}
+            </div>
+          </div>
           {userObservations.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userObservations.slice(0, 6).map((observation) => (
+            <div className="grid-4">
+              {userObservations.slice(0, 4).map((observation) => (
                 <Link
                   key={observation.id}
                   href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
+                  className="card-hover group"
                 >
                   <div className="relative aspect-video bg-gray-100">
                     {observation.pictures && observation.pictures.length > 0 ? (
@@ -203,10 +269,10 @@ export default async function UserProfilePage({
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-green-600 mb-1">
+                    <h3 className="heading-4 group-hover:text-green-600 mb-1">
                       {observation.species.preferredCommonName || observation.species.name}
                     </h3>
-                    <p className="text-sm text-gray-500 italic mb-2">
+                    <p className="text-small italic mb-2">
                       {observation.species.name}
                     </p>
                     <div className="text-small">
@@ -226,9 +292,11 @@ export default async function UserProfilePage({
             </div>
           )}
         </div>
+      </div>
+      <div className="section bg-light">
+        <div className="container-lg">
 
-        {/* Conservation Projects - Moved above Favorites */}
-        <div className="mb-8 max-w-7xl mx-auto">
+          {/* Conservation Projects - Moved above Favorites */}
           <div className="flex items-center justify-between mb-4">
             <h2 className="heading-3">Conservation Projects</h2>
             {userProjects.length > 6 && (
@@ -241,7 +309,7 @@ export default async function UserProfilePage({
             )}
           </div>
           {userProjects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid-3">
               {userProjects.slice(0, 6).map((project) => {
                 const fundingPercentage = (project.currentFunding / project.fundingGoal) * 100;
                 const mainImage = project.pictures[0]?.imageUrl;
@@ -250,7 +318,7 @@ export default async function UserProfilePage({
                   <Link
                     key={project.id}
                     href={getProjectUrl(project.id, project.title)}
-                    className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
+                    className="card-hover group"
                   >
                     {/* Project Image */}
                     {mainImage ? (
@@ -271,25 +339,24 @@ export default async function UserProfilePage({
                     {/* Project Info */}
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-green-600 line-clamp-2">
+                        <h3 className="heading-4 group-hover:text-green-600 line-clamp-2">
                           {project.title}
                         </h3>
-                        <span className={`px-2 py-1 text-xs rounded-full flex-shrink-0 ml-2 ${
-                          project.status === 'active' ? 'bg-green-100 text-green-800' :
-                          project.status === 'funded' ? 'bg-blue-100 text-blue-800' :
-                          project.status === 'completed' ? 'bg-purple-100 text-purple-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`px-2 py-1 text-xs rounded-full flex-shrink-0 ml-2 ${project.status === 'active' ? 'bg-green-100 text-green-800' :
+                            project.status === 'funded' ? 'bg-blue-100 text-blue-800' :
+                              project.status === 'completed' ? 'bg-purple-100 text-purple-800' :
+                                'bg-gray-100 text-gray-800'
+                          }`}>
                           {project.status}
                         </span>
                       </div>
 
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-small mb-4 line-clamp-2">
                         {project.description}
                       </p>
 
                       {/* Location */}
-                      <div className="flex items-center text-sm text-gray-500 mb-4">
+                      <div className="flex items-center text-small text-gray-500 mb-4">
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -324,17 +391,29 @@ export default async function UserProfilePage({
             </div>
           )}
         </div>
+      </div>
+      <div className="section bg-light">
+        <div className="container-lg">
 
-        {/* Favorites */}
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">Favorite Species</h2>
+          {/* Favorites */}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="heading-3">Favorite Species</h2>
+            {userFavorites.length > 5 && (
+              <Link
+                href={`/user/${id}/favorites`}
+                className="text-green-600 hover:text-green-700 text-sm font-medium"
+              >
+                View All ({userFavorites.length})
+              </Link>
+            )}
+          </div>
           {userFavorites.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {userFavorites.map((favorite) => (
+              {userFavorites.slice(0, 5).map((favorite) => (
                 <Link
                   key={favorite.id}
                   href={getSpeciesUrl(favorite.species.slug, favorite.species.name, favorite.species.preferredCommonName)}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
+                  className="card-hover group"
                 >
                   <div className="relative aspect-square bg-gray-100">
                     {favorite.species.defaultPhotoUrl ? (
@@ -351,7 +430,7 @@ export default async function UserProfilePage({
                     )}
                   </div>
                   <div className="p-3">
-                    <p className="font-medium text-sm text-gray-900 group-hover:text-green-600 line-clamp-2">
+                    <p className="font-medium text-small group-hover:text-green-600 line-clamp-2">
                       {favorite.species.preferredCommonName || favorite.species.name}
                     </p>
                   </div>
@@ -365,7 +444,6 @@ export default async function UserProfilePage({
             </div>
           )}
         </div>
-      </div>
       </div>
     </main>
   );

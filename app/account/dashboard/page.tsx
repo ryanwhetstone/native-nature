@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { users, favorites, observations, conservationProjects } from "@/db/schema";
-import { eq, count, desc } from "drizzle-orm";
+import { users, favorites, observations, conservationProjects, observationPictures, projectPictures, projectUpdatePictures, projectUpdates } from "@/db/schema";
+import { eq, count, desc, sql } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
 import { getSpeciesUrl } from "@/lib/species-url";
@@ -55,6 +55,36 @@ export default async function DashboardPage() {
   
   const projectsCount = projectsCountResult[0]?.count || 0;
 
+  // Get unique species count from user's observations
+  const speciesCountResult = await db
+    .selectDistinct({ speciesId: observations.speciesId })
+    .from(observations)
+    .where(eq(observations.userId, session.user.id));
+  
+  const speciesCount = speciesCountResult.length;
+
+  // Count all photos from user's observations and projects
+  const [obsPhotosCount] = await db
+    .select({ count: count() })
+    .from(observationPictures)
+    .innerJoin(observations, eq(observationPictures.observationId, observations.id))
+    .where(eq(observations.userId, session.user.id));
+
+  const [projPhotosCount] = await db
+    .select({ count: count() })
+    .from(projectPictures)
+    .innerJoin(conservationProjects, eq(projectPictures.projectId, conservationProjects.id))
+    .where(eq(conservationProjects.userId, session.user.id));
+
+  const [updatePhotosCount] = await db
+    .select({ count: count() })
+    .from(projectUpdatePictures)
+    .innerJoin(projectUpdates, eq(projectUpdatePictures.updateId, projectUpdates.id))
+    .innerJoin(conservationProjects, eq(projectUpdates.projectId, conservationProjects.id))
+    .where(eq(conservationProjects.userId, session.user.id));
+
+  const totalPhotosCount = (obsPhotosCount?.count || 0) + (projPhotosCount?.count || 0) + (updatePhotosCount?.count || 0);
+
   // Fetch user's favorite species (limited to 6 for display)
   const userFavorites = await db.query.favorites.findMany({
     where: eq(favorites.userId, session.user.id),
@@ -99,27 +129,17 @@ export default async function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
+          <Link href="/account/projects" className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-small">Species Viewed</p>
-                <p className="text-3xl font-semibold text-gray-900">0</p>
+                <p className="text-small">Conservation Projects</p>
+                <p className="text-3xl font-semibold text-gray-900">{projectsCount}</p>
               </div>
-              <div className="text-4xl">🔍</div>
+              <div className="text-4xl">🌍</div>
             </div>
-          </div>
+          </Link>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-small">Favorites</p>
-                <p className="text-3xl font-semibold text-gray-900">{favoritesCount}</p>
-              </div>
-              <div className="text-4xl">⭐</div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow p-6">
+          <Link href="/account/observations" className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-small">Observations</p>
@@ -127,27 +147,27 @@ export default async function DashboardPage() {
               </div>
               <div className="text-4xl">📍</div>
             </div>
-          </div>
+          </Link>
+
+          <Link href="/account/favorites" className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-small">Favorited Species</p>
+                <p className="text-3xl font-semibold text-gray-900">{speciesCount}</p>
+              </div>
+              <div className="text-4xl">🦋</div>
+            </div>
+          </Link>
 
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-small">States Explored</p>
-                <p className="text-3xl font-semibold text-gray-900">0</p>
+                <p className="text-small">Photos</p>
+                <p className="text-3xl font-semibold text-gray-900">{totalPhotosCount}</p>
               </div>
-              <div className="text-4xl">🗺️</div>
+              <div className="text-4xl">📷</div>
             </div>
           </div>
-
-          <Link href="/account/projects" className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-small">Projects</p>
-                <p className="text-3xl font-semibold text-gray-900">{projectsCount}</p>
-              </div>
-              <div className="text-4xl">🌍</div>
-            </div>
-          </Link>
         </div>
 
         {/* Quick Actions */}
@@ -156,17 +176,6 @@ export default async function DashboardPage() {
             <h2 className="heading-4">Quick Actions</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-            <Link
-              href="/"
-              className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-            >
-              <div className="text-3xl">🗺️</div>
-              <div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-green-600">Explore States</h3>
-                <p className="text-small">Browse species by state</p>
-              </div>
-            </Link>
-
             <Link
               href={`/user/${session.user.id}/profile`}
               className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
@@ -177,18 +186,6 @@ export default async function DashboardPage() {
                 <p className="text-small">See your public profile</p>
               </div>
             </Link>
-
-            <Link
-              href="/account/projects"
-              className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
-            >
-              <div className="text-3xl">🌍</div>
-              <div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-green-600">My Projects</h3>
-                <p className="text-small">Conservation initiatives</p>
-              </div>
-            </Link>
-
             <Link
               href="/account/settings"
               className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors group"
@@ -424,51 +421,6 @@ export default async function DashboardPage() {
                 </Link>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow mb-8">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="heading-4">Recent Activity</h2>
-          </div>
-          <div className="p-6">
-            <div className="text-center py-12 text-gray-500">
-              <div className="text-5xl mb-4">🌱</div>
-              <p className="text-lg font-medium">No activity yet</p>
-              <p className="mt-2">Start exploring species to see your activity here!</p>
-              <Link
-                href="/"
-                className="mt-6 inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-colors"
-              >
-                Start Exploring
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Featured Categories */}
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="heading-4">Popular Categories</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 p-6">
-            {[
-              { name: "Plants", emoji: "🌿" },
-              { name: "Birds", emoji: "🦅" },
-              { name: "Mammals", emoji: "🦌" },
-              { name: "Reptiles", emoji: "🦎" },
-              { name: "Insects", emoji: "🐛" },
-              { name: "Fungi", emoji: "🍄" },
-            ].map((category) => (
-              <div
-                key={category.name}
-                className="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-              >
-                <div className="text-4xl mb-2">{category.emoji}</div>
-                <p className="text-sm font-medium text-gray-900">{category.name}</p>
-              </div>
-            ))}
           </div>
         </div>
       </div>

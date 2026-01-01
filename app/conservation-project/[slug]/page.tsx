@@ -18,13 +18,13 @@ import AskQuestionForm from "./AskQuestionForm";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const projectId = parseProjectSlug(slug);
-  
+
   if (!projectId) {
     return {
       title: 'Project Not Found | Native Nature',
     };
   }
-  
+
   const project = await db.query.conservationProjects.findFirst({
     where: eq(conservationProjects.id, projectId),
   });
@@ -150,7 +150,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
 
   const allPhotos: GalleryPhoto[] = [
     // Map update pictures to gallery format
-    ...updates.flatMap(update => 
+    ...updates.flatMap(update =>
       update.pictures.map(pic => ({
         id: `update-${pic.id}`,
         imageUrl: pic.imageUrl,
@@ -203,7 +203,8 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
     <main className="min-h-screen bg-light">
       <ThankYouModal />
       {/* Dark section for header and photos */}
-      <div className="container-full bg-dark pt-3 sm:pt-4 px-4">
+      <div className="section bg-dark pt-3 sm:pt-4 px-4">
+        <div className="container-full">
           {/* Header */}
           <div className="max-w-7xl mx-auto flex-gap-md">
             <div className="flex justify-end">
@@ -219,12 +220,11 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center mb-8">
                   <div className="flex items-center gap-3">
-                    <span className={`px-3 py-1 text-sm rounded-full ${
-                      project.status === 'active' ? 'bg-green-600 text-white' :
+                    <span className={`px-3 py-1 text-sm rounded-full ${project.status === 'active' ? 'bg-green-600 text-white' :
                       project.status === 'funded' ? 'bg-blue-600 text-white' :
-                      project.status === 'completed' ? 'bg-emerald-600 text-white' :
-                      'bg-gray-600 text-white'
-                    }`}>
+                        project.status === 'completed' ? 'bg-emerald-600 text-white' :
+                          'bg-gray-600 text-white'
+                      }`}>
                       {project.status.charAt(0).toUpperCase() + project.status.slice(1)} Conservation Project
                     </span>
                   </div>
@@ -234,7 +234,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                     <div className="flex items-center">
                       <span className="mr-2">👤</span>
                       <span>Created by{" "}
-                        <Link 
+                        <Link
                           href={`/user/${project.user.id}/profile`}
                           className="text-blue-400 hover:text-blue-300 transition-colors"
                         >
@@ -270,7 +270,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           {/* Photos Gallery */}
           {allPhotos.length > 0 && (
             <div id="photo-gallery">
-              <MasonryPhotoGallery 
+              <MasonryPhotoGallery
                 photos={allPhotos as any[]}
                 columns={{ default: 1, md: 2, lg: 3 }}
                 isProjectGallery={true}
@@ -278,10 +278,13 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               />
             </div>
           )}
+        </div>
       </div>
 
+
       {/* Light section for additional details */}
-      <div className="container-sm">
+      <div className="section bg-light">
+        <div className="container-sm">
 
 
           {/* Project Updates Section */}
@@ -295,16 +298,16 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{update.title}</h3>
                         <p className="text-sm text-gray-500 mt-1">
-                          {new Date(update.createdAt).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
+                          {new Date(update.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
                           })}
                         </p>
                       </div>
                     </div>
                     <p className="text-gray-700 whitespace-pre-wrap mb-4">{update.description}</p>
-                    
+
                     {/* Update Pictures */}
                     {update.pictures.length > 0 && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -347,9 +350,9 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                 {fundingPercentage >= 100 ? 'Fully funded' : `${fundingPercentage.toFixed(1)}% funded`}
               </p>
             </div>
-            
+
             {/* Donate Button */}
-            <DonateButton 
+            <DonateButton
               projectId={project.id}
               projectTitle={project.title}
               currentFunding={project.currentFunding}
@@ -373,10 +376,10 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                 </span>
               </p>
             </div>
-            
+
             {/* Map */}
             <div>
-              <ProjectDisplayMap 
+              <ProjectDisplayMap
                 longitude={parseFloat(project.longitude)}
                 latitude={parseFloat(project.latitude)}
               />
@@ -419,11 +422,11 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               <div className="space-y-3">
                 {completedDonations.map((donation) => {
                   let displayName = 'Anonymous Donor';
-                  
+
                   // If donation is tied to a user account, use their public name
                   if (donation.user) {
                     displayName = donation.user.publicName || donation.user.name || 'Anonymous Donor';
-                  } 
+                  }
                   // Otherwise, format the donor name from Stripe (first name + last initial)
                   else if (donation.donorName) {
                     const nameParts = donation.donorName.trim().split(' ');
@@ -435,7 +438,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                       displayName = donation.donorName;
                     }
                   }
-                  
+
                   return (
                     <div key={donation.id} className="py-3 border-b border-gray-100 last:border-0">
                       <div className="flex justify-between items-start mb-1">
@@ -443,7 +446,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                           <div className="flex items-center gap-2">
                             <span className="text-green-600">❤️</span>
                             {donation.user ? (
-                              <Link 
+                              <Link
                                 href={`/user/${donation.user.id}/profile`}
                                 className="text-gray-900 font-medium hover:text-blue-600 transition-colors"
                               >
@@ -454,10 +457,10 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                             )}
                           </div>
                           <p className="text-xs text-gray-500 ml-7 mt-1">
-                            {new Date(donation.completedAt || donation.createdAt).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
+                            {new Date(donation.completedAt || donation.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
                             })}
                           </p>
                         </div>
@@ -488,20 +491,17 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
             </div>
           )}
 
-        {/* Q&A Section */}
-        <div className="section-card">
-          <AskQuestionForm projectId={project.id} />
-
+          {/* Q&A Section */}
           {/* Display answered questions */}
           {questionsWithAnswers.length > 0 && (
-            <div className="">
+            <div className="section-card">
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">Questions & Answers</h2>
               <div className="space-y-6">
                 {questionsWithAnswers.map((qa) => {
-                  const askerName = qa.user 
+                  const askerName = qa.user
                     ? (qa.user.publicName || qa.user.name || 'Anonymous')
                     : (qa.askerName || 'Anonymous');
-                  
+
                   return (
                     <div key={qa.id} className="border-b border-gray-200 last:border-0 pb-6 last:pb-0">
                       {/* Question */}
@@ -512,7 +512,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                             <p className="text-gray-900 font-medium">{qa.question}</p>
                             <p className="text-sm text-gray-500 mt-1">
                               Asked by {qa.user ? (
-                                <Link 
+                                <Link
                                   href={`/user/${qa.user.id}/profile`}
                                   className="text-blue-600 hover:underline"
                                 >
@@ -520,10 +520,10 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                                 </Link>
                               ) : (
                                 <span>{askerName}</span>
-                              )} on {new Date(qa.createdAt).toLocaleDateString('en-US', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
+                              )} on {new Date(qa.createdAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
                               })}
                             </p>
                           </div>
@@ -539,10 +539,10 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
                               <p className="text-gray-900 whitespace-pre-wrap">{qa.response}</p>
                               {qa.respondedAt && (
                                 <p className="text-sm text-gray-600 mt-2">
-                                  Answered by {project.user.publicName || project.user.name} on {new Date(qa.respondedAt).toLocaleDateString('en-US', { 
-                                    year: 'numeric', 
-                                    month: 'long', 
-                                    day: 'numeric' 
+                                  Answered by {project.user.publicName || project.user.name} on {new Date(qa.respondedAt).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
                                   })}
                                 </p>
                               )}
@@ -556,8 +556,12 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
               </div>
             </div>
           )}
-      </div>
+          <div className="section-card">
+            <AskQuestionForm projectId={project.id} />
+
+          </div>
         </div>
+      </div>
     </main>
   );
 }

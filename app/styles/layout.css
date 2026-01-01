@@ -14,22 +14,23 @@
 .flex-gap-md{
   @apply flex flex-col gap-3 sm:gap-4;
 }
-/* Container */
-.container {
-  @apply w-full max-w-6xl mx-auto padding-normal flex-normal;
+/* Sections */
+.section{
+  @apply w-full padding-normal;
 }
+/* Container */
 .container-lg {
-  @apply w-full mx-auto padding-normal flex-normal;
+  @apply w-full mx-auto flex-normal;
   max-width: 1400px;
 }
 .container-md {
-  @apply w-full max-w-6xl mx-auto padding-normal flex-normal;
+  @apply w-full max-w-7xl mx-auto flex-normal;
 }
 .container-sm {
-  @apply w-full max-w-4xl mx-auto padding-normal flex-normal;
+  @apply w-full max-w-4xl mx-auto flex-normal;
 }
 .container-full {
-  @apply w-full padding-normal flex-normal;
+  @apply w-full flex-normal;
 }
 
 /* Section */

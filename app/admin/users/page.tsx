@@ -8,6 +8,7 @@ import { Pagination } from "../components/Pagination";
 import { SearchBar } from "../components/SearchBar";
 import { AdminNav } from "../components/AdminNav";
 import { DeleteUserButton } from "./DeleteUserButton";
+import { ImpersonateButton } from "./ImpersonateButton";
 import { revalidatePath } from "next/cache";
 
 export const metadata = {
@@ -170,6 +171,7 @@ export default async function AdminUsersPage({
                       <Link href={`/admin/users/${user.id}`} className="text-blue-600 hover:text-blue-900">
                         Edit
                       </Link>
+                      <ImpersonateButton userId={user.id} userName={user.publicName || user.name || 'Anonymous'} />
                       <DeleteUserButton
                         userId={user.id}
                         userName={user.publicName || user.name || 'Anonymous'}

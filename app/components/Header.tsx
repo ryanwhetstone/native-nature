@@ -22,7 +22,7 @@ export function Header({ session }: { session: any }) {
 
   return (
     <header className="border-b border-gray-200 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4">
+      <div className="container-md">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <Link href="/" className="flex items-center space-x-2">

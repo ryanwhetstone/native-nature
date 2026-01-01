@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { db } from "@/db";
-import { users, conservationProjects } from "@/db/schema";
+import { users, conservationProjects, observations, favorites } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
 import Image from "next/image";
 import { getProjectUrl } from "@/lib/project-url";
 import { Metadata } from "next";
+import { UserProfileHeader } from "../components/UserProfileHeader";
 
 export async function generateMetadata({
   params,
@@ -52,27 +53,59 @@ export default async function UserProjectsPage({
     where: eq(conservationProjects.userId, id),
     with: {
       pictures: true,
+      updates: {
+        with: {
+          pictures: true,
+        },
+      },
     },
     orderBy: [desc(conservationProjects.createdAt)],
   });
 
+  // Fetch counts for nav
+  const userObservations = await db.query.observations.findMany({
+    where: eq(observations.userId, id),
+    with: {
+      pictures: true,
+    },
+  });
+
+  const userFavorites = await db.query.favorites.findMany({
+    where: eq(favorites.userId, id),
+  });
+
+  const observationPhotos = userObservations.flatMap((obs) => obs.pictures);
+
+  // Calculate total photo count (observation + project + project update photos)
+  const projectPhotosCount = userProjects.reduce((count, proj) => {
+    const mainPhotosCount = proj.pictures?.length || 0;
+    const updatePhotosCount = proj.updates?.reduce((uCount, update) => uCount + (update.pictures?.length || 0), 0) || 0;
+    return count + mainPhotosCount + updatePhotosCount;
+  }, 0);
+  const totalPhotosCount = observationPhotos.length + projectPhotosCount;
+
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link
-            href={`/user/${id}/profile`}
-            className="text-green-600 hover:text-green-700 text-sm mb-2 inline-block"
-          >
-            ← Back to Profile
-          </Link>
-          <h1 className="heading-2">
+    <main className="min-h-screen bg-light">
+      <UserProfileHeader
+        userId={id}
+        displayName={displayName}
+        userImage={user.image}
+        userBio={user.bio}
+        observationsCount={userObservations.length}
+        photosCount={totalPhotosCount}
+        projectsCount={userProjects.length}
+        favoritesCount={userFavorites.length}
+      />
+      <div className="section bg-light">
+
+      <div className="container-lg">
+        <div className="flex-gap-xs">
+          <h1>
             {displayName}&apos;s Conservation Projects
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-muted">
             {userProjects.length} {userProjects.length === 1 ? 'project' : 'projects'} total
           </p>
         </div>
@@ -166,6 +199,7 @@ export default async function UserProjectsPage({
             <p className="text-muted">No conservation projects yet</p>
           </div>
         )}
+      </div>
       </div>
     </main>
   );

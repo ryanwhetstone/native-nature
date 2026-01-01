@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "./providers";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import { ImpersonationBanner } from "./components/ImpersonationBanner";
 import { ToastProvider } from "./components/Toast";
 import { auth } from "@/auth";
 
@@ -30,6 +31,12 @@ export default async function RootLayout({
       <body className="flex flex-col min-h-screen font-sans">
         <AuthProvider>
           <ToastProvider>
+            {session?.user?.isImpersonating && (
+              <ImpersonationBanner 
+                userName={session.user.name || session.user.email || 'User'} 
+                userId={session.user.id}
+              />
+            )}
             <Header session={session} />
             <main className="flex-1">
               {children}
