@@ -25,6 +25,7 @@
     "bcryptjs": "^3.0.3",
     "countrycitystatejson": "^25.8.101",
     "drizzle-orm": "^0.44.7",
+    "gsap": "^3.14.2",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^3.17.0",
     "next": "^15.0.3",

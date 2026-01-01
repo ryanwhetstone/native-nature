@@ -106,7 +106,7 @@ export default async function UserObservationsPage({
           <div className="flex-gap-xs">
             <div className="flex items-center justify-between">
               <div>
-                <h1>{displayName}'s Observations</h1>
+                <h1>{displayName}&apos;s Observations</h1>
                 <p className="text-muted">
                   {userObservations.length} {userObservations.length === 1 ? 'observation' : 'observations'} recorded
                 </p>

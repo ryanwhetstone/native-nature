@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { getObservationUrl } from '@/lib/observation-url';
 import { getProjectUrl } from '@/lib/project-url';
 import { getSpeciesUrl } from '@/lib/species-url';
+import { gsap } from 'gsap';
 
 interface Photo {
   id: number | string;
@@ -53,6 +54,37 @@ export default function MasonryPhotoGallery({
 }: MasonryPhotoGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
+  const photoRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const hasAnimated = useRef<boolean>(false);
+
+  // Animate photos only on initial mount
+  useEffect(() => {
+    if (!hasAnimated.current) {
+      const validRefs = photoRefs.current.filter(ref => ref !== null);
+      
+      if (validRefs.length > 0) {
+        gsap.fromTo(
+          validRefs,
+          {
+            opacity: 0,
+            y: 30,
+            scale: 0.95,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            stagger: 0.05,
+            ease: 'power2.out',
+            clearProps: 'all',
+          }
+        );
+        
+        hasAnimated.current = true;
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (selectedIndex !== null && lightboxRef.current) {
@@ -126,6 +158,7 @@ export default function MasonryPhotoGallery({
           return (
             <button
               key={photo.id}
+              ref={(el) => { photoRefs.current[index] = el; }}
               data-photo-index={index}
               onClick={() => openLightbox(index)}
               className="group relative w-full break-inside-avoid mb-4 rounded-lg overflow-hidden bg-gray-100 cursor-pointer block"

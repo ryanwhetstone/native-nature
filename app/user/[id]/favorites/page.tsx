@@ -105,7 +105,7 @@ export default async function UserFavoritesPage({
 
       <div className="container-lg">
         <div className="flex-gap-xs">
-          <h1>{displayName}'s Favorite Species</h1>
+          <h1>{displayName}&apos;s Favorite Species</h1>
           <p className="text-muted">
             {userFavorites.length} {userFavorites.length === 1 ? 'species' : 'species'}
           </p>

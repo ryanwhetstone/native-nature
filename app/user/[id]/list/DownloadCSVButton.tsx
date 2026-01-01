@@ -1,7 +1,7 @@
 'use client';
 
 interface Observation {
-  id: string;
+  id: number | string;
   observedAt: Date;
   city: string | null;
   region: string | null;
