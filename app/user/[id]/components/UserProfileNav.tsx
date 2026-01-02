@@ -24,6 +24,7 @@ export function UserProfileNav({
         { href: `/user/${userId}/photos`, label: 'Photos', count: photosCount },
         { href: `/user/${userId}/projects`, label: 'Projects', count: projectsCount },
         { href: `/user/${userId}/favorites`, label: 'Favorites', count: favoritesCount },
+        { href: `/user/${userId}/map`, label: 'Map', count: null },
     ];
 
     return (
