@@ -30,6 +30,7 @@ export default async function UserMapPage({
     where: eq(observations.userId, id),
     with: {
       species: true,
+      pictures: true,
     },
     orderBy: [desc(observations.observedAt)],
     limit: 1000,
@@ -38,6 +39,9 @@ export default async function UserMapPage({
   // Get user's projects with locations
   const userProjects = await db.query.conservationProjects.findMany({
     where: eq(conservationProjects.userId, id),
+    with: {
+      pictures: true,
+    },
   });
 
   // Filter for observations with valid locations
@@ -83,7 +87,7 @@ export default async function UserMapPage({
                   latitude: parseFloat(obs.latitude),
                   longitude: parseFloat(obs.longitude),
                   observedAt: obs.observedAt,
-                  imageUrl: obs.imageUrl,
+                  imageUrl: obs.pictures?.[0]?.imageUrl || null,
                   speciesName: obs.species?.name || 'Unknown',
                   speciesCommonName: obs.species?.preferredCommonName || null,
                   speciesSlug: obs.species?.slug || null,
@@ -93,7 +97,7 @@ export default async function UserMapPage({
                   latitude: parseFloat(proj.latitude),
                   longitude: parseFloat(proj.longitude),
                   title: proj.title,
-                  imageUrl: proj.imageUrl,
+                  imageUrl: proj.pictures?.[0]?.imageUrl || null,
                 }))}
             />
           </div>

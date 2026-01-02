@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getObservationUrl } from '@/lib/observation-url';
 import { getProjectUrl } from '@/lib/project-url';
 
@@ -205,11 +206,14 @@ function UserMapView({ observations, projects }: UserMapViewProps) {
                 {(selectedItem.data as Observation).speciesCommonName || (selectedItem.data as Observation).speciesName}
               </h3>
               {(selectedItem.data as Observation).imageUrl && (
-                <img 
-                  src={(selectedItem.data as Observation).imageUrl!} 
-                  alt="Observation" 
-                  className="w-full h-32 object-cover rounded mb-2"
-                />
+                <div className="relative w-full h-32 mb-2">
+                  <Image 
+                    src={(selectedItem.data as Observation).imageUrl!} 
+                    alt="Observation" 
+                    fill
+                    className="object-cover rounded"
+                  />
+                </div>
               )}
               <p className="text-sm text-gray-600 mb-3">
                 {new Date((selectedItem.data as Observation).observedAt).toLocaleDateString()}
@@ -234,11 +238,14 @@ function UserMapView({ observations, projects }: UserMapViewProps) {
                 {(selectedItem.data as Project).title}
               </h3>
               {(selectedItem.data as Project).imageUrl && (
-                <img 
-                  src={(selectedItem.data as Project).imageUrl!} 
-                  alt="Project" 
-                  className="w-full h-32 object-cover rounded mb-2"
-                />
+                <div className="relative w-full h-32 mb-2">
+                  <Image 
+                    src={(selectedItem.data as Project).imageUrl!} 
+                    alt="Project" 
+                    fill
+                    className="object-cover rounded"
+                  />
+                </div>
               )}
               <Link
                 href={getProjectUrl((selectedItem.data as Project).id, (selectedItem.data as Project).title)}
