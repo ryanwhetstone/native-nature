@@ -1,8 +1,9 @@
 import { db } from "@/db";
-import { observations, conservationProjects, users, favorites } from "@/db/schema";
+import { observations, conservationProjects, users } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { UserProfileHeader } from "../components/UserProfileHeader";
+import { getUserCounts } from "../getUserCounts";
 import UserMapView from "./UserMapView";
 
 export default async function UserMapPage({
@@ -21,6 +22,9 @@ export default async function UserMapPage({
     notFound();
   }
 
+  // Get counts using shared helper
+  const counts = await getUserCounts(id);
+
   // Get user's observations with locations
   const userObservations = await db.query.observations.findMany({
     where: eq(observations.userId, id),
@@ -34,20 +38,17 @@ export default async function UserMapPage({
   // Get user's projects with locations
   const userProjects = await db.query.conservationProjects.findMany({
     where: eq(conservationProjects.userId, id),
-    with: {
-      pictures: true,
-    },
   });
 
-  // Get user's favorites
-  const userFavorites = await db.query.favorites.findMany({
-    where: eq(favorites.userId, id),
-  });
+  // Filter for observations with valid locations
+  const observationsWithLocation = userObservations.filter(
+    (obs) => obs.latitude !== null && obs.longitude !== null
+  );
 
-  // Count photos from observations
-  const userPhotosCount = userObservations.reduce((count, obs) => {
-    return count + (obs.pictures?.length || 0);
-  }, 0);
+  // Filter for projects with valid locations
+  const projectsWithLocation = userProjects.filter(
+    (project) => project.latitude !== null && project.longitude !== null
+  );
 
   return (
     <main className="min-h-screen">
@@ -57,10 +58,10 @@ export default async function UserMapPage({
         displayName={user.publicName || user.name || "Anonymous"}
         userImage={user.image}
         userBio={user.bio}
-        observationsCount={userObservations.length}
-        photosCount={userPhotosCount}
-        projectsCount={userProjects.length}
-        favoritesCount={userFavorites.length}
+        observationsCount={counts.observationsCount}
+        photosCount={counts.photosCount}
+        projectsCount={counts.projectsCount}
+        favoritesCount={counts.favoritesCount}
     />
 
       {/* Light section for map */}
@@ -72,14 +73,12 @@ export default async function UserMapPage({
                 {user.publicName || user.name || "User"}&apos;s Map
               </h2>
               <p className="text-muted">
-                {userObservations.length} observations · {userProjects.length} projects
+                {observationsWithLocation.length} observations · {projectsWithLocation.length} projects
               </p>
             </div>
             
             <UserMapView 
-              observations={userObservations
-                .filter(obs => obs.latitude && obs.longitude)
-                .map(obs => ({
+              observations={observationsWithLocation.map(obs => ({
                   id: obs.id,
                   latitude: parseFloat(obs.latitude),
                   longitude: parseFloat(obs.longitude),
@@ -89,9 +88,7 @@ export default async function UserMapPage({
                   speciesCommonName: obs.species?.preferredCommonName || null,
                   speciesSlug: obs.species?.slug || null,
                 }))}
-              projects={userProjects
-                .filter(proj => proj.latitude && proj.longitude)
-                .map(proj => ({
+              projects={projectsWithLocation.map(proj => ({
                   id: proj.id,
                   latitude: parseFloat(proj.latitude),
                   longitude: parseFloat(proj.longitude),
