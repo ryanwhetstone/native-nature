@@ -153,7 +153,7 @@ export default async function ObservationDetailPage({
         <div className="container-sm">
           {/* Location */}
           <div className="section-card">
-            <div className="flex items-baseline justify-between mb-4">
+            <div className="flex items-baseline justify-between">
               <h2 className="text-xl font-semibold mr-8">Location</h2>
               {(observation.city || observation.region || observation.country) && (
                 <p className="text-muted">

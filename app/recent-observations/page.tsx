@@ -12,7 +12,16 @@ export const metadata: Metadata = {
   description: "Explore the latest wildlife and nature observations from our global community. View recent sightings, photos, and discoveries from around the world.",
 };
 
-export default async function RecentObservationsPage() {
+const ITEMS_PER_PAGE = 12;
+
+export default async function RecentObservationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const params = await searchParams;
+  const currentPage = Number(params.page) || 1;
+  
   // Fetch recent observations with species and pictures
   const allObservations = await db.query.observations.findMany({
     with: {
@@ -21,14 +30,21 @@ export default async function RecentObservationsPage() {
       user: true,
     },
     orderBy: [desc(observations.createdAt)],
-    limit: 100, // Get more to filter for approved
+    limit: 200, // Get more to filter for approved
   });
 
   // Filter to only observations where ALL pictures are approved
-  const recentObservations = allObservations.filter(obs => 
+  const filteredObservations = allObservations.filter(obs => 
     obs.pictures.length > 0 && 
     obs.pictures.every(pic => pic.approved === true)
-  ).slice(0, 50);
+  );
+
+  // Calculate pagination
+  const totalObservations = filteredObservations.length;
+  const totalPages = Math.ceil(totalObservations / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const recentObservations = filteredObservations.slice(startIndex, endIndex);
 
   // Get all observation photos for the masonry gallery
   const allPhotos = recentObservations.flatMap((obs) =>
@@ -49,15 +65,18 @@ export default async function RecentObservationsPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       {/* Dark section for header and photo gallery */}
-      <div className="bg-slate-900 py-8">
-        <div className="w-full px-4">
-          {/* Header */}
-          <div className="max-w-7xl mx-auto mb-8">
-            <h1 className="text-3xl font-semibold text-white">Recent Observations</h1>
+      <div className="section bg-dark">
+        <div className="container-md">
+          <div className="flex-gap-xs">
+
+            <h1 className="heading-2 text-white">Recent Observations</h1>
             <p className="mt-2 text-gray-300">
               Latest wildlife sightings from the community
             </p>
           </div>
+          </div>
+          </div>
+        <div className="section bg-dark px-4 pt-0">
 
           {/* Photo Gallery */}
           {allPhotos.length > 0 && (
@@ -67,19 +86,16 @@ export default async function RecentObservationsPage() {
             </div>
           )}
         </div>
-      </div>
 
       {/* Light section for observations list */}
-      <div className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="section bg-light">
           {/* Observations List Header */}
-          <div className="mb-6">
-            <h2 className="heading-3">All Observations</h2>
-          </div>
+          <div className="container-lg">
+            <h2 className="heading-3">Observations</h2>
 
           {/* Observations Grid */}
         {recentObservations.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recentObservations.map((observation) => (
               <div
                 key={observation.id}
@@ -150,6 +166,65 @@ export default async function RecentObservationsPage() {
             <p className="text-muted">
               Be the first to record a wildlife observation!
             </p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-8">
+            {currentPage > 1 && (
+              <Link
+                href={`/recent-observations?page=${currentPage - 1}`}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Previous
+              </Link>
+            )}
+            
+            <div className="flex items-center gap-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                // Show first page, last page, current page, and pages around current
+                const showPage = 
+                  page === 1 || 
+                  page === totalPages || 
+                  (page >= currentPage - 1 && page <= currentPage + 1);
+                
+                const showEllipsis = 
+                  (page === currentPage - 2 && currentPage > 3) ||
+                  (page === currentPage + 2 && currentPage < totalPages - 2);
+
+                if (showEllipsis) {
+                  return <span key={page} className="px-2">...</span>;
+                }
+
+                if (!showPage) {
+                  return null;
+                }
+
+                return (
+                  <Link
+                    key={page}
+                    href={`/recent-observations?page=${page}`}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      page === currentPage
+                        ? 'bg-green-600 text-white font-semibold'
+                        : 'bg-white border border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {page}
+                  </Link>
+                );
+              })}
+            </div>
+
+            {currentPage < totalPages && (
+              <Link
+                href={`/recent-observations?page=${currentPage + 1}`}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Next
+              </Link>
+            )}
           </div>
         )}
         </div>

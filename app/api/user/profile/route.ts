@@ -15,7 +15,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const { name, publicName, bio } = await request.json();
+    const { name, publicName, bio, homeLat, homeLng } = await request.json();
 
     // Update user profile
     await db
@@ -24,6 +24,8 @@ export async function PATCH(request: Request) {
         name,
         publicName,
         bio,
+        homeLat: homeLat || null,
+        homeLng: homeLng || null,
         updatedAt: new Date(),
       })
       .where(eq(users.id, session.user.id));

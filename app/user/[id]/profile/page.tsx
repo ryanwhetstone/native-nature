@@ -199,7 +199,7 @@ export default async function UserProfilePage({
 
         {/* Photo Gallery */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <h2 className="heading-3 text-white">Recent Photos</h2>
             {totalPhotosCount > 12 && (
               <Link
@@ -297,7 +297,7 @@ export default async function UserProfilePage({
         <div className="container-lg">
 
           {/* Conservation Projects - Moved above Favorites */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <h2 className="heading-3">Conservation Projects</h2>
             {userProjects.length > 6 && (
               <Link
@@ -396,7 +396,7 @@ export default async function UserProfilePage({
         <div className="container-lg">
 
           {/* Favorites */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <h2 className="heading-3">Favorite Species</h2>
             {userFavorites.length > 5 && (
               <Link

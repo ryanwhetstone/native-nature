@@ -28,7 +28,7 @@ async function bulkUpdateApproval(photoIds: number[], type: 'observation' | 'pro
     await db.update(observationPictures)
       .set({ approved })
       .where(eq(observationPictures.id, photoIds[0]));
-    
+
     for (const id of photoIds.slice(1)) {
       await db.update(observationPictures)
         .set({ approved })
@@ -38,7 +38,7 @@ async function bulkUpdateApproval(photoIds: number[], type: 'observation' | 'pro
     await db.update(projectPictures)
       .set({ approved })
       .where(eq(projectPictures.id, photoIds[0]));
-    
+
     for (const id of photoIds.slice(1)) {
       await db.update(projectPictures)
         .set({ approved })
@@ -48,7 +48,7 @@ async function bulkUpdateApproval(photoIds: number[], type: 'observation' | 'pro
     await db.update(projectUpdatePictures)
       .set({ approved })
       .where(eq(projectUpdatePictures.id, photoIds[0]));
-    
+
     for (const id of photoIds.slice(1)) {
       await db.update(projectUpdatePictures)
         .set({ approved })
@@ -65,7 +65,7 @@ export default async function BulkPhotoManagementPage({
   searchParams: Promise<{ page?: string; filter?: string }>;
 }) {
   const session = await auth();
-  
+
   if (!session?.user || session.user.role !== 'admin') {
     redirect('/');
   }
@@ -152,68 +152,67 @@ export default async function BulkPhotoManagementPage({
   return (
     <main className="min-h-screen bg-light">
       <AdminNav />
-      <div className="container-full">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex-gap-xs">
-            <h1>Bulk Photo Management</h1>
-            <p className="text-muted">
-              {totalCount} {filter === 'approved' ? 'approved' : filter === 'disapproved' ? 'disapproved' : 'pending'} photos
-            </p>
+      <div className="section">
+        <div className="container-full">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex-gap-xs">
+              <h1>Bulk Photo Management</h1>
+              <p className="text-muted">
+                {totalCount} {filter === 'approved' ? 'approved' : filter === 'disapproved' ? 'disapproved' : 'pending'} photos
+              </p>
+            </div>
+            <Link href="/admin/photos" className="btn-secondary">
+              Back to Photos
+            </Link>
           </div>
-          <Link href="/admin/photos" className="btn-secondary">
-            Back to Photos
-          </Link>
+
+          <div className="section-card mb-6">
+            <div className="flex gap-3">
+              <Link
+                href="/admin/photos/bulk?filter=pending"
+                className={`px-4 py-2 rounded-lg transition-colors ${filter === 'pending'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+              >
+                Pending Review
+              </Link>
+              <Link
+                href="/admin/photos/bulk?filter=approved"
+                className={`px-4 py-2 rounded-lg transition-colors ${filter === 'approved'
+                    ? 'bg-green-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+              >
+                Approved
+              </Link>
+              <Link
+                href="/admin/photos/bulk?filter=disapproved"
+                className={`px-4 py-2 rounded-lg transition-colors ${filter === 'disapproved'
+                    ? 'bg-red-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+              >
+                Disapproved
+              </Link>
+            </div>
+          </div>
+
+          <BulkPhotoManager
+            photos={paginatedPhotos}
+            bulkUpdateApproval={bulkUpdateApproval}
+          />
+
+          {totalPages > 1 && (
+            <div className="mt-6">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                baseUrl={`/admin/photos/bulk?filter=${filter}`}
+              />
+            </div>
+          )}
         </div>
-
-        <div className="section-card mb-6">
-          <div className="flex gap-3">
-            <Link 
-              href="/admin/photos/bulk?filter=pending" 
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'pending' 
-                  ? 'bg-blue-500 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Pending Review
-            </Link>
-            <Link 
-              href="/admin/photos/bulk?filter=approved" 
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'approved' 
-                  ? 'bg-green-500 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Approved
-            </Link>
-            <Link 
-              href="/admin/photos/bulk?filter=disapproved" 
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                filter === 'disapproved' 
-                  ? 'bg-red-500 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Disapproved
-            </Link>
-          </div>
-        </div>
-
-        <BulkPhotoManager 
-          photos={paginatedPhotos} 
-          bulkUpdateApproval={bulkUpdateApproval}
-        />
-
-        {totalPages > 1 && (
-          <div className="mt-6">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              baseUrl={`/admin/photos/bulk?filter=${filter}`}
-            />
-          </div>
-        )}
       </div>
     </main>
   );

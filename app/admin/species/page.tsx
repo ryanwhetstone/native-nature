@@ -22,7 +22,7 @@ export default async function AdminSpeciesPage({
   searchParams: Promise<{ page?: string; search?: string }>;
 }) {
   const session = await auth();
-  
+
   if (!session?.user || session.user.role !== 'admin') {
     redirect('/');
   }
@@ -35,9 +35,9 @@ export default async function AdminSpeciesPage({
   // Build where clause for search
   const searchConditions = searchTerm
     ? or(
-        ilike(species.name, `%${searchTerm}%`),
-        ilike(species.preferredCommonName, `%${searchTerm}%`)
-      )
+      ilike(species.name, `%${searchTerm}%`),
+      ilike(species.preferredCommonName, `%${searchTerm}%`)
+    )
     : undefined;
 
   const [{ count: totalCount }] = await db
@@ -56,75 +56,76 @@ export default async function AdminSpeciesPage({
   return (
     <main className="min-h-screen bg-light">
       <AdminNav />
-      <div className="container-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex-gap-xs">
-            <h1>Manage Species</h1>
-            <p className="text-muted">
-              {totalCount} total species
-            </p>
+      <div className="section">
+        <div className="container-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex-gap-xs">
+              <h1>Manage Species</h1>
+              <p className="text-muted">
+                {totalCount} total species
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="section-card">
-          <div className="mb-4">
-            <SearchBar placeholder="Search by scientific or common name..." />
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Common Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scientific Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observations</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {allSpecies.map((sp) => (
-                  <tr key={sp.id}>
-                    <td className="px-6 py-4">
-                      <Link href={getSpeciesUrl(sp.slug || sp.id, sp.name, sp.preferredCommonName)} className="text-blue-600 hover:underline">
-                        {sp.preferredCommonName || 'N/A'}
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 italic">
-                      {sp.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {sp.rank || 'N/A'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {sp.conservationStatus && (
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          sp.conservationStatus.includes('CR') || sp.conservationStatus.includes('EN') ? 'bg-red-100 text-red-800' :
-                          sp.conservationStatus.includes('VU') || sp.conservationStatus.includes('NT') ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {sp.conservationStatus}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {sp.observationsCount || 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(sp.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link href={`/admin/species/${sp.id}`} className="text-blue-600 hover:text-blue-900">
-                        Edit
-                      </Link>
-                    </td>
+          <div className="section-card">
+            <div className="mb-4">
+              <SearchBar placeholder="Search by scientific or common name..." />
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Common Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scientific Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observations</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {allSpecies.map((sp) => (
+                    <tr key={sp.id}>
+                      <td className="px-6 py-4">
+                        <Link href={getSpeciesUrl(sp.slug || sp.id, sp.name, sp.preferredCommonName)} className="text-blue-600 hover:underline">
+                          {sp.preferredCommonName || 'N/A'}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 italic">
+                        {sp.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {sp.rank || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {sp.conservationStatus && (
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${sp.conservationStatus.includes('CR') || sp.conservationStatus.includes('EN') ? 'bg-red-100 text-red-800' :
+                              sp.conservationStatus.includes('VU') || sp.conservationStatus.includes('NT') ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                            }`}>
+                            {sp.conservationStatus}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {sp.observationsCount || 0}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(sp.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <Link href={`/admin/species/${sp.id}`} className="text-blue-600 hover:text-blue-900">
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/species" />
           </div>
-          <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/species" />
         </div>
       </div>
     </main>

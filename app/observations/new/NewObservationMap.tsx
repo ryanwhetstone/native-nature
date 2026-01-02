@@ -35,7 +35,7 @@ export default function NewObservationMap({ onLocationSelect, selectedLocation, 
     const initialCenter: [number, number] = lastLocation 
       ? [lastLocation.lng, lastLocation.lat]
       : [0, 0];
-    const initialZoom = lastLocation ? 6 : 2; // Zoom 6 is approximately state level
+    const initialZoom = lastLocation ? 10 : 2; // Zoom 10 is approximately city level
 
     try {
       // Initialize map

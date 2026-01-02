@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import SettingsMap from "./SettingsMap";
 
 interface User {
   id?: string;
@@ -10,6 +11,8 @@ interface User {
   image?: string | null;
   publicName?: string | null;
   bio?: string | null;
+  homeLat?: string | null;
+  homeLng?: string | null;
 }
 
 interface SettingsFormProps {
@@ -21,6 +24,14 @@ export function SettingsForm({ user }: SettingsFormProps) {
   const [name, setName] = useState(user.name || "");
   const [publicName, setPublicName] = useState(user.publicName || "");
   const [bio, setBio] = useState(user.bio || "");
+  const [selectedLocation, setSelectedLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(
+    user.homeLat && user.homeLng
+      ? { lat: parseFloat(user.homeLat), lng: parseFloat(user.homeLng) }
+      : null
+  );
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -36,7 +47,13 @@ export function SettingsForm({ user }: SettingsFormProps) {
       const response = await fetch("/api/user/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, publicName, bio }),
+        body: JSON.stringify({ 
+          name, 
+          publicName, 
+          bio,
+          homeLat: selectedLocation?.lat.toString() || null,
+          homeLng: selectedLocation?.lng.toString() || null,
+        }),
       });
 
       const data = await response.json();
@@ -171,6 +188,23 @@ export function SettingsForm({ user }: SettingsFormProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               placeholder="Tell us about yourself..."
             />
+          </div>
+
+          <div>
+            <label htmlFor="homeLocation" className="form-label">
+              Home Location (Used as the default location on maps)
+            </label>
+            <SettingsMap
+              onLocationSelect={setSelectedLocation}
+              selectedLocation={selectedLocation}
+            />
+            {selectedLocation && (
+              <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Selected:</span> {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                </p>
+              </div>
+            )}
           </div>
 
           <button

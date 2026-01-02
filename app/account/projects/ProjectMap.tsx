@@ -35,7 +35,7 @@ export default function ProjectMap({ onLocationSelect, selectedLocation, initial
     const initialCenter: [number, number] = initialLocation 
       ? [initialLocation.lng, initialLocation.lat]
       : [0, 20];
-    const initialZoom = initialLocation ? 6 : 2;
+    const initialZoom = initialLocation ? 10 : 2; // Zoom 10 is approximately city level
 
     try {
       // Initialize map

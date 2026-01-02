@@ -7,7 +7,11 @@ import ProjectMap from "@/app/account/projects/ProjectMap";
 import { useToast } from "@/app/components/Toast";
 import { getProjectUrl } from "@/lib/project-url";
 
-export default function NewProjectForm() {
+interface NewProjectFormProps {
+  homeLocation?: { lat: number; lng: number };
+}
+
+export default function NewProjectForm({ homeLocation }: NewProjectFormProps = {}) {
   const router = useRouter();
   const { showToast } = useToast();
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -220,6 +224,7 @@ export default function NewProjectForm() {
         <ProjectMap
           onLocationSelect={setSelectedLocation}
           selectedLocation={selectedLocation}
+          initialLocation={homeLocation}
           onWebGLError={setWebglError}
         />
         {selectedLocation && (

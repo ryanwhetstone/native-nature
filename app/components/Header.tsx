@@ -1,9 +1,55 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserMenu } from "./UserMenu";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+
+// Loading bar component
+function LoadingBar() {
+  const [isLoading, setIsLoading] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [pathname, searchParams]);
+
+  useEffect(() => {
+    const handleStart = () => setIsLoading(true);
+    const handleComplete = () => setIsLoading(false);
+
+    // Listen for link clicks
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const link = target.closest('a');
+      
+      if (link && link.href && !link.href.startsWith('mailto:') && !link.href.startsWith('tel:') && !link.target) {
+        const url = new URL(link.href);
+        const currentUrl = new URL(window.location.href);
+        
+        // Only show loading if navigating to a different page
+        if (url.pathname !== currentUrl.pathname || url.search !== currentUrl.search) {
+          handleStart();
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  if (!isLoading) return null;
+
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50 h-0.5 bg-gray-200">
+      <div className="h-full bg-green-600 animate-loading-bar" />
+    </div>
+  );
+}
 
 export function Header({ session }: { session: any }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -21,8 +67,9 @@ export function Header({ session }: { session: any }) {
   };
 
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="container-md">
+    <>
+      <header className="border-b border-gray-200 bg-white">
+        <div className="container-md">
         <div className="flex justify-between items-center h-16">
           {/* Logo/Brand */}
           <Link href="/" className="flex items-center space-x-2">
@@ -269,5 +316,7 @@ export function Header({ session }: { session: any }) {
         </div>
       )}
     </header>
+    <LoadingBar />
+    </>
   );
 }

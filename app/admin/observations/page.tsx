@@ -22,7 +22,7 @@ export default async function AdminObservationsPage({
   searchParams: Promise<{ page?: string; search?: string }>;
 }) {
   const session = await auth();
-  
+
   if (!session?.user || session.user.role !== 'admin') {
     redirect('/');
   }
@@ -39,7 +39,7 @@ export default async function AdminObservationsPage({
   if (searchTerm) {
     // Search with species name filter
     const results = await db
-      .select({ 
+      .select({
         observation: observations,
         speciesName: speciesTable.name,
         speciesCommonName: speciesTable.preferredCommonName,
@@ -54,10 +54,10 @@ export default async function AdminObservationsPage({
           ilike(observations.region, `%${searchTerm}%`)
         )
       );
-    
+
     totalCount = results.length;
     const observationIds = results.slice(offset, offset + ITEMS_PER_PAGE).map(r => r.observation.id);
-    
+
     // Fetch full observation data with relations
     allObservations = await db.query.observations.findMany({
       where: (obs, { inArray }) => inArray(obs.id, observationIds),
@@ -80,7 +80,7 @@ export default async function AdminObservationsPage({
   } else {
     const [{ count: cnt }] = await db.select({ count: count() }).from(observations);
     totalCount = cnt;
-    
+
     allObservations = await db.query.observations.findMany({
       orderBy: (observations, { desc }) => [desc(observations.createdAt)],
       limit: ITEMS_PER_PAGE,
@@ -108,73 +108,75 @@ export default async function AdminObservationsPage({
   return (
     <main className="min-h-screen bg-light">
       <AdminNav />
-      <div className="container-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex-gap-xs">
-            <h1>Manage Observations</h1>
-            <p className="text-muted">
-              {totalCount} total observations
-            </p>
+      <div className="section">
+        <div className="container-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex-gap-xs">
+              <h1>Manage Observations</h1>
+              <p className="text-muted">
+                {totalCount} total observations
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div className="section-card">
-          <div className="mb-4">
-            <SearchBar placeholder="Search by species or location..." />
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Species</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photos</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observed</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {allObservations.map((observation) => (
-                  <tr key={observation.id}>
-                    <td className="px-6 py-4">
-                      <Link 
-                        href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)} 
-                        className="text-blue-600 hover:underline"
-                      >
-                        {observation.species.preferredCommonName || observation.species.name}
-                      </Link>
-                      {observation.species.preferredCommonName && (
-                        <div className="text-xs text-gray-500 italic">{observation.species.name}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {observation.user.publicName || observation.user.name}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {[observation.city, observation.region, observation.country].filter(Boolean).join(', ') || 'N/A'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {observation.pictures.length}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(observation.observedAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(observation.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link href={`/admin/observations/${observation.id}`} className="text-blue-600 hover:text-blue-900">
-                        Edit
-                      </Link>
-                    </td>
+          <div className="section-card">
+            <div className="mb-4">
+              <SearchBar placeholder="Search by species or location..." />
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Species</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observer</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photos</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observed</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {allObservations.map((observation) => (
+                    <tr key={observation.id}>
+                      <td className="px-6 py-4">
+                        <Link
+                          href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
+                          className="text-blue-600 hover:underline"
+                        >
+                          {observation.species.preferredCommonName || observation.species.name}
+                        </Link>
+                        {observation.species.preferredCommonName && (
+                          <div className="text-xs text-gray-500 italic">{observation.species.name}</div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {observation.user.publicName || observation.user.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {[observation.city, observation.region, observation.country].filter(Boolean).join(', ') || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {observation.pictures.length}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(observation.observedAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(observation.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <Link href={`/admin/observations/${observation.id}`} className="text-blue-600 hover:text-blue-900">
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/observations" />
           </div>
-          <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/observations" />
         </div>
       </div>
     </main>

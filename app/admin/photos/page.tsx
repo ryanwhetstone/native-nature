@@ -24,7 +24,7 @@ export default async function AdminPhotosPage({
   searchParams: Promise<{ page?: string; search?: string }>;
 }) {
   const session = await auth();
-  
+
   if (!session?.user || session.user.role !== 'admin') {
     redirect('/');
   }
@@ -144,11 +144,11 @@ export default async function AdminPhotosPage({
 
   // Filter by search term if provided
   const filteredPhotos = searchTerm
-    ? allPhotos.filter(photo => 
-        photo.title.toLowerCase().includes(searchTerm) ||
-        photo.uploader.toLowerCase().includes(searchTerm) ||
-        photo.type.toLowerCase().includes(searchTerm)
-      )
+    ? allPhotos.filter(photo =>
+      photo.title.toLowerCase().includes(searchTerm) ||
+      photo.uploader.toLowerCase().includes(searchTerm) ||
+      photo.type.toLowerCase().includes(searchTerm)
+    )
     : allPhotos;
 
   const totalCount = filteredPhotos.length;
@@ -158,90 +158,91 @@ export default async function AdminPhotosPage({
   return (
     <main className="min-h-screen bg-light">
       <AdminNav />
-      <div className="container-lg">
-        <div className="flex items-center justify-between">
-          <div className="flex-gap-xs">
-            <h1>Manage Photos</h1>
-            <p className="text-muted">
-              {totalCount} total photos
-            </p>
+      <div className="section">
+        <div className="container-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex-gap-xs">
+              <h1>Manage Photos</h1>
+              <p className="text-muted">
+                {totalCount} total photos
+              </p>
+            </div>
+            <Link href="/admin/photos/bulk" className="btn-primary">
+              Bulk Management
+            </Link>
           </div>
-          <Link href="/admin/photos/bulk" className="btn-primary">
-            Bulk Management
-          </Link>
-        </div>
 
-        <div className="section-card">
-          <div className="mb-4">
-            <SearchBar placeholder="Search by species, project, or uploader..." />
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploader</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Caption</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {paginatedPhotos.map((photo) => (
-                  <tr key={`${photo.type}-${photo.id}`}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="h-16 w-16 flex-shrink-0">
-                          <Image
-                            src={photo.imageUrl}
-                            alt="Photo thumbnail"
-                            width={64}
-                            height={64}
-                            className="h-16 w-16 rounded object-cover"
-                          />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        photo.type === 'observation' ? 'bg-blue-100 text-blue-800' : 
-                        photo.type === 'project' ? 'bg-green-100 text-green-800' :
-                        'bg-purple-100 text-purple-800'
-                      }`}>
-                        {photo.type}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {photo.link ? (
-                        <Link href={photo.link} className="text-blue-600 hover:underline">
-                          {photo.title}
-                        </Link>
-                      ) : (
-                        <span>{photo.title}</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {photo.uploader}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {photo.caption || 'N/A'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(photo.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <Link href={`/admin/photos/${photo.type}/${photo.id}`} className="text-blue-600 hover:text-blue-900">
-                        Edit
-                      </Link>
-                    </td>
+          <div className="section-card">
+            <div className="mb-4">
+              <SearchBar placeholder="Search by species, project, or uploader..." />
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploader</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Caption</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {paginatedPhotos.map((photo) => (
+                    <tr key={`${photo.type}-${photo.id}`}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="h-16 w-16 flex-shrink-0">
+                            <Image
+                              src={photo.imageUrl}
+                              alt="Photo thumbnail"
+                              width={64}
+                              height={64}
+                              className="h-16 w-16 rounded object-cover"
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${photo.type === 'observation' ? 'bg-blue-100 text-blue-800' :
+                            photo.type === 'project' ? 'bg-green-100 text-green-800' :
+                              'bg-purple-100 text-purple-800'
+                          }`}>
+                          {photo.type}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {photo.link ? (
+                          <Link href={photo.link} className="text-blue-600 hover:underline">
+                            {photo.title}
+                          </Link>
+                        ) : (
+                          <span>{photo.title}</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {photo.uploader}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {photo.caption || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(photo.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <Link href={`/admin/photos/${photo.type}/${photo.id}`} className="text-blue-600 hover:text-blue-900">
+                          Edit
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/photos" />
           </div>
-          <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/admin/photos" />
         </div>
       </div>
     </main>
