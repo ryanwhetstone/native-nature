@@ -40,7 +40,9 @@ export default function ManageQuestions({
   const handleSubmitResponse = async (questionId: number) => {
     const response = responses[questionId];
     if (!response || response.trim().length === 0) {
-      setError('Response cannot be empty');
+      const errorMessage = 'Response cannot be empty';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
       return;
     }
 
@@ -62,7 +64,9 @@ export default function ManageQuestions({
       // Success - reload the page
       window.location.reload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit response');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit response';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
       setIsSubmitting(null);
     }
   };
@@ -112,12 +116,6 @@ export default function ManageQuestions({
           <h3 className="heading-4 mb-4">
             Unanswered Questions ({unansweredQuestions.length})
           </h3>
-
-          {error && (
-            <div className="error-box">
-              {error}
-            </div>
-          )}
 
           <div className="space-y-4">
             {unansweredQuestions.map((question) => {

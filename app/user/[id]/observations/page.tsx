@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getObservationUrl } from "@/lib/observation-url";
 import { Metadata } from "next";
 import { UserProfileHeader } from "../components/UserProfileHeader";
+import ShareButtons from "@/app/components/ShareButtons";
 
 export async function generateMetadata({
   params,
@@ -132,13 +133,13 @@ export default async function UserObservationsPage({
                   href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
                   className="card-hover group"
                 >
-                  <div className="relative aspect-video bg-gray-100">
+                  <div className="relative aspect-video bg-gray-100 overflow-hidden">
                     {observation.pictures && observation.pictures.length > 0 ? (
                       <Image
                         src={observation.pictures[0].imageUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       />
                     ) : observation.species.defaultPhotoUrl ? (
@@ -146,7 +147,7 @@ export default async function UserObservationsPage({
                         src={observation.species.defaultPhotoUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       />
                     ) : (
@@ -185,6 +186,13 @@ export default async function UserObservationsPage({
           )}
         </div>
       </div>
+      
+      {/* Share Buttons */}
+      <ShareButtons
+        title={`${displayName}'s Observations`}
+        description={`View all wildlife observations by ${displayName} on Native Nature`}
+        type="Share Observations"
+      />
     </main>
   );
 }

@@ -104,7 +104,8 @@ export default function NewProjectForm({ homeLocation }: NewProjectFormProps = {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create project");
+        const data = await response.json();
+        throw new Error(data.error || "Failed to create project");
       }
 
       const project = await response.json();
@@ -116,7 +117,8 @@ export default function NewProjectForm({ homeLocation }: NewProjectFormProps = {
       router.refresh();
     } catch (error) {
       console.error("Error creating project:", error);
-      showToast("Failed to create project. Please try again.", "error");
+      const errorMessage = error instanceof Error ? error.message : "Failed to create project. Please try again.";
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }

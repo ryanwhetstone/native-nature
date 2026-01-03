@@ -289,13 +289,13 @@ export default async function Home() {
                   href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
                   className="bg-slate-800 rounded-lg overflow-hidden group hover:bg-slate-700 transition-all"
                 >
-                  <div className="relative aspect-video bg-slate-700">
+                  <div className="relative aspect-video bg-slate-700 overflow-hidden">
                     {observation.pictures && observation.pictures.length > 0 && (
                       <Image
                         src={observation.pictures[0].imageUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       />
                     )}

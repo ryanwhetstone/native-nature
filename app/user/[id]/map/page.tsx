@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { UserProfileHeader } from "../components/UserProfileHeader";
 import { getUserCounts } from "../getUserCounts";
 import UserMapView from "./UserMapView";
+import ShareButtons from "@/app/components/ShareButtons";
 
 export default async function UserMapPage({
   params,
@@ -103,6 +104,13 @@ export default async function UserMapPage({
           </div>
         </div>
       </div>
+      
+      {/* Share Buttons */}
+      <ShareButtons
+        title={`${user.publicName || user.name || "User"}'s Map`}
+        description={`View observations and conservation projects by ${user.publicName || user.name || "User"} on Native Nature`}
+        type="Share Map"
+      />
     </main>
   );
 }

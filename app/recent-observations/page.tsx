@@ -46,10 +46,11 @@ export default async function RecentObservationsPage({
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const recentObservations = filteredObservations.slice(startIndex, endIndex);
 
-  // Get all observation photos for the masonry gallery
-  const allPhotos = recentObservations.flatMap((obs) =>
-    obs.pictures.map((pic) => ({
-      ...pic,
+  // Get one photo per observation for the masonry gallery
+  const allPhotos = recentObservations
+    .filter(obs => obs.pictures.length > 0)
+    .map((obs) => ({
+      ...obs.pictures[0],
       observation: {
         id: obs.id,
         observedAt: obs.observedAt,
@@ -59,8 +60,7 @@ export default async function RecentObservationsPage({
         },
       },
       species: obs.species,
-    }))
-  );
+    }));
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -102,29 +102,26 @@ export default async function RecentObservationsPage({
                 className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
               >
                 <Link href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}>
-                  <div className="relative aspect-video bg-gray-100">
+                  <div className="relative aspect-video bg-gray-100 overflow-hidden">
                     {observation.pictures && observation.pictures.length > 0 ? (
                       <Image
                         src={observation.pictures[0].imageUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                       />
                     ) : observation.species.defaultPhotoUrl ? (
                       <Image
                         src={observation.species.defaultPhotoUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-6xl">
                         🌿
                       </div>
                     )}
-                    <div className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md">
-                      <span className="text-xl">📍</span>
-                    </div>
                     {observation.pictures && observation.pictures.length > 1 && (
                       <div className="absolute bottom-3 right-3 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
                         +{observation.pictures.length - 1} more

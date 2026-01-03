@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { observations, observationPictures } from '@/db/schema';
 import { getSpeciesByTaxonId } from '@/db/queries';
+import { validateNoProfanity } from '@/lib/profanity-filter';
 
 // Reverse geocoding function using Mapbox
 async function reverseGeocode(lat: number, lng: number) {
@@ -83,6 +84,18 @@ export async function POST(request: NextRequest) {
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    // Validate description for profanity
+    if (description) {
+      try {
+        validateNoProfanity(description, 'Description');
+      } catch (error) {
+        return NextResponse.json(
+          { error: error instanceof Error ? error.message : 'Description contains inappropriate language' },
+          { status: 400 }
+        );
+      }
     }
 
     const parsedSpeciesId = typeof speciesId === 'string' ? parseInt(speciesId) : speciesId;

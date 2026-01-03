@@ -9,6 +9,7 @@ import { DeleteObservationButton } from "@/app/account/observations/DeleteObserv
 import ObservationMap from "./ObservationMap";
 import MasonryPhotoGallery from "@/app/components/MasonryPhotoGallery";
 import { getSpeciesUrl } from "@/lib/species-url";
+import ShareButtons from "@/app/components/ShareButtons";
 import type { Metadata } from "next";
 
 export async function generateMetadata({
@@ -99,8 +100,9 @@ export default async function ObservationDetailPage({
                 </div>
               </div>
               {observation.description && (
-                  <p className="mt-3 sm:mt-4 text-white">{observation.description}</p>
+                <p className="mt-3 sm:mt-4 text-white">{observation.description}</p>
               )}
+
             </div>
             <div className="flex-shrink-0 flex gap-2">
               <Link
@@ -124,29 +126,29 @@ export default async function ObservationDetailPage({
             </div>
           </div>
         </div>
-        </div>
-        {/* Photos */}
-        {observation.pictures.length > 0 && (
-          <div className="section bg-dark px-4 pt-0">
+      </div>
+      {/* Photos */}
+      {observation.pictures.length > 0 && (
+        <div className="section bg-dark px-4 pt-0">
 
-            <MasonryPhotoGallery
-              photos={observation.pictures.map(pic => ({
-                ...pic,
-                observation: {
-                  id: observation.id,
-                  observedAt: observation.observedAt,
-                  user: {
-                    publicName: observation.user.publicName,
-                    name: observation.user.name,
-                  },
+          <MasonryPhotoGallery
+            photos={observation.pictures.map(pic => ({
+              ...pic,
+              observation: {
+                id: observation.id,
+                observedAt: observation.observedAt,
+                user: {
+                  publicName: observation.user.publicName,
+                  name: observation.user.name,
                 },
-                species: observation.species,
-              }))}
-              columns={{ default: 1, md: 2, lg: 3 }}
-              currentObservationId={observation.id}
-            />
-            </div>
-        )}
+              },
+              species: observation.species,
+            }))}
+            columns={{ default: 1, md: 2, lg: 3 }}
+            currentObservationId={observation.id}
+          />
+        </div>
+      )}
 
       {/* Light section for location */}
       <div className="section bg-light">
@@ -179,6 +181,13 @@ export default async function ObservationDetailPage({
           </div>
         </div>
       </div>
+      {/* Share Buttons */}
+
+      <ShareButtons
+        title={`${observation.species.preferredCommonName || observation.species.name} Observation`}
+        description={`Observed by ${observation.user.publicName || observation.user.name || 'Anonymous'} on ${new Date(observation.observedAt).toLocaleDateString()}`}
+        type="Share Observation"
+      />
     </main>
   );
 }

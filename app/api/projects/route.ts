@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { conservationProjects, projectPictures } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { validateNoProfanity } from '@/lib/profanity-filter';
 
 // Reverse geocoding function using Mapbox
 async function reverseGeocode(lat: number, lng: number) {
@@ -79,6 +80,17 @@ export async function POST(request: NextRequest) {
     if (!title || !description || !latitude || !longitude || !fundingGoal) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Validate title and description for profanity
+    try {
+      validateNoProfanity(title, 'Title');
+      validateNoProfanity(description, 'Description');
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Content contains inappropriate language' },
         { status: 400 }
       );
     }

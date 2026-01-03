@@ -5,6 +5,7 @@ import { eq, desc } from "drizzle-orm";
 import { Metadata } from "next";
 import { UserProfileHeader } from "../components/UserProfileHeader";
 import PhotosGalleryWithLoadMore from "./PhotosGalleryWithLoadMore";
+import ShareButtons from "@/app/components/ShareButtons";
 
 export async function generateMetadata({
   params,
@@ -205,6 +206,13 @@ export default async function UserPhotosPage({
           <PhotosGalleryWithLoadMore allPhotos={allPhotos} />
         </div>
       </div>
+      
+      {/* Share Buttons */}
+      <ShareButtons
+        title={`${displayName}'s Photos`}
+        description={`View wildlife photos by ${displayName} on Native Nature`}
+        type="Share Photos"
+      />
     </main>
   );
 }

@@ -130,7 +130,8 @@ export default function ProjectUpdateForm({
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to ${existingUpdate ? 'update' : 'create'} update`);
+        const data = await response.json();
+        throw new Error(data.error || `Failed to ${existingUpdate ? 'update' : 'create'} update`);
       }
 
       showToast(`Update ${existingUpdate ? 'updated' : 'posted'} successfully!`);
@@ -142,7 +143,8 @@ export default function ProjectUpdateForm({
       }
     } catch (error) {
       console.error('Error saving update:', error);
-      showToast(`Failed to ${existingUpdate ? 'update' : 'post'} update. Please try again.`, 'error');
+      const errorMessage = error instanceof Error ? error.message : `Failed to ${existingUpdate ? 'update' : 'post'} update. Please try again.`;
+      showToast(errorMessage, 'error');
     } finally {
       setIsSubmitting(false);
     }

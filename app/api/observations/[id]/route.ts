@@ -5,6 +5,7 @@ import { observations, observationPictures } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, S3_BUCKET } from '@/lib/s3';
+import { validateNoProfanity } from '@/lib/profanity-filter';
 
 export async function DELETE(
   request: NextRequest,
@@ -171,6 +172,18 @@ export async function PATCH(
 
     const body = await request.json();
     const { latitude, longitude, observedAt, description, newImageUrls, deletedImageIds } = body;
+
+    // Validate description for profanity
+    if (description) {
+      try {
+        validateNoProfanity(description, 'Description');
+      } catch (error) {
+        return NextResponse.json(
+          { error: error instanceof Error ? error.message : 'Description contains inappropriate language' },
+          { status: 400 }
+        );
+      }
+    }
 
     // Verify ownership
     const observation = await db.query.observations.findFirst({

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getProjectUrl } from "@/lib/project-url";
 import { Metadata } from "next";
 import { UserProfileHeader } from "../components/UserProfileHeader";
+import ShareButtons from "@/app/components/ShareButtons";
 
 export async function generateMetadata({
   params,
@@ -125,12 +126,12 @@ export default async function UserProjectsPage({
                 >
                   {/* Project Image */}
                   {mainImage ? (
-                    <div className="relative h-48 bg-gray-200">
+                    <div className="relative h-48 bg-gray-200 overflow-hidden">
                       <Image
                         src={mainImage}
                         alt={project.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                       />
                     </div>
                   ) : (
@@ -201,6 +202,13 @@ export default async function UserProjectsPage({
         )}
       </div>
       </div>
+      
+      {/* Share Buttons */}
+      <ShareButtons
+        title={`${displayName}'s Conservation Projects`}
+        description={`View conservation projects by ${displayName} on Native Nature`}
+        type="Share Projects"
+      />
     </main>
   );
 }

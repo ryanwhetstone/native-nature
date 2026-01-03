@@ -124,13 +124,15 @@ export default function EditObservationForm({ observation }: EditObservationForm
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update observation");
+        const data = await response.json();
+        throw new Error(data.error || "Failed to update observation");
       }
 
       showToast("Observation updated successfully!");
       router.push(`/observation/${observation.id}`);
     } catch (error) {
-      showToast("Failed to update observation. Please try again.", "error");
+      const errorMessage = error instanceof Error ? error.message : "Failed to update observation. Please try again.";
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }

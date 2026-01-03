@@ -10,6 +10,7 @@ import { getObservationUrl } from "@/lib/observation-url";
 import { getProjectUrl } from "@/lib/project-url";
 import { Metadata } from "next";
 import { UserProfileHeader } from "../components/UserProfileHeader";
+import ShareButtons from "@/app/components/ShareButtons";
 
 export async function generateMetadata({
   params,
@@ -247,20 +248,20 @@ export default async function UserProfilePage({
                   href={getObservationUrl(observation.id, observation.species.name, observation.species.preferredCommonName)}
                   className="card-hover group"
                 >
-                  <div className="relative aspect-video bg-gray-100">
+                  <div className="relative aspect-video bg-gray-100 overflow-hidden">
                     {observation.pictures && observation.pictures.length > 0 ? (
                       <Image
                         src={observation.pictures[0].imageUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                       />
                     ) : observation.species.defaultPhotoUrl ? (
                       <Image
                         src={observation.species.defaultPhotoUrl}
                         alt={observation.species.preferredCommonName || observation.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-6xl">
@@ -322,12 +323,12 @@ export default async function UserProfilePage({
                   >
                     {/* Project Image */}
                     {mainImage ? (
-                      <div className="relative h-48 bg-gray-200">
+                      <div className="relative h-48 bg-gray-200 overflow-hidden">
                         <Image
                           src={mainImage}
                           alt={project.title}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform"
+                          className="object-cover group-hover:scale-110 transition-transform"
                         />
                       </div>
                     ) : (
@@ -415,13 +416,13 @@ export default async function UserProfilePage({
                   href={getSpeciesUrl(favorite.species.slug, favorite.species.name, favorite.species.preferredCommonName)}
                   className="card-hover group"
                 >
-                  <div className="relative aspect-square bg-gray-100">
+                  <div className="relative aspect-square bg-gray-100 overflow-hidden">
                     {favorite.species.defaultPhotoUrl ? (
                       <Image
                         src={favorite.species.defaultPhotoUrl}
                         alt={favorite.species.preferredCommonName || favorite.species.name}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform"
+                        className="object-cover group-hover:scale-110 transition-transform"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-4xl">
@@ -445,6 +446,13 @@ export default async function UserProfilePage({
           )}
         </div>
       </div>
+      
+      {/* Share Buttons */}
+      <ShareButtons
+        title={`${displayName}'s Profile`}
+        description={`View ${displayName}'s nature observations and contributions on Native Nature`}
+        type="Share Profile"
+      />
     </main>
   );
 }

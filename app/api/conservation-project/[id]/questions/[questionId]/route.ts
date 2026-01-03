@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { projectQuestions, conservationProjects } from "@/db/schema";
 import { auth } from "@/auth";
 import { eq, and } from "drizzle-orm";
+import { validateNoProfanity } from "@/lib/profanity-filter";
 
 export async function PATCH(
   request: NextRequest,
@@ -32,6 +33,16 @@ export async function PATCH(
     if (!response || response.trim().length === 0) {
       return NextResponse.json(
         { error: "Response is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate for profanity
+    try {
+      validateNoProfanity(response, 'Response');
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Response contains inappropriate language' },
         { status: 400 }
       );
     }

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getSpeciesUrl } from "@/lib/species-url";
 import { Metadata } from "next";
 import { UserProfileHeader } from "../components/UserProfileHeader";
+import ShareButtons from "@/app/components/ShareButtons";
 
 export async function generateMetadata({
   params,
@@ -119,13 +120,13 @@ export default async function UserFavoritesPage({
                 href={getSpeciesUrl(favorite.species.slug, favorite.species.name, favorite.species.preferredCommonName)}
                 className="card-hover group"
               >
-                <div className="relative aspect-square bg-gray-100">
+                <div className="relative aspect-square bg-gray-100 overflow-hidden">
                   {favorite.species.defaultPhotoUrl ? (
                     <Image
                       src={favorite.species.defaultPhotoUrl}
                       alt={favorite.species.preferredCommonName || favorite.species.name}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform"
+                      className="object-cover group-hover:scale-110 transition-transform"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl">
@@ -152,6 +153,13 @@ export default async function UserFavoritesPage({
         )}
       </div>
       </div>
+      
+      {/* Share Buttons */}
+      <ShareButtons
+        title={`${displayName}'s Favorite Species`}
+        description={`View favorite species by ${displayName} on Native Nature`}
+        type="Share Favorites"
+      />
     </main>
   );
 }

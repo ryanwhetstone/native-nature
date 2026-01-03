@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { conservationProjects, projectUpdates, projectUpdatePictures } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { validateNoProfanity } from '@/lib/profanity-filter';
 
 export async function POST(
   request: NextRequest,
@@ -25,6 +26,17 @@ export async function POST(
     if (!title || !description) {
       return NextResponse.json(
         { error: 'Title and description are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate for profanity
+    try {
+      validateNoProfanity(title, 'Title');
+      validateNoProfanity(description, 'Description');
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Content contains inappropriate language' },
         { status: 400 }
       );
     }

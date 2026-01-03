@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { projectQuestions } from "@/db/schema";
 import { auth } from "@/auth";
+import { validateNoProfanity } from "@/lib/profanity-filter";
 
 export async function POST(
   request: NextRequest,
@@ -33,6 +34,16 @@ export async function POST(
     if (!question || question.trim().length === 0) {
       return NextResponse.json(
         { error: "Question is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate for profanity
+    try {
+      validateNoProfanity(question, 'Question');
+    } catch (error) {
+      return NextResponse.json(
+        { error: error instanceof Error ? error.message : 'Question contains inappropriate language' },
         { status: 400 }
       );
     }

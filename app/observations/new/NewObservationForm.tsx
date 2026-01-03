@@ -113,7 +113,8 @@ export default function NewObservationForm({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create observation");
+        const data = await response.json();
+        throw new Error(data.error || "Failed to create observation");
       }
 
       const observation = await response.json();
@@ -125,7 +126,8 @@ export default function NewObservationForm({
       router.refresh();
     } catch (error) {
       console.error("Error creating observation:", error);
-      showToast("Failed to create observation. Please try again.", "error");
+      const errorMessage = error instanceof Error ? error.message : "Failed to create observation. Please try again.";
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }

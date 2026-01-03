@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/app/components/Toast";
 import SettingsMap from "./SettingsMap";
 
 interface User {
@@ -21,6 +22,7 @@ interface SettingsFormProps {
 
 export function SettingsForm({ user }: SettingsFormProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [name, setName] = useState(user.name || "");
   const [publicName, setPublicName] = useState(user.publicName || "");
   const [bio, setBio] = useState(user.bio || "");
@@ -35,12 +37,10 @@ export function SettingsForm({ user }: SettingsFormProps) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
     setLoading(true);
 
     try {
@@ -59,15 +59,15 @@ export function SettingsForm({ user }: SettingsFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage({ type: "error", text: data.error || "Failed to update profile" });
+        showToast(data.error || "Failed to update profile", "error");
         setLoading(false);
         return;
       }
 
-      setMessage({ type: "success", text: "Profile updated successfully" });
+      showToast("Profile updated successfully!");
       router.refresh();
     } catch (error) {
-      setMessage({ type: "error", text: "An error occurred" });
+      showToast("An error occurred", "error");
     } finally {
       setLoading(false);
     }
@@ -75,15 +75,14 @@ export function SettingsForm({ user }: SettingsFormProps) {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
 
     if (newPassword !== confirmPassword) {
-      setMessage({ type: "error", text: "New passwords do not match" });
+      showToast("New passwords do not match", "error");
       return;
     }
 
     if (newPassword.length < 8) {
-      setMessage({ type: "error", text: "Password must be at least 8 characters" });
+      showToast("Password must be at least 8 characters", "error");
       return;
     }
 
@@ -99,17 +98,17 @@ export function SettingsForm({ user }: SettingsFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage({ type: "error", text: data.error || "Failed to change password" });
+        showToast(data.error || "Failed to change password", "error");
         setLoading(false);
         return;
       }
 
-      setMessage({ type: "success", text: "Password changed successfully" });
+      showToast("Password changed successfully!");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      setMessage({ type: "error", text: "An error occurred" });
+      showToast("An error occurred", "error");
     } finally {
       setLoading(false);
     }
@@ -120,18 +119,6 @@ export function SettingsForm({ user }: SettingsFormProps) {
       {/* Profile Information */}
       <div className="p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile Information</h2>
-        
-        {message && (
-          <div
-            className={`mb-4 p-4 rounded-lg ${
-              message.type === "success"
-                ? "bg-green-50 text-green-800 border border-green-200"
-                : "bg-red-50 text-red-800 border border-red-200"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
 
         <form onSubmit={handleProfileUpdate} className="space-y-4">
           <div>

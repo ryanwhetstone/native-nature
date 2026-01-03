@@ -14,6 +14,7 @@ import ProjectActions from "./ProjectActions";
 import UpdateImage from "./UpdateImage";
 import Image from "next/image";
 import AskQuestionForm from "./AskQuestionForm";
+import ShareButtons from "@/app/components/ShareButtons";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -562,6 +563,13 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
           </div>
         </div>
       </div>
+      
+      {/* Share Buttons */}
+      <ShareButtons
+        title={project.title}
+        description={project.description}
+        type="Share Project"
+      />
     </main>
   );
 }

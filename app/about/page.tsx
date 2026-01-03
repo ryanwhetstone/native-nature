@@ -1,80 +1,115 @@
-import Link from "next/link";
-import Image from "next/image";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About | Native Nature",
-  description: "Learn about Native Nature, a platform for exploring and documenting wildlife and flora around the world through citizen science and nature observation.",
+  title: "About Native Nature | Features & Mission",
+  description: "Learn about Native Nature's mission to document and protect biodiversity through wildlife observations and conservation projects.",
 };
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* Hero Section - Dark Background */}
-      <div className="bg-slate-900 py-16">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-green-700 to-green-900 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-semibold text-white mb-6">
-            Discover the Wonder of Nature
-          </h1>
-          <p className="text-xl text-gray-300 leading-relaxed">
-            Native Nature is your gateway to exploring and documenting the incredible biodiversity 
-            that surrounds us. Join a community passionate about wildlife observation, species 
-            discovery, and conservation efforts around the globe.
+          <h1 className="mb-6 text-white">About Native Nature</h1>
+          <p className="text-xl text-green-100 leading-relaxed">
+            A global platform connecting nature enthusiasts and conservationists to document biodiversity 
+            and support meaningful conservation efforts worldwide.
           </p>
         </div>
       </div>
 
       {/* Mission Section */}
-      <div className="py-16 bg-white">
+      <div className="bg-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">Our Mission</h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              We believe that understanding and appreciating nature is the first step toward 
-              protecting it. Native Nature empowers individuals to document wildlife sightings, 
-              learn about species, and contribute to conservation awareness through the simple 
-              act of observation.
-            </p>
-          </div>
+          <h2 className="text-3xl font-semibold text-center text-gray-900 mb-8">Our Mission</h2>
+          <p className="text-lg text-gray-700 leading-relaxed mb-6">
+            Native Nature is dedicated to preserving our planet&apos;s biodiversity by empowering individuals 
+            to document wildlife observations and support conservation initiatives. We believe that by making 
+            nature observation accessible and funding conservation projects transparent, we can create a global 
+            community committed to protecting our natural world.
+          </p>
           
           <div className="grid md:grid-cols-3 gap-8 mt-12">
             <div className="text-center">
               <div className="text-5xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Discover</h3>
               <p className="text-muted">
-                Explore thousands of species from around the world with detailed information 
-                and stunning photography.
+                Explore species, locations, and biodiversity data from around the world.
               </p>
             </div>
             <div className="text-center">
               <div className="text-5xl mb-4">📸</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Document</h3>
               <p className="text-muted">
-                Record your wildlife observations with photos, locations, and dates to build 
-                your personal nature journal.
+                Record your wildlife observations with photos, locations, and dates.
               </p>
             </div>
             <div className="text-center">
               <div className="text-5xl mb-4">💚</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Support</h3>
               <p className="text-muted">
-                Fund conservation projects that protect habitats and native species around 
-                the world.
+                Fund conservation projects that protect habitats and native species.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Features Section - Dark Background */}
+      {/* Features Section */}
       <div className="bg-slate-900 py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-semibold text-white text-center mb-12">
-            Powerful Features for Nature Enthusiasts
+            Platform Features
           </h2>
           
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Feature 1 */}
+            {/* Wildlife Observations */}
+            <div className="bg-slate-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">📍</div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Wildlife Observations
+                  </h3>
+                  <p className="text-gray-300 mb-3">
+                    Create detailed records of wildlife sightings with:
+                  </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Photo uploads for visual documentation</li>
+                    <li>• GPS location tracking with interactive maps</li>
+                    <li>• Date and time recording</li>
+                    <li>• Species identification and linking</li>
+                    <li>• Personal observation journals</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Species Database */}
+            <div className="bg-slate-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">🦋</div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Species Database
+                  </h3>
+                  <p className="text-gray-300 mb-3">
+                    Explore comprehensive species information including:
+                  </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Scientific and common names</li>
+                    <li>• Conservation status (IUCN classifications)</li>
+                    <li>• Species photos and descriptions</li>
+                    <li>• Geographic distribution</li>
+                    <li>• Favorite species tracking</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Mapping */}
             <div className="bg-slate-800 rounded-lg p-6">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">🗺️</div>
@@ -82,80 +117,65 @@ export default function AboutPage() {
                   <h3 className="text-xl font-semibold text-white mb-2">
                     Interactive Mapping
                   </h3>
-                  <p className="text-gray-300">
-                    Record precise locations of your wildlife observations with interactive maps 
-                    powered by Mapbox. Visualize where you&apos;ve encountered different species and 
-                    explore biodiversity by region.
+                  <p className="text-gray-300 mb-3">
+                    Visualize biodiversity with powerful mapping tools:
                   </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Global species distribution maps</li>
+                    <li>• Country and region exploration</li>
+                    <li>• Personal observation heat maps</li>
+                    <li>• Project location tracking</li>
+                    <li>• Interactive pin-based navigation</li>
+                  </ul>
                 </div>
               </div>
             </div>
 
-            {/* Feature 2 */}
+            {/* Conservation Projects */}
+            <div className="bg-slate-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">🌱</div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Conservation Projects
+                  </h3>
+                  <p className="text-gray-300 mb-3">
+                    Create and support conservation initiatives with:
+                  </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Project creation and management</li>
+                    <li>• Funding goals and progress tracking</li>
+                    <li>• Photo and update documentation</li>
+                    <li>• Secure Stripe payment processing</li>
+                    <li>• Community Q&A features</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Photo Gallery */}
             <div className="bg-slate-800 rounded-lg p-6">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">📷</div>
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-2">
-                    Beautiful Photo Galleries
+                    Photo Galleries
                   </h3>
-                  <p className="text-gray-300">
-                    Upload and showcase your wildlife photography in stunning masonry galleries. 
-                    View full-screen images with detailed information about each observation.
+                  <p className="text-gray-300 mb-3">
+                    Showcase and discover wildlife photography:
                   </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Masonry-style photo layouts</li>
+                    <li>• Image approval system for quality control</li>
+                    <li>• Multi-photo observation support</li>
+                    <li>• Species and location metadata</li>
+                    <li>• Community photo feeds</li>
+                  </ul>
                 </div>
               </div>
             </div>
 
-            {/* Feature 3 */}
-            <div className="bg-slate-800 rounded-lg p-6">
-              <div className="flex items-start gap-4">
-                <div className="text-3xl">🌍</div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    Global Species Database
-                  </h3>
-                  <p className="text-gray-300">
-                    Access comprehensive information on species from around the world, including 
-                    taxonomy, conservation status, and observation counts powered by iNaturalist.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-slate-800 rounded-lg p-6">
-              <div className="flex items-start gap-4">
-                <div className="text-3xl">⭐</div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    Personal Favorites
-                  </h3>
-                  <p className="text-gray-300">
-                    Build your collection of favorite species and track your observations over time. 
-                    Create a personalized record of your nature exploration journey.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="bg-slate-800 rounded-lg p-6">
-              <div className="flex items-start gap-4">
-                <div className="text-3xl">👥</div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    Community Profiles
-                  </h3>
-                  <p className="text-gray-300">
-                    Share your observations with the community through public profiles. Discover 
-                    what others are seeing and get inspired by fellow nature enthusiasts.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 6 */}
+            {/* Search & Discovery */}
             <div className="bg-slate-800 rounded-lg p-6">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">🔎</div>
@@ -163,10 +183,60 @@ export default function AboutPage() {
                   <h3 className="text-xl font-semibold text-white mb-2">
                     Smart Search & Discovery
                   </h3>
-                  <p className="text-gray-300">
-                    Explore species by country, region, or category. Browse recent observations 
-                    from the community and discover biodiversity in your local area.
+                  <p className="text-gray-300 mb-3">
+                    Find what you&apos;re looking for quickly:
                   </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Multi-category search (species, places, observations, projects)</li>
+                    <li>• Country and region browsing</li>
+                    <li>• Recent observations feed</li>
+                    <li>• Species lists by location</li>
+                    <li>• Advanced filtering options</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* User Profiles */}
+            <div className="bg-slate-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">👤</div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    User Profiles & Dashboard
+                  </h3>
+                  <p className="text-gray-300 mb-3">
+                    Manage your nature documentation:
+                  </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Personal dashboard with statistics</li>
+                    <li>• Observation management and editing</li>
+                    <li>• Project tracking and updates</li>
+                    <li>• Favorites collections</li>
+                    <li>• Donation history</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Community Features */}
+            <div className="bg-slate-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">🤝</div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Community Features
+                  </h3>
+                  <p className="text-gray-300 mb-3">
+                    Connect with fellow nature enthusiasts:
+                  </p>
+                  <ul className="text-gray-300 space-y-2 ml-4">
+                    <li>• Project Q&A and responses</li>
+                    <li>• Public user profiles</li>
+                    <li>• Shared observation galleries</li>
+                    <li>• Conservation project updates</li>
+                    <li>• Supporter recognition</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -174,138 +244,74 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Conservation Projects Section */}
-      <div className="py-16 bg-white">
+      {/* How Conservation Projects Work */}
+      <div className="bg-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-              Conservation Projects
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              Native Nature empowers individuals and organizations to create and fund conservation 
-              projects that make a real difference. From habitat restoration to wildlife protection, 
-              our platform connects passionate conservationists with donors who want to support 
-              meaningful environmental initiatives.
-            </p>
-          </div>
+          <h2 className="text-3xl font-semibold text-gray-900 mb-4 text-center">
+            Conservation Projects
+          </h2>
+          <p className="text-lg text-gray-700 leading-relaxed mb-8 text-center">
+            Native Nature empowers individuals and organizations to create and fund conservation 
+            projects that make a real difference. From habitat restoration to wildlife protection, 
+            our platform connects passionate conservationists with donors who want to support 
+            meaningful environmental initiatives.
+          </p>
 
-          <div className="bg-green-50 rounded-lg shadow-lg p-8 mb-8">
+          <div className="bg-green-50 rounded-lg shadow-lg p-8 mt-8">
             <h3 className="text-2xl font-semibold text-gray-900 mb-6 text-center">
-              How Conservation Projects Work
+              How Projects Work
             </h3>
             <div className="space-y-6 text-gray-700">
               <div className="flex items-start gap-4">
-                <div className="step-number">
+                <div className="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
                   1
                 </div>
                 <div>
                   <h4 className="text-lg font-semibold text-gray-900 mb-1">Create a Project</h4>
                   <p>
-                    Conservation organizations and individuals can create projects with detailed 
-                    descriptions, funding goals, and photo documentation of their conservation efforts.
+                    Set up your conservation project with a clear title, description, funding goal, 
+                    and location. Add photos to show what you&apos;re working to protect.
                   </p>
                 </div>
               </div>
+
               <div className="flex items-start gap-4">
-                <div className="step-number">
+                <div className="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
                   2
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Community Support</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Share Your Story</h4>
                   <p>
-                    The Native Nature community can browse and donate to projects they care about. 
-                    Donors can contribute any amount and leave messages of support for project creators.
+                    Post regular updates about your progress, answer questions from the community, 
+                    and build trust with potential donors through transparency.
                   </p>
                 </div>
               </div>
+
               <div className="flex items-start gap-4">
-                <div className="step-number">
+                <div className="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
                   3
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Progress Updates</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Receive Funding</h4>
                   <p>
-                    Once funded, project creators share updates with photos showing the real-world 
-                    impact of the conservation work. Donors and the community can see exactly how 
-                    their contributions are making a difference.
+                    Accept secure donations through Stripe. Track your funding progress in real-time 
+                    and thank your supporters as your project grows.
                   </p>
                 </div>
               </div>
+
               <div className="flex items-start gap-4">
-                <div className="step-number">
+                <div className="flex-shrink-0 w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
                   4
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Transparent Impact</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-1">Make an Impact</h4>
                   <p>
-                    All donations, donor messages, and project updates are publicly visible. This 
-                    transparency ensures accountability and allows everyone to see the collective 
-                    impact of conservation efforts.
+                    Execute your conservation plan and share the results with your community. 
+                    Completed projects inspire others and demonstrate the power of collective action.
                   </p>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <Link
-              href="/conservation-efforts"
-              className="inline-block px-8 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Browse Conservation Projects
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Conservation Section */}
-      <div className="py-16 bg-green-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-              Why Conservation Matters
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              Every observation you record contributes to a greater understanding of our planet&apos;s 
-              biodiversity. By documenting wildlife, you&apos;re participating in citizen science and 
-              helping researchers track species populations, migration patterns, and habitat changes.
-            </p>
-          </div>
-
-          <div className="card-lg">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">
-              The Power of Observation
-            </h3>
-            <div className="space-y-4 text-gray-700">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">🌿</span>
-                <p>
-                  <strong>Biodiversity Awareness:</strong> Understanding what species exist in an area 
-                  is the foundation for protecting them. Your observations create valuable records of 
-                  species distribution.
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">📊</span>
-                <p>
-                  <strong>Data Collection:</strong> Collective observations from communities around the 
-                  world provide scientists with crucial data about population trends and ecosystem health.
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">💚</span>
-                <p>
-                  <strong>Connection to Nature:</strong> Regular observation fosters a deeper connection 
-                  with the natural world, inspiring stewardship and conservation action.
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">🌍</span>
-                <p>
-                  <strong>Global Impact:</strong> Small actions, like recording a bird sighting or 
-                  photographing a wildflower, collectively create a powerful movement for environmental 
-                  awareness and protection.
-                </p>
               </div>
             </div>
           </div>
@@ -313,52 +319,25 @@ export default function AboutPage() {
       </div>
 
       {/* Call to Action */}
-      <div className="bg-slate-900 py-16">
+      <div className="bg-gradient-to-br from-green-600 to-green-800 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-semibold text-white mb-6">
-            Start Your Journey Today
-          </h2>
-          <p className="text-xl text-gray-300 mb-8">
-            Join our community of nature enthusiasts and begin documenting the incredible 
-            wildlife around you. Every observation matters.
+          <h2 className="text-3xl font-bold mb-4 text-white">Join the Native Nature Community</h2>
+          <p className="text-xl text-green-100 mb-8">
+            Start documenting wildlife, exploring biodiversity, and supporting conservation today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/auth/signup"
-              className="px-8 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg hover:bg-green-700 transition-colors"
+              href="/auth/signin"
+              className="inline-block px-8 py-3 bg-white text-green-700 rounded-lg hover:bg-gray-100 transition-colors font-semibold"
             >
-              Create Free Account
+              Get Started
             </Link>
             <Link
-              href="/recent-observations"
-              className="px-8 py-3 bg-slate-700 text-white text-lg font-semibold rounded-lg hover:bg-slate-600 transition-colors"
+              href="/conservation-projects"
+              className="inline-block px-8 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors font-semibold border-2 border-white"
             >
-              View Recent Observations
+              View Projects
             </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Stats Section */}
-      <div className="py-12 bg-white border-t border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-semibold text-green-600 mb-2">∞</div>
-              <p className="text-muted">Species to Discover</p>
-            </div>
-            <div>
-              <div className="text-4xl font-semibold text-green-600 mb-2">🌍</div>
-              <p className="text-muted">Global Coverage</p>
-            </div>
-            <div>
-              <div className="text-4xl font-semibold text-green-600 mb-2">📸</div>
-              <p className="text-muted">Photo Galleries</p>
-            </div>
-            <div>
-              <div className="text-4xl font-semibold text-green-600 mb-2">💚</div>
-              <p className="text-muted">Conservation Focus</p>
-            </div>
           </div>
         </div>
       </div>

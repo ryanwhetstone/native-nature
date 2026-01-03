@@ -125,7 +125,8 @@ export default function EditProjectForm({ project }: { project: Project }) {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update project");
+        const data = await response.json();
+        throw new Error(data.error || "Failed to update project");
       }
 
       // Show success toast
@@ -135,7 +136,8 @@ export default function EditProjectForm({ project }: { project: Project }) {
       router.refresh();
     } catch (error) {
       console.error("Error updating project:", error);
-      showToast("Failed to update project. Please try again.", "error");
+      const errorMessage = error instanceof Error ? error.message : "Failed to update project. Please try again.";
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }

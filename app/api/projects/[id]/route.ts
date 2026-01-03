@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import { db } from '@/db';
 import { conservationProjects, projectPictures } from '@/db/schema';
 import { eq, inArray } from 'drizzle-orm';
+import { validateNoProfanity } from '@/lib/profanity-filter';
 
 export async function GET(
   request: NextRequest,
@@ -97,6 +98,29 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
     const { title, description, fundingGoal, status, latitude, longitude, newImageUrls, deletedImageIds } = body;
+
+    // Validate title and description for profanity if provided
+    if (title) {
+      try {
+        validateNoProfanity(title, 'Title');
+      } catch (error) {
+        return NextResponse.json(
+          { error: error instanceof Error ? error.message : 'Title contains inappropriate language' },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (description) {
+      try {
+        validateNoProfanity(description, 'Description');
+      } catch (error) {
+        return NextResponse.json(
+          { error: error instanceof Error ? error.message : 'Description contains inappropriate language' },
+          { status: 400 }
+        );
+      }
+    }
 
     // Check if user owns the project
     const existingProject = await db.query.conservationProjects.findFirst({
