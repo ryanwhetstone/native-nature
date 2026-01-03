@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-gray-50">
+    <>
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-green-700 to-green-900 text-white py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -341,6 +341,7 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }

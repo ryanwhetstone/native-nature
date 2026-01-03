@@ -219,7 +219,7 @@ export default async function Home() {
   }).slice(0, 3);
   
   return (
-    <main className="min-h-screen">
+    <>
       {/* Hero Section and Recent Observations - Dark */}
       <div className="section bg-dark px-4">
         <div className="container-full">
@@ -422,6 +422,7 @@ export default async function Home() {
 
           </div>
 
-    </main>
+    
+      </>
   );
 }

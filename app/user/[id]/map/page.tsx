@@ -56,7 +56,7 @@ export default async function UserMapPage({
   );
 
   return (
-    <main className="min-h-screen">
+    <>
       {/* Dark section for header */}
     <UserProfileHeader
         userId={user.id}
@@ -111,6 +111,7 @@ export default async function UserMapPage({
         description={`View observations and conservation projects by ${user.publicName || user.name || "User"} on Native Nature`}
         type="Share Map"
       />
-    </main>
+    
+      </>
   );
 }

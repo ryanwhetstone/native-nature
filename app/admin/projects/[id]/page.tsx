@@ -93,7 +93,7 @@ export default async function EditProjectPage({
   const fundingPercentage = (project.currentFunding / project.fundingGoal) * 100;
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <AdminNav />
       <div className="section">
         <div className="container-lg">
@@ -249,6 +249,7 @@ export default async function EditProjectPage({
           </div>
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }

@@ -43,7 +43,7 @@ export default async function ConservationProjectsPage() {
   });
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <>
       <div className="w-full max-w-7xl mx-auto px-4 py-12">
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4">Conservation Projects</h1>
@@ -64,6 +64,7 @@ export default async function ConservationProjectsPage() {
           </div>
         )}
       </div>
-    </main>
+    
+      </>
   );
 }

@@ -67,7 +67,7 @@ export default async function ObservationDetailPage({
   const isOwner = session?.user && observation.userId === session.user.id;
 
   return (
-    <main className="min-h-screen">
+    <>
       {/* Dark section for header and photos */}
       <div className="section bg-dark px-4">
         <div className="container-md">
@@ -188,6 +188,7 @@ export default async function ObservationDetailPage({
         description={`Observed by ${observation.user.publicName || observation.user.name || 'Anonymous'} on ${new Date(observation.observedAt).toLocaleDateString()}`}
         type="Share Observation"
       />
-    </main>
+    
+      </>
   );
 }

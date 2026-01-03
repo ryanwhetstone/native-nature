@@ -17,7 +17,7 @@ export default async function GenerateDataPage() {
   }
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <AdminNav />
       <div className="section">
         <div className="container-lg">
@@ -46,6 +46,7 @@ export default async function GenerateDataPage() {
           </div>
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }

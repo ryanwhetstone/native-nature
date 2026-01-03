@@ -178,7 +178,7 @@ export default async function UserPhotosPage({
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen">
+    <>
       <UserProfileHeader
         userId={id}
         displayName={displayName}
@@ -213,6 +213,7 @@ export default async function UserPhotosPage({
         description={`View wildlife photos by ${displayName} on Native Nature`}
         type="Share Photos"
       />
-    </main>
+    
+      </>
   );
 }

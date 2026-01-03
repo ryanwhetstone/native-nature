@@ -55,7 +55,7 @@ export default async function CountryPage({ params }: CountryPageProps) {
 
   // For other countries, show the country code and map
   return (
-    <main className="min-h-screen bg-gray-50 p-8">
+    <>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 relative">
           <Link 
@@ -104,7 +104,8 @@ export default async function CountryPage({ params }: CountryPageProps) {
           </div>
         )}
       </div>
-    </main>
+    
+      </>
   );
 }
 

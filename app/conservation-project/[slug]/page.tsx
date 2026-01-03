@@ -201,7 +201,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
   ];
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <ThankYouModal />
       {/* Dark section for header and photos */}
       <div className="section bg-dark pt-3 sm:pt-4 px-4">
@@ -570,6 +570,7 @@ export default async function PublicProjectPage({ params }: { params: Promise<{ 
         description={project.description}
         type="Share Project"
       />
-    </main>
+    
+      </>
   );
 }

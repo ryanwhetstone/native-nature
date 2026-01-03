@@ -150,7 +150,7 @@ export default async function BulkPhotoManagementPage({
   const paginatedPhotos = allPhotos.slice(offset, offset + ITEMS_PER_PAGE);
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <AdminNav />
       <div className="section">
         <div className="container-full">
@@ -214,6 +214,7 @@ export default async function BulkPhotoManagementPage({
           )}
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }

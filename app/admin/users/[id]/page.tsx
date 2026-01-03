@@ -64,7 +64,7 @@ export default async function EditUserPage({
   }
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <AdminNav />
       <div className="section">
         <div className="container-lg">
@@ -190,6 +190,7 @@ export default async function EditUserPage({
           </div>
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }

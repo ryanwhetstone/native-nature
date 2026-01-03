@@ -185,7 +185,7 @@ export default async function UserProfilePage({
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen">
+    <>
       <UserProfileHeader
         userId={id}
         displayName={displayName}
@@ -453,6 +453,7 @@ export default async function UserProfilePage({
         description={`View ${displayName}'s nature observations and contributions on Native Nature`}
         type="Share Profile"
       />
-    </main>
+    
+      </>
   );
 }

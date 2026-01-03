@@ -63,7 +63,7 @@ export default async function RecentObservationsPage({
     }));
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <>
       {/* Dark section for header and photo gallery */}
       <div className="section bg-dark">
         <div className="container-md">
@@ -226,6 +226,7 @@ export default async function RecentObservationsPage({
         )}
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }

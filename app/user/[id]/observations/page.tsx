@@ -89,7 +89,7 @@ export default async function UserObservationsPage({
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <UserProfileHeader
         userId={id}
         displayName={displayName}
@@ -193,6 +193,7 @@ export default async function UserObservationsPage({
         description={`View all wildlife observations by ${displayName} on Native Nature`}
         type="Share Observations"
       />
-    </main>
+    
+      </>
   );
 }

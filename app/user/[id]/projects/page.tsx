@@ -88,7 +88,7 @@ export default async function UserProjectsPage({
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <UserProfileHeader
         userId={id}
         displayName={displayName}
@@ -209,6 +209,7 @@ export default async function UserProjectsPage({
         description={`View conservation projects by ${displayName} on Native Nature`}
         type="Share Projects"
       />
-    </main>
+    
+      </>
   );
 }

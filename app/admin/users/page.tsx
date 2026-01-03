@@ -107,7 +107,7 @@ export default async function AdminUsersPage({
   }
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <AdminNav />
       <div className="section">
         <div className="container-lg">
@@ -191,6 +191,7 @@ export default async function AdminUsersPage({
           </div>
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }

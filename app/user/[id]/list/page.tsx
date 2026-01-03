@@ -89,7 +89,7 @@ export default async function UserObservationsListPage({
   const displayName = user.publicName || user.name || 'Anonymous User';
 
   return (
-    <main className="min-h-screen bg-light">
+    <>
       <UserProfileHeader
         userId={id}
         displayName={displayName}
@@ -184,6 +184,7 @@ export default async function UserObservationsListPage({
           )}
         </div>
       </div>
-    </main>
+    
+      </>
   );
 }
